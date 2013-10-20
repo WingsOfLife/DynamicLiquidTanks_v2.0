@@ -1,14 +1,9 @@
-DynamicLiquidTanks
+Dynamic Liquid Tanks v2.0
 ==================
 
-DLT - Developed By WingsOfLife
+DLT_v2.0 - Developed By WingsOfLife
 
-Contributing
+This is an incomplete version of Dynamic Liquid Tanks v2.0. It 
+will be published here periodically as a backup for myself(WingsOfLife)
 
-If you wish to submit a pull request to fix bugs or broken behaviour feel free to do so. If you would like to add 		 features or change existing behaviour or balance, please discuss it with WingsOfLife before submiting the pull request.
-
-Reporting issues
-
-Before reporting an issue, please check that it has not been reported before.
-Issues are for bugs/crashes, please do not use them to ask general questions.
-Always include the version you are having trouble with. 
+This mod is protected under the Creative Commons License(http://creativecommons.org/licenses/by-nc-nd/3.0/us/legalcode)
