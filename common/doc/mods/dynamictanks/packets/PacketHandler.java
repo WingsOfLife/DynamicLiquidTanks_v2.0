@@ -54,6 +54,7 @@ public class PacketHandler implements IPacketHandler {
 		/*
 		 * Handler Packets
 		 */
+		
 		World world = ((EntityPlayerMP) player).worldObj;
 		TileEntity tileAtLoc = world.getBlockTileEntity(x, y, z);
 		
@@ -61,14 +62,14 @@ public class PacketHandler implements IPacketHandler {
 			ItemStack itemStack = new ItemStack((int)itemID, (int)value, (int)meta);
 			if (!world.isRemote)
 				ItemHelper.spawnItem(itemStack, world, x, y, z);
+			((UpgradeTileEntity) tileAtLoc).setInventorySlotContents((int) xAdd, null);
 		}
 		else if (id == PacketHandler.PacketIDs.spotClick) {
-			ItemStack itemStack = new ItemStack((int)itemID, (int)value, (int)meta);
+			ItemStack itemStack = itemID != -1 ? new ItemStack((int)itemID, (int)value, (int)meta) : null;
 			((UpgradeTileEntity) tileAtLoc).setSlotViaClick(xAdd, yAdd, zAdd, (UpgradeTileEntity)tileAtLoc, (EntityPlayer) player, itemStack);
 		}
 	}
 
-	@SideOnly(Side.CLIENT)
 	public static void sendPacketWithInt(int id, float value, float itemID, float meta, double xAdd, double yAdd, double zAdd, int x, int y, int z) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(16);
 		DataOutputStream outputStream = new DataOutputStream(bos);
@@ -88,7 +89,7 @@ public class PacketHandler implements IPacketHandler {
 		}
 
 		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = "dynamicTanks";
+		packet.channel = "dynamictanks";
 		packet.data = bos.toByteArray();
 		packet.length = bos.size();
 

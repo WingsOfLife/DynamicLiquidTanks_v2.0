@@ -24,7 +24,8 @@ public class BlockTankController extends BlockContainer {
 	private Icon faceIcon;
 	
 	public BlockTankController(int par1) {
-		super(par1, Material.iron);
+		super(par1, Material.rock);
+		setHardness(2.0F);
 		setUnlocalizedName("Tank Controller");
 	}
 	
@@ -99,6 +100,24 @@ public class BlockTankController extends BlockContainer {
 		return new ControllerTileEntity();
 	}
 
+	public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, int par5) {
+		int i1 = par1World.getBlockMetadata(par2, par3, par4);
+		
+		boolean flag = par1World.isBlockIndirectlyGettingPowered(par2, par3, par4) || par1World.isBlockIndirectlyGettingPowered(par2, par3 + 1, par4);
+        boolean flag1 = (i1 & 8) != 0;
+        
+        ControllerTileEntity currentTile = (ControllerTileEntity) par1World.getBlockTileEntity(par2, par3, par4);
+        
+        if (flag && !flag1)        {
+            currentTile.nextLiquidIndex();
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, i1 | 8, 4);
+        }
+        else if (!flag && flag1)
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, i1 & -9, 4);
+        
+        System.out.println(currentTile.getLiquidIndex());
+    }
+	
 	@Override
 	public boolean onBlockActivated (World world, int x, int y, int z, EntityPlayer player, int side, float clickX, float clickY, float clickZ) {
 		ItemStack heldItem = player.inventory.getCurrentItem();
@@ -120,14 +139,16 @@ public class BlockTankController extends BlockContainer {
 				else
 					return true;
 			}
-			/*else if (FluidContainerRegistry.isBucket(heldItem) && conTE != null)
+			else if (FluidContainerRegistry.isBucket(heldItem) && conTE != null)
 			{
-				//ILiquidTank[] tanks = logic.getTanks(ForgeDirection.UNKNOWN);
-				FluidStack fillLiquid = conTE.tank.getFluid();
+				if (conTE.getLiquidIndex() > conTE.getAllLiquids().size())
+					conTE.setLiquidIndex(conTE.getAllLiquids().size()); 
+				
+				FluidStack fillLiquid = conTE.getAllLiquids().get(conTE.getLiquidIndex()).getFluid();
 				ItemStack fillStack = FluidContainerRegistry.fillFluidContainer(fillLiquid, heldItem);
 				if (fillStack != null)
 				{
-					logic.drain(ForgeDirection.UNKNOWN, FluidContainerRegistry.getFluidForFilledItem(fillStack).amount, true);
+					conTE.drain(ForgeDirection.UNKNOWN, FluidContainerRegistry.getFluidForFilledItem(fillStack).amount, true);
 					if (!player.capabilities.isCreativeMode)
 					{
 						if (heldItem.stackSize == 1)
@@ -136,7 +157,7 @@ public class BlockTankController extends BlockContainer {
 						}
 						else
 						{
-							player.inventory.setInventorySlotContents(player.inventory.currentItem, ItemUtils.consumeItem(heldItem));
+							player.inventory.setInventorySlotContents(player.inventory.currentItem, consumeItem(heldItem));
 
 							if (!player.inventory.addItemStackToInventory(fillStack))
 							{
@@ -150,7 +171,7 @@ public class BlockTankController extends BlockContainer {
 				{
 					return true;
 				}
-			}*/
+			}
 		}
 		return false;
 	}

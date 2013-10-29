@@ -16,23 +16,19 @@ import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import doc.mods.dynamictanks.DynamicLiquidTanksCore;
+import doc.mods.dynamictanks.helpers.BlockHelper;
 import doc.mods.dynamictanks.items.ItemManager;
 import doc.mods.dynamictanks.packets.PacketHandler;
 import doc.mods.dynamictanks.tileentity.UpgradeTileEntity;
 
 public class BlockUpgrade extends BlockContainer {
 
-	private final int LEFT = 0;
-	private final int RIGHT = 1;
-
-	private final int[] leftSlots = { 0, 2, 4 };
-	private final int[] rightSlots = { 1, 3, 5 };
-
 	@SideOnly(Side.CLIENT)
 	private Icon faceIcon;
 
 	protected BlockUpgrade(int par1) {
 		super(par1, Material.iron);
+		setHardness(2.0F);
 		setUnlocalizedName("Upgrade Module");		
 	}
 
@@ -112,10 +108,8 @@ public class BlockUpgrade extends BlockContainer {
 	public boolean onBlockActivated (World world, int x, int y, int z, EntityPlayer player, int side, float clickX, float clickY, float clickZ) {
 		ItemStack heldItem = player.inventory.getCurrentItem();
 		UpgradeTileEntity upgradeTE = (UpgradeTileEntity) world.getBlockTileEntity(x, y, z);
-
-		player.openGui(DynamicLiquidTanksCore.instance, 0, world, x, y, z);
 		
-		/*if ((heldItem == null || heldItem.itemID == ItemManager.upgradeItem.itemID) && player.rayTrace(200, 1.0F) != null && world.isRemote) {
+		if ((heldItem == null || heldItem.itemID == ItemManager.upgradeItem.itemID) && player.rayTrace(200, 1.0F) != null && world.isRemote) {
 			double xCoord = player.rayTrace(200, 1.0F).hitVec.xCoord;
 			double yCoord = player.rayTrace(200, 1.0F).hitVec.yCoord;
 			double zCoord = player.rayTrace(200, 1.0F).hitVec.zCoord;
@@ -124,92 +118,16 @@ public class BlockUpgrade extends BlockContainer {
 			double zRound = zCoord - MathHelper.floor_double(zCoord);
 			double yRound = yCoord - MathHelper.floor_double(yCoord);
 
-			setSlotViaClick(xRound, yRound, zRound, upgradeTE, player, heldItem);
 			PacketHandler.sendPacketWithInt(PacketHandler.PacketIDs.spotClick, 1, 
-					heldItem.itemID, heldItem.getItemDamage(), 
+					heldItem != null ? heldItem.itemID : -1, heldItem != null ? heldItem.getItemDamage() : -1, 
 					xRound, yRound, zRound, x, y, z);
-		}*/
-
+		}
 		return true;
 	}
 	
-	/*
-	 * Self
-	 */
-
-	public void setSlotViaClick(double xClick, double yClick, double zClick, UpgradeTileEntity upgradeTile, EntityPlayer player, ItemStack itemStack) {
-		int direction =  MathHelper.floor_double((double)(player.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
-
-		switch (direction) {
-		case 0:
-			if (xClick > 50) { //left
-				setSlotViaCoord(yClick, LEFT, upgradeTile, itemStack, player);
-			}
-			if (xClick < 50) { //right
-				setSlotViaCoord(yClick, RIGHT, upgradeTile, itemStack, player);
-			}
-			break;
-		case 1: 
-			if (zClick < 50) { //left
-				setSlotViaCoord(yClick, LEFT, upgradeTile, itemStack, player);
-			}
-			if (zClick > 50) { //right
-				setSlotViaCoord(yClick, RIGHT, upgradeTile, itemStack, player);
-			}
-			break;
-		case 2: 
-			if (xClick < 50) { //left
-				setSlotViaCoord(yClick, LEFT, upgradeTile, itemStack, player);
-			}
-			if (xClick > 50) { //right
-				setSlotViaCoord(yClick, RIGHT, upgradeTile, itemStack, player);
-			}
-			break;
-		case 3: 
-			if (zClick > 50) { //left
-				setSlotViaCoord(yClick, LEFT, upgradeTile, itemStack, player);
-			}
-			if (zClick < 50) { //right
-				setSlotViaCoord(yClick, RIGHT, upgradeTile, itemStack, player);
-			}
-			break;
-		}
+	@Override
+    public void breakBlock(World world, int x, int y, int z, int par5, int par6) {
+		BlockHelper.dropItems(world, x, y, z);
+		super.breakBlock(world, x, y, z, par5, par6);;
 	}
-
-	public void setSlotViaCoord(double yClick, int direction, UpgradeTileEntity upgradeTile, ItemStack itemStack, EntityPlayer player) {
-
-		int[] sideSlotArray = direction == LEFT ? leftSlots : rightSlots;
-
-		if (yClick <= 1.00 && yClick >= .66) {
-			if (upgradeTile.getStackInSlot(sideSlotArray[0]) != null)
-				PacketHandler.sendPacketWithInt(PacketHandler.PacketIDs.dropItem, 1, 
-						upgradeTile.getStackInSlot(sideSlotArray[0]).itemID, upgradeTile.getStackInSlot(sideSlotArray[0]).getItemDamage(),
-						0, 0, 0, upgradeTile.xCoord, upgradeTile.yCoord, upgradeTile.zCoord);
-			else if (itemStack != null) {
-				upgradeTile.setInventorySlotContents(sideSlotArray[0], itemStack); //empty
-				player.inventory.mainInventory[player.inventory.currentItem] = null;
-			}
-		}
-		if (yClick <= .65 && yClick >= .33) {
-			if (upgradeTile.getStackInSlot(sideSlotArray[1]) != null)
-				PacketHandler.sendPacketWithInt(PacketHandler.PacketIDs.dropItem, 1, 
-						upgradeTile.getStackInSlot(sideSlotArray[1]).itemID, upgradeTile.getStackInSlot(sideSlotArray[1]).getItemDamage(),
-						0, 0, 0, upgradeTile.xCoord, upgradeTile.yCoord, upgradeTile.zCoord);
-			else if (itemStack != null) {
-				upgradeTile.setInventorySlotContents(sideSlotArray[1], itemStack); //empty
-				player.inventory.mainInventory[player.inventory.currentItem] = null;
-			}
-		}
-		if (yClick <= .32 && yClick >= 0) {
-			if (upgradeTile.getStackInSlot(sideSlotArray[2]) != null)
-				PacketHandler.sendPacketWithInt(PacketHandler.PacketIDs.dropItem, 1, 
-						upgradeTile.getStackInSlot(sideSlotArray[2]).itemID, upgradeTile.getStackInSlot(sideSlotArray[2]).getItemDamage(),
-						0, 0, 0, upgradeTile.xCoord, upgradeTile.yCoord, upgradeTile.zCoord);
-			else if (itemStack != null) {
-				upgradeTile.setInventorySlotContents(sideSlotArray[2], itemStack); //empty
-				player.inventory.mainInventory[player.inventory.currentItem] = null;
-			}
-		}
-	}
-
 }

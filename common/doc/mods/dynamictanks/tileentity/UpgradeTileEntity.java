@@ -11,6 +11,7 @@ import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.ForgeDirection;
+import doc.mods.dynamictanks.block.BlockManager;
 import doc.mods.dynamictanks.common.ModConfig;
 import doc.mods.dynamictanks.items.ItemManager;
 import doc.mods.dynamictanks.packets.PacketHandler;
@@ -59,10 +60,10 @@ public class UpgradeTileEntity extends CountableTileEntity implements IInventory
 		storageUpgrades = 0;
 		for (int i = 0; i < inventory.length; i++) {
 			itemStack = inventory[i];
-			if (itemStack != null && itemStack.itemID == ModConfig.ItemIDs.upgradeItems) {
-				if (itemStack.getItemDamage() == 0)
+			if (itemStack != null) {
+				if (itemStack.getItemDamage() == 0 && itemStack.itemID == ItemManager.upgradeItem.itemID)
 					capacityUpgrades++;
-				if (itemStack.getItemDamage() == 1)
+				if (itemStack.getItemDamage() == 1 && itemStack.itemID == ItemManager.upgradeItem.itemID)
 					storageUpgrades++;
 			}
 				
@@ -106,49 +107,41 @@ public class UpgradeTileEntity extends CountableTileEntity implements IInventory
 
 		switch (direction) {
 		case 0:
-			if (xClick > 50) { //left
+			if (xClick > .5) //left
 				setSlotViaCoord(yClick, LEFT, upgradeTile, itemStack, player);
-			}
-			if (xClick < 50) { //right
+			if (xClick < .5) //right
 				setSlotViaCoord(yClick, RIGHT, upgradeTile, itemStack, player);
-			}
 			break;
 		case 1: 
-			if (zClick < 50) { //left
+			if (zClick < .5) //left
 				setSlotViaCoord(yClick, LEFT, upgradeTile, itemStack, player);
-			}
-			if (zClick > 50) { //right
+			if (zClick > .5) //right
 				setSlotViaCoord(yClick, RIGHT, upgradeTile, itemStack, player);
-			}
 			break;
 		case 2: 
-			if (xClick < 50) { //left
+			if (xClick < .5) //left
 				setSlotViaCoord(yClick, LEFT, upgradeTile, itemStack, player);
-			}
-			if (xClick > 50) { //right
+			if (xClick > .5) //right
 				setSlotViaCoord(yClick, RIGHT, upgradeTile, itemStack, player);
-			}
 			break;
 		case 3: 
-			if (zClick > 50) { //left
+			if (zClick > .5) //left
 				setSlotViaCoord(yClick, LEFT, upgradeTile, itemStack, player);
-			}
-			if (zClick < 50) { //right
+			if (zClick < .5) //right
 				setSlotViaCoord(yClick, RIGHT, upgradeTile, itemStack, player);
-			}
 			break;
 		}
 	}
 
 	public void setSlotViaCoord(double yClick, int direction, UpgradeTileEntity upgradeTile, ItemStack itemStack, EntityPlayer player) {
 
-		int[] sideSlotArray = direction == LEFT ? leftSlots : rightSlots;
+		int[] sideSlotArray = (direction == LEFT) ? leftSlots : rightSlots;
 
 		if (yClick <= 1.00 && yClick >= .66) {
 			if (upgradeTile.getStackInSlot(sideSlotArray[0]) != null)
 				PacketHandler.sendPacketWithInt(PacketHandler.PacketIDs.dropItem, 1, 
 						upgradeTile.getStackInSlot(sideSlotArray[0]).itemID, upgradeTile.getStackInSlot(sideSlotArray[0]).getItemDamage(),
-						0, 0, 0, upgradeTile.xCoord, upgradeTile.yCoord, upgradeTile.zCoord);
+						sideSlotArray[0], 0, 0, upgradeTile.xCoord, upgradeTile.yCoord, upgradeTile.zCoord);
 			else if (itemStack != null) {
 				upgradeTile.setInventorySlotContents(sideSlotArray[0], itemStack); //empty
 				player.inventory.mainInventory[player.inventory.currentItem] = null;
@@ -158,7 +151,7 @@ public class UpgradeTileEntity extends CountableTileEntity implements IInventory
 			if (upgradeTile.getStackInSlot(sideSlotArray[1]) != null)
 				PacketHandler.sendPacketWithInt(PacketHandler.PacketIDs.dropItem, 1, 
 						upgradeTile.getStackInSlot(sideSlotArray[1]).itemID, upgradeTile.getStackInSlot(sideSlotArray[1]).getItemDamage(),
-						0, 0, 0, upgradeTile.xCoord, upgradeTile.yCoord, upgradeTile.zCoord);
+						sideSlotArray[1], 0, 0, upgradeTile.xCoord, upgradeTile.yCoord, upgradeTile.zCoord);
 			else if (itemStack != null) {
 				upgradeTile.setInventorySlotContents(sideSlotArray[1], itemStack); //empty
 				player.inventory.mainInventory[player.inventory.currentItem] = null;
@@ -168,7 +161,7 @@ public class UpgradeTileEntity extends CountableTileEntity implements IInventory
 			if (upgradeTile.getStackInSlot(sideSlotArray[2]) != null)
 				PacketHandler.sendPacketWithInt(PacketHandler.PacketIDs.dropItem, 1, 
 						upgradeTile.getStackInSlot(sideSlotArray[2]).itemID, upgradeTile.getStackInSlot(sideSlotArray[2]).getItemDamage(),
-						0, 0, 0, upgradeTile.xCoord, upgradeTile.yCoord, upgradeTile.zCoord);
+						sideSlotArray[2], 0, 0, upgradeTile.xCoord, upgradeTile.yCoord, upgradeTile.zCoord);
 			else if (itemStack != null) {
 				upgradeTile.setInventorySlotContents(sideSlotArray[2], itemStack); //empty
 				player.inventory.mainInventory[player.inventory.currentItem] = null;
@@ -178,6 +171,14 @@ public class UpgradeTileEntity extends CountableTileEntity implements IInventory
 
 	@Override
 	public boolean receiveClientEvent(int id, int value) {
+		if (worldObj.isRemote) { //only execute on client side
+			switch (id) {
+			case BlockManager.blockEventIds.insertCapacityUpgrade:
+				if (getStackInSlot(value) == null)
+					setInventorySlotContents(value, new ItemStack(ItemManager.upgradeItem, 1, 1));
+				break;
+			}
+		}
 		return true;
 	}
 	

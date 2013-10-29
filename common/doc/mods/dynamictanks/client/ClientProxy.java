@@ -3,8 +3,9 @@ package doc.mods.dynamictanks.client;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import doc.mods.dynamictanks.client.gui.GuiUpgrade;
+import doc.mods.dynamictanks.client.gui.GuiController;
 import doc.mods.dynamictanks.common.CommonProxy;
+import doc.mods.dynamictanks.tileentity.ControllerTileEntity;
 import doc.mods.dynamictanks.tileentity.UpgradeTileEntity;
 
 public class ClientProxy extends CommonProxy
@@ -14,7 +15,10 @@ public class ClientProxy extends CommonProxy
 		TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
 
 		if (tileEntity instanceof UpgradeTileEntity)
-			return new GuiUpgrade(player.inventory, (UpgradeTileEntity) tileEntity);
+			return null;
+		
+		if (tileEntity instanceof ControllerTileEntity)
+			return new GuiController(player.inventory, (UpgradeTileEntity) tileEntity);
 
 		return null;
 	}

@@ -5,8 +5,13 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import doc.mods.dynamictanks.common.ModConfig;
 
-public class BlockManager
-{
+public class BlockManager {
+	
+	public class blockEventIds {
+		public static final int insertStorageUpgrade = 0;
+		public static final int insertCapacityUpgrade = 1;
+	}
+	
 	public static BlockTankController BlockTankController = null;
 	public static BlockTank BlockTank = null;
 	public static BlockUpgrade BlockUpgrade = null;

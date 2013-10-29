@@ -109,6 +109,10 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 		camoMeta[1] = meta;
 	}
 
+	public void setLiquidIndex(int val) {
+		toExtractFromTank = val;
+	}
+	
 	public void resizeTank(int newSize) {
 		for (FluidTank fluidTank : containedLiquids) {
 			fluidTank.setCapacity(newSize * FluidContainerRegistry.BUCKET_VOLUME);
@@ -119,6 +123,10 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 	 * Getters
 	 */
 
+	public LinkedList<FluidTank> getAllLiquids() {
+		return containedLiquids;
+	}
+	
 	public FluidTank getTankObj(FluidStack fluidStack) {
 		for (FluidTank tank : containedLiquids) {
 			if (tank.getFluid().isFluidEqual(fluidStack))
@@ -147,12 +155,16 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 	public LinkedList<int[]> getNeighbors() {
 		return neighborLocations;
 	}
+	
+	public int getLiquidIndex() {
+		return toExtractFromTank;
+	}
 
 	/*
 	 * Misc Methods
 	 */
 	public void nextLiquidIndex() {
-		if (toExtractFromTank + 1 > containedLiquids.size()) {
+		if (toExtractFromTank + 1 > (containedLiquids.size() - 1)) {
 			toExtractFromTank = 0;
 			return;
 		}
@@ -168,6 +180,9 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 		int newCap = (int) (((neighborLocations.size() * INTERNAL_SIZE) * (BONUS_MULT)) * (Math.pow(upgradeMult, powerOf)) * FluidContainerRegistry.BUCKET_VOLUME);
 		tankCapacity = newCap < (INTERNAL_SIZE * FluidContainerRegistry.BUCKET_VOLUME) ? INTERNAL_SIZE * FluidContainerRegistry.BUCKET_VOLUME : newCap;
 		refreshTankCapacity();
+		
+		if (getLiquidIndex() > containedLiquids.size())
+			toExtractFromTank = containedLiquids.size(); 
 	}
 
 	/*
