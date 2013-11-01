@@ -13,7 +13,7 @@ import doc.mods.dynamictanks.tileentity.ControllerTileEntity;
 public class ControllerCommands {
 
 	public static String[] controllerGetCommandList = {
-		"getLiquids", "getNumStored", "getTotalCapacity",
+		"getLiquids", "getNumStored", "getTotalCapacity", "getExtractIndex",
 		"getAmountOfEa", "getLiquidAtIndex", "getLiqAmtAtIndex",
 		"getNeighbors", "getCurrentCamo", "getNameAtIndex"
 	};
@@ -52,6 +52,8 @@ public class ControllerCommands {
 			return "Liquids: " + controller.getStored();
 		else if (cmd.equals("getTotalCapacity"))
 			return "" + controller.getTankCapacity();
+		else if (cmd.equals("getExtractIndex"))
+			return "" + controller.getLiquidIndex();
 
 		return setCommandReturns(cmd, index, controller);
 	}

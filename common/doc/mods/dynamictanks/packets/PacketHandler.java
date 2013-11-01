@@ -76,6 +76,8 @@ public class PacketHandler implements IPacketHandler {
 			((ControllerTileEntity) tileAtLoc).setCamo((int) value, (int) meta); 
 		else if (id == PacketHandler.PacketIDs.extractIndex)
 			((ControllerTileEntity) tileAtLoc).setLiquidIndex((int) value);
+		
+		world.markBlockForUpdate(x, y, z);
 	}
 
 	public static void sendPacketWithInt(int id, float value, float itemID, float meta, double xAdd, double yAdd, double zAdd, int x, int y, int z) {

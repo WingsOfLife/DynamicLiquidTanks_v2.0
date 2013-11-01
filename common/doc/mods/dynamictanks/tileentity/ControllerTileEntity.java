@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
@@ -66,17 +67,10 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 	/* 
 	 * Commandsline commands/GUI Information
 	 */
-	
-	public String[] validCommands = { 
-			"getFluidCapacity", "getFluidAmount",
-			"getStoredFluids", "getStoredFluidsCount", "emptyFluidToContainer",
-			"grabFluid", "storeFluidFromInventory",
-			"storeAllFluidFromInventory", "fluidsInfo", "setCamo",
-			"setCamoWithMeta", "information" 
-	};
 
 	public ControllerTileEntity() {
-		containedLiquids.add(new FluidTank(getTankCapacity()));
+		if (containedLiquids.isEmpty())
+			containedLiquids.add(new FluidTank(getTankCapacity()));
 		
 		powerController = new PowerController();
 		powerController.modify(0, 6000, 15);
@@ -139,7 +133,11 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 	}
 	
 	public int getStored() {
-		return containedLiquids.size();
+		int count = 0;
+		for (FluidTank tank : containedLiquids)
+			if (tank.getFluid() != null)
+				count++;
+		return count;
 	}
 	
 	public FluidTank getTankObj(FluidStack fluidStack) {
@@ -238,11 +236,19 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 
 		numLiquids = tagCompound.getInteger("numLiquids");
 		tankCapacity = tagCompound.getInteger("tankCapacity");
+		toExtractFromTank = tagCompound.getInteger("index");
 		camoMeta[0] = tagCompound.getInteger("blockID");
 		camoMeta[1] = tagCompound.getInteger("meta");
 
-		for (int i = 0; i < numLiquids; i++)
-			containedLiquids.add(new FluidTank(new FluidStack(tagCompound.getInteger("itemID" + i), tagCompound.getInteger("amount" + i)), getTankCapacity()));
+		NBTTagList tankTag = tagCompound.getTagList("Tanks");
+        containedLiquids.clear();
+
+        for (int iter = 0; iter < tankTag.tagCount(); iter++) {
+            NBTTagCompound nbt = (NBTTagCompound) tankTag.tagAt(iter);
+            FluidTank tank = new FluidTank(tankCapacity);
+            tank.readFromNBT(nbt);
+            containedLiquids.add(tank);
+        }
 	}
 
 	@Override
@@ -251,15 +257,18 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 
 		tagCompound.setInteger("numLiquids", numLiquids);
 		tagCompound.setInteger("tankCapacity", tankCapacity);
+		tagCompound.setInteger("index", toExtractFromTank);
 		tagCompound.setInteger("blockID", camoMeta[0]);
 		tagCompound.setInteger("meta", camoMeta[1]);
 
-		for (int i = 0; i < containedLiquids.size(); i++) {
-			if (containedLiquids.get(i).getFluid() != null) {
-				tagCompound.setInteger("itemID" + i, containedLiquids.get(i).getFluid().fluidID);
-				tagCompound.setInteger("amount" + i, containedLiquids.get(i).getFluid().amount);
-			}				
-		}
+		NBTTagList taglist = new NBTTagList();
+        for (FluidTank tank : containedLiquids) {
+            NBTTagCompound nbt = new NBTTagCompound();
+            tank.writeToNBT(nbt);
+            taglist.appendTag(nbt);
+        }
+
+        tagCompound.setTag("Tanks", taglist);
 
 
 	}

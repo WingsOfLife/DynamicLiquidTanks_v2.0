@@ -12,6 +12,8 @@ import org.lwjgl.input.Keyboard;
 
 import doc.mods.dynamictanks.helpers.CommandParser;
 import doc.mods.dynamictanks.helpers.ControllerCommands;
+import doc.mods.dynamictanks.helpers.FluidHelper;
+import doc.mods.dynamictanks.helpers.StringHelper;
 import doc.mods.dynamictanks.tileentity.ControllerTileEntity;
 
 public class GuiController extends GuiContainer {
@@ -53,6 +55,10 @@ public class GuiController extends GuiContainer {
 				output[i].setText(controller.recentDisplayed.get(i));
 	}
 
+	public void updateScreen() {
+		
+	}
+	
 	public void keyTyped(char c, int i) {
 		if ((Keyboard.isKeyDown(28) || Keyboard.isKeyDown(156)) && commands.isFocused()) {
 			if (commands.getText().equals(""))
@@ -100,6 +106,9 @@ public class GuiController extends GuiContainer {
 
 		for (int v = 0; v < output.length; v++)
 			output[v].drawTextBox();
+		
+		drawString(fontRenderer, "Liquid: " + StringHelper.Cap(FluidHelper.getName(controller.getAllLiquids(), controller.getLiquidIndex())), guiLeft + 20, guiTop + 76, 0xFFFFFF);
+		drawString(fontRenderer, "Stored: " + StringHelper.parseCommas("" + FluidHelper.getTotal(controller.getAllLiquids(), controller.getAllLiquids().get(controller.getLiquidIndex()).getFluid(), 0, 0), "", " mB"), guiLeft + 20, guiTop + 86, 0xFFFFFF);
 	}
 
 	public void setCommandOutput(String toSet) {
