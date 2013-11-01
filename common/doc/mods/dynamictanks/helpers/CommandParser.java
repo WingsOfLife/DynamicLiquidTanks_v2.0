@@ -2,7 +2,7 @@ package doc.mods.dynamictanks.helpers;
 
 public class CommandParser {
 
-	private int index = -1;
+	private int[] index = new int[3];
 	
 	private String commandName = null;
 	private String commandUnparsed = null;
@@ -13,18 +13,20 @@ public class CommandParser {
 	}
 	
 	private void parseCommand(String command) {
-		String delims = "[()]+";
+		String delims = "[(,)]+";
 		String[] parts = command.split(delims);
 		
 		commandName = parts[0] != null || parts[0] != "" ? parts[0] : null;
-		index = (parts[1] != null || parts[1] != "") ? Integer.valueOf(parts[1]) : -1; 
+		if (parts.length > 1)
+			for (int i = 1; i < parts.length; i++)
+				index[i - 1] = Integer.valueOf(parts[i]);				
 	}
 	
 	public String getCommandName() {
-		return commandName;
+		return commandName.replaceAll(" ", "");
 	}
 	
-	public int getIndex() {
+	public int[] getIndex() {
 		return index;
 	}
 }

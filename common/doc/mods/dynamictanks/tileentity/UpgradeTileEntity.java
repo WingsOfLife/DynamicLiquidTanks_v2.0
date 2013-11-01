@@ -77,6 +77,8 @@ public class UpgradeTileEntity extends CountableTileEntity implements IInventory
 	public void updateController(ControllerTileEntity contTE, int capUpgrade, int storageUpgrade) {
 		if (contTE.containedLiquids.size() < (storageUpgrade + 1))
 			contTE.addAdditionalTank((storageUpgrade + 1) - contTE.containedLiquids.size());
+		if (contTE.containedLiquids.size() < (storageUpgrade + 1))
+			//contTE.addAdditionalTank((storageUpgrade + 1) - contTE.containedLiquids.size()); //TODO
 		contTE.powerOf = capUpgrade;
 	}
 

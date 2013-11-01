@@ -15,9 +15,8 @@ import net.minecraft.world.World;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import doc.mods.dynamictanks.helpers.ItemHelper;
+import doc.mods.dynamictanks.tileentity.ControllerTileEntity;
 import doc.mods.dynamictanks.tileentity.UpgradeTileEntity;
 
 public class PacketHandler implements IPacketHandler {
@@ -25,6 +24,9 @@ public class PacketHandler implements IPacketHandler {
 	public class PacketIDs {
 		public static final int dropItem = 0;
 		public static final int spotClick = 1;
+		public static final int camo = 2;
+		public static final int camoMeta = 3;
+		public static final int extractIndex = 4;
 	}
 
 	@Override
@@ -67,7 +69,13 @@ public class PacketHandler implements IPacketHandler {
 		else if (id == PacketHandler.PacketIDs.spotClick) {
 			ItemStack itemStack = itemID != -1 ? new ItemStack((int)itemID, (int)value, (int)meta) : null;
 			((UpgradeTileEntity) tileAtLoc).setSlotViaClick(xAdd, yAdd, zAdd, (UpgradeTileEntity)tileAtLoc, (EntityPlayer) player, itemStack);
-		}
+		} 
+		else if (id == PacketHandler.PacketIDs.camo)
+			((ControllerTileEntity) tileAtLoc).setCamo((int) value);
+		else if (id == PacketHandler.PacketIDs.camoMeta)
+			((ControllerTileEntity) tileAtLoc).setCamo((int) value, (int) meta); 
+		else if (id == PacketHandler.PacketIDs.extractIndex)
+			((ControllerTileEntity) tileAtLoc).setLiquidIndex((int) value);
 	}
 
 	public static void sendPacketWithInt(int id, float value, float itemID, float meta, double xAdd, double yAdd, double zAdd, int x, int y, int z) {

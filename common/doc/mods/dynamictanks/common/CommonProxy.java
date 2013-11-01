@@ -5,8 +5,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
+import doc.mods.dynamictanks.client.gui.ContainerController;
 import doc.mods.dynamictanks.client.gui.GuiController;
-import doc.mods.dynamictanks.client.gui.ControllerContainer;
 import doc.mods.dynamictanks.tileentity.ControllerTileEntity;
 import doc.mods.dynamictanks.tileentity.TankTileEntity;
 import doc.mods.dynamictanks.tileentity.UpgradeTileEntity;
@@ -29,7 +29,7 @@ public class CommonProxy implements IGuiHandler
 			return null;
 		
 		if (tileEntity instanceof ControllerTileEntity)
-			return new ControllerContainer(player.inventory, (UpgradeTileEntity) tileEntity);
+			return new ContainerController(player.inventory, (ControllerTileEntity) tileEntity);
 		
 		return null;
 	}
@@ -43,7 +43,7 @@ public class CommonProxy implements IGuiHandler
 			return null;
 		
 		if (tileEntity instanceof ControllerTileEntity)
-			return new GuiController(player.inventory, (UpgradeTileEntity) tileEntity);
+			return new GuiController(player.inventory, (ControllerTileEntity) tileEntity);
 		
 		return null;
 	}

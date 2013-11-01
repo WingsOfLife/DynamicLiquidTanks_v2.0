@@ -18,7 +18,7 @@ public class ClientProxy extends CommonProxy
 			return null;
 		
 		if (tileEntity instanceof ControllerTileEntity)
-			return new GuiController(player.inventory, (UpgradeTileEntity) tileEntity);
+			return new GuiController(player.inventory, (ControllerTileEntity) tileEntity);
 
 		return null;
 	}

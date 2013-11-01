@@ -26,6 +26,11 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 	protected LinkedList<FluidTank> containedLiquids = new LinkedList<FluidTank>();
 	protected LinkedList<int[]> neighborLocations = new LinkedList<int[]>(); 
 
+	/*
+	 * Commands vars
+	 */
+	public LinkedList<String> recentSent = new LinkedList<String>();
+	public LinkedList<String> recentDisplayed = new LinkedList<String>();
 	
 	/*
 	 * misc vars
@@ -86,6 +91,12 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 			containedLiquids.add(new FluidTank(getTankCapacity()));
 		numLiquids += numToAdd;
 	}
+	
+	public void removeAdditionalTank(int numToRemove) {
+		for (int i = 0; i < numToRemove; i++)
+			containedLiquids.removeLast();
+		numLiquids -= numToRemove;
+	}
 
 	public boolean addNeighbor(int[] loc) {
 		for(int i = 0; i < neighborLocations.size(); i++)
@@ -125,6 +136,10 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 
 	public LinkedList<FluidTank> getAllLiquids() {
 		return containedLiquids;
+	}
+	
+	public int getStored() {
+		return containedLiquids.size();
 	}
 	
 	public FluidTank getTankObj(FluidStack fluidStack) {
@@ -177,7 +192,7 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 	}
 
 	public void refresh() {
-		int newCap = (int) (((neighborLocations.size() * INTERNAL_SIZE) * (BONUS_MULT)) * (Math.pow(upgradeMult, powerOf)) * FluidContainerRegistry.BUCKET_VOLUME);
+		int newCap = (int) ((((neighborLocations.size() + 1) * INTERNAL_SIZE) * (BONUS_MULT)) * (Math.pow(upgradeMult, powerOf)) * FluidContainerRegistry.BUCKET_VOLUME);
 		tankCapacity = newCap < (INTERNAL_SIZE * FluidContainerRegistry.BUCKET_VOLUME) ? INTERNAL_SIZE * FluidContainerRegistry.BUCKET_VOLUME : newCap;
 		refreshTankCapacity();
 		
@@ -190,21 +205,26 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 	 */
 	@Override
 	public void updateEntity() {		
+		doCount();
+
+		if (countMet()) { //perform events every maxTickCount
+			refresh(); //resize capacity of FluidTank Array
+		}
+		
 		if (worldObj.isRemote) { //client side
 			
 		}
 		
 		if (!worldObj.isRemote) { //server side
-			doCount();
+		/*	doCount();
 
 			if (countMet()) { //perform events every maxTickCount
 				refresh(); //resize capacity of FluidTank Array
-				
+		 			
 				System.out.println("Number of Liquids: " + this.numLiquids);
 				System.out.println("Capacity: " + this.tankCapacity);
 				System.out.println("Tanks: " + this.neighborLocations.size());
-				System.out.println("Contained Liquids: " + this.containedLiquids.size());
-			}
+				System.out.println("Contained Liquids: " + this.containedLiquids.size()); */	
 		}
 	}
 
@@ -270,8 +290,10 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 		FluidTank tankToFill = null;
 
 		for (FluidTank fluidTank : containedLiquids) 
-			if (fluidTank.getFluid() != null && fluidTank.getFluid().isFluidEqual(resource))
+			if (fluidTank.getFluid() != null && fluidTank.getFluid().isFluidEqual(resource)) {
 				tankToFill = fluidTank;
+				break;
+			}
 
 		if (tankToFill == null)
 			for (FluidTank fluidTank : containedLiquids)

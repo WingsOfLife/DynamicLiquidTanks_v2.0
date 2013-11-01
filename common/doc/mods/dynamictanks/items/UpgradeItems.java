@@ -2,15 +2,19 @@ package doc.mods.dynamictanks.items;
 
 import java.util.List;
 
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class UpgradeItems extends Item {
 
+	Icon[] icons = new Icon[2];
+	
 	public static String[] names = { "Capacity Upgrade", "Storage Upgrade" };
 	public static String[] info = { "Increase the capacity of the tanks.", 
 		"Increase the number of liquids a tank can hold." };
@@ -25,7 +29,7 @@ public class UpgradeItems extends Item {
 	
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean bool) {
-		list.add("x" + info[stack.getItemDamage()]);
+		list.add(info[stack.getItemDamage()]);
 	}
 	
 	@Override
@@ -39,5 +43,16 @@ public class UpgradeItems extends Item {
 			list.add(new ItemStack(itemId, 1, i));
 		}
 	}
+	
+	@Override
+    public void registerIcons(IconRegister register) {
+            icons[0] = register.registerIcon("dynamictanks:blaze_chip");
+            icons[1] = register.registerIcon("dynamictanks:pearl_chip");
+    }
+    
+    @Override
+    public Icon getIconFromDamage(int i) {
+            return icons[i];
+    }
 
 }

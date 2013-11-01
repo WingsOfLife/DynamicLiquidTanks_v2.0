@@ -16,6 +16,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import doc.mods.dynamictanks.DynamicLiquidTanksCore;
 import doc.mods.dynamictanks.tileentity.ControllerTileEntity;
 
 public class BlockTankController extends BlockContainer {
@@ -114,8 +115,6 @@ public class BlockTankController extends BlockContainer {
         }
         else if (!flag && flag1)
             par1World.setBlockMetadataWithNotify(par2, par3, par4, i1 & -9, 4);
-        
-        System.out.println(currentTile.getLiquidIndex());
     }
 	
 	@Override
@@ -123,8 +122,7 @@ public class BlockTankController extends BlockContainer {
 		ItemStack heldItem = player.inventory.getCurrentItem();
 		ControllerTileEntity conTE = (ControllerTileEntity) world.getBlockTileEntity(x, y, z);
 
-		if (heldItem != null)
-		{
+		if (heldItem != null && FluidContainerRegistry.isContainer(heldItem)) {
 			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(player.getCurrentEquippedItem());
 			if (liquid != null)
 			{
@@ -139,8 +137,7 @@ public class BlockTankController extends BlockContainer {
 				else
 					return true;
 			}
-			else if (FluidContainerRegistry.isBucket(heldItem) && conTE != null)
-			{
+			else if (FluidContainerRegistry.isBucket(heldItem) && conTE != null) {
 				if (conTE.getLiquidIndex() > conTE.getAllLiquids().size())
 					conTE.setLiquidIndex(conTE.getAllLiquids().size()); 
 				
@@ -173,6 +170,8 @@ public class BlockTankController extends BlockContainer {
 				}
 			}
 		}
+		
+		player.openGui(DynamicLiquidTanksCore.instance, 0, world, x, y, z);
 		return false;
 	}
 
