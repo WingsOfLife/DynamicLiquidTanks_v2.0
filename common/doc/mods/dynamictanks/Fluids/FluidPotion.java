@@ -9,12 +9,14 @@ import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import doc.mods.dynamictanks.DynamicLiquidTanksCore;
 
 public class FluidPotion extends BlockFluidClassic {
 
 	public FluidPotion(int id, Fluid fluid, Material material) {
 		super(id, fluid, material);
-		this.setUnlocalizedName("Liquid Potion");
+		this.setUnlocalizedName("dynamictanks.fluids.potion");
+		setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);	
 	}
 	
 	@SideOnly(Side.CLIENT)

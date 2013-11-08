@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.lwjgl.input.Keyboard;
 
+import doc.mods.dynamictanks.DynamicLiquidTanksCore;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,7 +16,7 @@ public class IronPlateItem extends Item {
 
 	public IronPlateItem (int itemId) {
 		super(itemId);
-		setCreativeTab(CreativeTabs.tabRedstone);
+		setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);	
 	}
 
 	@Override

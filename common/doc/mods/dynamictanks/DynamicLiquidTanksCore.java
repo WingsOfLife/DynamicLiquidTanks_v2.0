@@ -1,10 +1,16 @@
 package doc.mods.dynamictanks;
 
+import net.minecraft.block.Block;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+
+import org.apache.commons.lang3.ObjectUtils;
+
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -38,6 +44,13 @@ public class DynamicLiquidTanksCore
 	private static Fluid dltFluidPotion;
 	public static Fluid fluidPotion;
 
+	public static CreativeTabs tabDynamicTanks = new CreativeTabs("tabDynamicTanks") {
+		@Override
+		public ItemStack getIconItemStack() {
+			return new ItemStack(BlockManager.BlockTank, 1, 0);
+		}
+	};
+
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
@@ -45,6 +58,16 @@ public class DynamicLiquidTanksCore
 		configFile.load();
 
 		ModConfig.BlockIDs.blockController = configFile.getBlock("BlockController", ModConfig.BlockIDs.blockController).getInt();
+		ModConfig.BlockIDs.blockTank = configFile.getBlock("BlockTank", ModConfig.BlockIDs.blockTank).getInt();
+		ModConfig.BlockIDs.blockUpgrade = configFile.getBlock("BlockUpgrade", ModConfig.BlockIDs.blockUpgrade).getInt();
+
+		ModConfig.ItemIDs.hammerItem = configFile.getItem("Hammer", ModConfig.ItemIDs.hammerItem).getInt();
+		ModConfig.ItemIDs.ironPlateItem = configFile.getItem("Iron Mass", ModConfig.ItemIDs.ironPlateItem).getInt();
+		ModConfig.ItemIDs.liquidDiamondItem = configFile.getItem("Softened Diamond Mass", ModConfig.ItemIDs.liquidDiamondItem).getInt();
+		ModConfig.ItemIDs.softDiamondItem = configFile.getItem("Softened Diamond", ModConfig.ItemIDs.softDiamondItem).getInt();
+		ModConfig.ItemIDs.upgradeItems = configFile.getItem("Upgrades", ModConfig.ItemIDs.upgradeItems).getInt();
+
+		ModConfig.FluidIDs.fluidPotion = configFile.getBlock("FluidPotion", ModConfig.FluidIDs.fluidPotion).getInt();
 
 		if(configFile.hasChanged())
 			configFile.save();

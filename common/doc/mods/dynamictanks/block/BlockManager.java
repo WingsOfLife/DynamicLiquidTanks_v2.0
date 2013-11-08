@@ -37,7 +37,7 @@ public class BlockManager {
 	
 	public static void registerCraftingRecipes() {
 		
-		GameRegistry.addShapedRecipe(new ItemStack(BlockTank), new Object[] {
+		GameRegistry.addShapedRecipe(new ItemStack(BlockTank, 2), new Object[] {
 			"GPG", "PGP", "GPG",
 			'G', Block.thinGlass,
 			'P', ItemManager.ironPlateItem

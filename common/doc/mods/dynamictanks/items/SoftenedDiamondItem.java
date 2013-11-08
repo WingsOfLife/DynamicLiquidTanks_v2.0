@@ -2,6 +2,7 @@ package doc.mods.dynamictanks.items;
 
 import java.util.List;
 
+import doc.mods.dynamictanks.DynamicLiquidTanksCore;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,7 +15,7 @@ public class SoftenedDiamondItem extends Item {
 	public SoftenedDiamondItem (int itemId) {
 		super(itemId);
 		setMaxDamage(5);
-		setCreativeTab(CreativeTabs.tabRedstone);
+		setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);	
 	}
 
 	@Override

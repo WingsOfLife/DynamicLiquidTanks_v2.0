@@ -29,6 +29,7 @@ public class BlockTank extends BlockContainer {
 		super(par1, Material.glass);
 		setHardness(1.0F);
 		setUnlocalizedName("dynamictanks.block.tank");
+		setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);
 	}
 
 	@Override

@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import doc.mods.dynamictanks.DynamicLiquidTanksCore;
 
 public class UpgradeItems extends Item {
 
@@ -24,7 +25,7 @@ public class UpgradeItems extends Item {
 		setHasSubtypes(true);
 		setMaxDamage(0);
 		setMaxStackSize(1);
-		setCreativeTab(CreativeTabs.tabRedstone);
+		setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);	
 	}
 	
 	@Override

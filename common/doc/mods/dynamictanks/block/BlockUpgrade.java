@@ -29,7 +29,8 @@ public class BlockUpgrade extends BlockContainer {
 	protected BlockUpgrade(int par1) {
 		super(par1, Material.iron);
 		setHardness(2.0F);
-		setUnlocalizedName("Upgrade Module");		
+		setUnlocalizedName("dynamictanks.block.upgradeModule");
+		setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);		
 	}
 
 	/* 

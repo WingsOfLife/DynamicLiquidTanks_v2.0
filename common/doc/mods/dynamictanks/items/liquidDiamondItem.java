@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.lwjgl.input.Keyboard;
 
+import doc.mods.dynamictanks.DynamicLiquidTanksCore;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -22,7 +23,7 @@ public class liquidDiamondItem extends Item {
 		super(itemId);
 		setMaxDamage(7);
 		setMaxStackSize(1);
-		setCreativeTab(CreativeTabs.tabRedstone);
+		setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);	
 	}
 
 	@Override

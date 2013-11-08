@@ -14,6 +14,8 @@ import net.minecraft.world.World;
 
 import org.lwjgl.input.Keyboard;
 
+import doc.mods.dynamictanks.DynamicLiquidTanksCore;
+
 public class HammerItem extends Item {
 
 	private int ticksExisted = 0;
@@ -22,20 +24,12 @@ public class HammerItem extends Item {
 		super(itemId);
 		setMaxDamage(16);
 		setMaxStackSize(1);
-		setCreativeTab(CreativeTabs.tabRedstone);
+		setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);	
 	}
 
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean bool) {
-		list.add("SHIFT for info.");
-		list.add("Uses Left: " + (stack.getMaxDamage() - stack.getItemDamage()));
-		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-			list.remove(1);
-			list.add(1, "Used to craft iron plates.");
-		} else {
-			list.remove(1);
-			list.add("SHIFT for info.");
-		}
+		list.add("Uses: " + (stack.getMaxDamage() - stack.getItemDamage()));
 	}
 
 	@Override

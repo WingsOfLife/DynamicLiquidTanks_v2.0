@@ -37,7 +37,8 @@ public class BlockTankController extends BlockContainer {
 	public BlockTankController(int par1) {
 		super(par1, Material.rock);
 		setHardness(2.0F);
-		setUnlocalizedName("Tank Controller");
+		setUnlocalizedName("dynamictanks.block.controller");
+		setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);
 	}
 
 	/* 
