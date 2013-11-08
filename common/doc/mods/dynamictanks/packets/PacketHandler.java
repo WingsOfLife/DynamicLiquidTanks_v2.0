@@ -27,6 +27,7 @@ public class PacketHandler implements IPacketHandler {
 		public static final int camo = 2;
 		public static final int camoMeta = 3;
 		public static final int extractIndex = 4;
+		public static final int dyeColorSet = 5;
 	}
 
 	@Override
@@ -76,8 +77,11 @@ public class PacketHandler implements IPacketHandler {
 			((ControllerTileEntity) tileAtLoc).setCamo((int) value, (int) meta); 
 		else if (id == PacketHandler.PacketIDs.extractIndex)
 			((ControllerTileEntity) tileAtLoc).setLiquidIndex((int) value);
+		else if (id == PacketHandler.PacketIDs.dyeColorSet)
+			((ControllerTileEntity) tileAtLoc).setDyeColor((int) value);
 		
 		world.markBlockForUpdate(x, y, z);
+		world.markBlockForRenderUpdate(x, y, z);
 	}
 
 	public static void sendPacketWithInt(int id, float value, float itemID, float meta, double xAdd, double yAdd, double zAdd, int x, int y, int z) {

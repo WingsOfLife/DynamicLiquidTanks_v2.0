@@ -46,9 +46,11 @@ public class BlockUpgrade extends BlockContainer {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon getIcon(int side, int meta) {
+		if (meta == 0 && side == 4)
+			return faceIcon;
 		if(side == 0 || side == 1) 
 			return blockIcon;
-		else if(side != meta)
+		else if (side != meta)
 			return blockIcon;
 		else 
 			return faceIcon;

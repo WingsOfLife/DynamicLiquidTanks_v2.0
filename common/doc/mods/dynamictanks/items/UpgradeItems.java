@@ -16,8 +16,8 @@ public class UpgradeItems extends Item {
 	Icon[] icons = new Icon[2];
 	
 	public static String[] names = { "Capacity Upgrade", "Storage Upgrade" };
-	public static String[] info = { "Increase the capacity of the tanks.", 
-		"Increase the number of liquids a tank can hold." };
+	public static String[] info = { "Increase the capacity;of the tanks.", 
+		"Increase the number;of liquids a tank ;can hold." };
 	
 	public UpgradeItems(int par1) {
 		super(par1);
@@ -29,7 +29,9 @@ public class UpgradeItems extends Item {
 	
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean bool) {
-		list.add(info[stack.getItemDamage()]);
+		String[] infoLine = info[stack.getItemDamage()].split(";");
+		for (String s : infoLine)
+			list.add(s);
 	}
 	
 	@Override

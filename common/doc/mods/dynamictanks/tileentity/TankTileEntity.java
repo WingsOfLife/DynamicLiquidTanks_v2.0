@@ -11,6 +11,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import doc.mods.dynamictanks.block.BlockManager;
+import doc.mods.dynamictanks.client.render.RendererHelper;
 
 public class TankTileEntity extends CountableTileEntity implements IFluidHandler {
 
@@ -23,10 +24,11 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
 	/*
 	 * Self Vars
 	 */
-	protected int[] camoMeta = { -1, -1 };	
+	
+	protected int[] camoMeta = { -1, 0 };	
+	protected int dyeIndex = -1;
 
-	public TankTileEntity() {
-	}
+	public TankTileEntity() {}
 
 	public TankTileEntity(int maxTickCount) {
 		this.maxTickCount = maxTickCount;
@@ -35,12 +37,25 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
 	/*
 	 * Self Methods
 	 */
+	
+	public boolean hasCamo() {
+		return camoMeta[0] != -1;
+	}
+	
+	public int[] getCamo() {
+		return camoMeta;
+	}
+	
 	public int[] getControllerCoords() {
 		return ControllerCoords;
 	}
 	
+	public int getDye() {
+		return dyeIndex;
+	}
+	
 	public boolean hasController() {
-		return ControllerCoords[0] != -1;
+		return ControllerCoords != null && ControllerCoords[0] != -1;
 	}
 
 	public void setControllerPos(int[] locs) {
@@ -48,6 +63,29 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
  			for (int i = 0; i < 3; i++)
 				ControllerCoords[i] = locs[i];				
 		}
+	}
+	
+	public int getLayer() {
+		return hasController() ? (yCoord - RendererHelper.smallestIndex(getControllerTE().getNeighbors())) + 1 : -1;
+	}
+	
+	public float amntToRender() {
+		if (!hasController() || getControllerTE().getAllLiquids().isEmpty()) 
+			return -1;
+		
+		float amnt = getControllerTE().getAllLiquids().get(getControllerTE().getLiquidIndex()).getFluidAmount();
+		float cap = getControllerTE().getPerLayer();
+		
+		if (amnt > (cap * getLayer()))
+			return 1.00f;
+		
+		if (amnt < (cap * getLayer())) {
+			float leftOver = (cap * getLayer()) - amnt;
+			return 1.0f - leftOver / cap;
+		}
+		
+		//TODO == case?
+		return 1.00f;
 	}
 	
 	public void setCamo(int blockID) {
@@ -59,6 +97,10 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
 		camoMeta[1] = meta;
 	}
 
+	public void setDye(int meta) {
+		dyeIndex = meta;
+	}
+	
 	public boolean searchForController(World wObj) {
 		TankTileEntity tankTE = null;
 		ControllerTileEntity controllerTE = null;
@@ -93,8 +135,8 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
 		return false;
 	}
 	
-	public ControllerTileEntity getControllerTE(World wObj) {
-		return hasController() ? (ControllerTileEntity) wObj.getBlockTileEntity(ControllerCoords[0], ControllerCoords[1], ControllerCoords[2]) : null;
+	public ControllerTileEntity getControllerTE() {
+		return hasController() ? (ControllerTileEntity) worldObj.getBlockTileEntity(ControllerCoords[0], ControllerCoords[1], ControllerCoords[2]) : null;
 	}
 	
 	/*
@@ -124,11 +166,15 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
 	@Override
 	public void readFromNBT(NBTTagCompound tagCompound) {
 		super.readFromNBT(tagCompound);
+		ControllerCoords = tagCompound.getIntArray("controllerLoc");
+		camoMeta = tagCompound.getIntArray("camo");
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound tagCompound) {
 		super.writeToNBT(tagCompound);
+		tagCompound.setIntArray("controllerLoc", ControllerCoords);
+		tagCompound.setIntArray("camo", camoMeta);
 	}
 
 	@Override
@@ -140,7 +186,7 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
 
 	@Override
 	public void onDataPacket (INetworkManager net, Packet132TileEntityData packet) {
-		readFromNBT(packet.customParam1);
+		readFromNBT(packet.data);
 	}
 
 	/*
@@ -149,17 +195,17 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
 	
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-		return getControllerTE(worldObj).fill(from, resource, doFill);
+		return getControllerTE().fill(from, resource, doFill);
 	}
 
 	@Override
 	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-		return getControllerTE(worldObj).drain(from, resource, doDrain);
+		return getControllerTE().drain(from, resource, doDrain);
 	}
 
 	@Override
 	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-		return getControllerTE(worldObj).drain(from, maxDrain, doDrain);
+		return getControllerTE().drain(from, maxDrain, doDrain);
 	}
 
 	@Override

@@ -11,8 +11,10 @@ import doc.mods.dynamictanks.tileentity.ControllerTileEntity;
 import doc.mods.dynamictanks.tileentity.TankTileEntity;
 import doc.mods.dynamictanks.tileentity.UpgradeTileEntity;
 
-public class CommonProxy implements IGuiHandler
-{
+public class CommonProxy implements IGuiHandler {
+	
+	public void setCustomRenders() {}
+	
 	public void registerTileEntities()
 	{
 		GameRegistry.registerTileEntity(ControllerTileEntity.class, "dynamictanks.tile.controllerTile");
@@ -31,6 +33,9 @@ public class CommonProxy implements IGuiHandler
 		if (tileEntity instanceof ControllerTileEntity)
 			return new ContainerController(player.inventory, (ControllerTileEntity) tileEntity);
 		
+		if (tileEntity instanceof TankTileEntity)
+			return new ContainerController(player.inventory, ((TankTileEntity) tileEntity).getControllerTE());
+		
 		return null;
 	}
 
@@ -44,6 +49,9 @@ public class CommonProxy implements IGuiHandler
 		
 		if (tileEntity instanceof ControllerTileEntity)
 			return new GuiController(player.inventory, (ControllerTileEntity) tileEntity);
+		
+		if (tileEntity instanceof TankTileEntity)
+			return new GuiController(player.inventory, ((TankTileEntity) tileEntity).getControllerTE());
 		
 		return null;
 	}

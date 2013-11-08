@@ -3,6 +3,7 @@ package doc.mods.dynamictanks.tileentity;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.INetworkManager;
@@ -18,6 +19,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 import doc.mods.dynamictanks.api.IPowerEater;
 import doc.mods.dynamictanks.api.IStorageUnit;
 import doc.mods.dynamictanks.api.PowerController;
+import doc.mods.dynamictanks.helpers.FluidHelper;
 
 public class ControllerTileEntity extends CountableTileEntity implements IFluidHandler, IPowerEater, IStorageUnit {
 
@@ -32,16 +34,18 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 	 */
 	public LinkedList<String> recentSent = new LinkedList<String>();
 	public LinkedList<String> recentDisplayed = new LinkedList<String>();
-	
+
 	/*
 	 * misc vars
 	 */
 	protected int[] camoMeta = { -1, -1 }; // first var camo, second var meta	
+	protected int dyeColorMeta = -1; //dyeColor
+	protected int potionMeta = -1;
 	
 	protected double BONUS_MULT = 1.05;
 	protected int INTERNAL_SIZE = 16;
-	
-	
+
+
 	/*
 	 * liquid vars
 	 */
@@ -50,20 +54,20 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 	protected int toExtractFromTank = 0;
 
 	private int maxNumAllowed = 6;
-	
+
 	/*
 	 * Power Vars
 	 */
-	
+
 	protected PowerController powerController = null;
-	
+
 	/* 
 	 * Upgrade Variables
 	 */
 
 	protected double upgradeMult = 1.1;
 	protected int powerOf = 0;
-	
+
 	/* 
 	 * Commandsline commands/GUI Information
 	 */
@@ -71,7 +75,7 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 	public ControllerTileEntity() {
 		if (containedLiquids.isEmpty())
 			containedLiquids.add(new FluidTank(getTankCapacity()));
-		
+
 		powerController = new PowerController();
 		powerController.modify(0, 6000, 15);
 	}
@@ -85,7 +89,7 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 			containedLiquids.add(new FluidTank(getTankCapacity()));
 		numLiquids += numToAdd;
 	}
-	
+
 	public void removeAdditionalTank(int numToRemove) {
 		for (int i = 0; i < numToRemove; i++)
 			containedLiquids.removeLast();
@@ -96,7 +100,7 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 		for(int i = 0; i < neighborLocations.size(); i++)
 			if (Arrays.equals(loc, neighborLocations.get(i)))
 				return false;
-		
+
 		neighborLocations.add(loc);
 		return true;
 	}
@@ -114,10 +118,18 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 		camoMeta[1] = meta;
 	}
 
+	public void setDyeColor(int meta) {
+		dyeColorMeta = meta;
+	}
+	
+	public void setPotion(int meta) {
+		potionMeta = meta;
+	}
+	
 	public void setLiquidIndex(int val) {
 		toExtractFromTank = val;
 	}
-	
+
 	public void resizeTank(int newSize) {
 		for (FluidTank fluidTank : containedLiquids) {
 			fluidTank.setCapacity(newSize * FluidContainerRegistry.BUCKET_VOLUME);
@@ -131,6 +143,22 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 	public LinkedList<FluidTank> getAllLiquids() {
 		return containedLiquids;
 	}
+
+	public int getCamo() {
+		return camoMeta[0];
+	}
+	
+	public int getCamoMeta() {
+		return camoMeta[1];
+	}
+	
+	public int getDyeColor() {
+		return dyeColorMeta;
+	}
+
+	public int getPotion() {
+		return potionMeta;
+	}
 	
 	public int getStored() {
 		int count = 0;
@@ -139,7 +167,7 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 				count++;
 		return count;
 	}
-	
+
 	public FluidTank getTankObj(FluidStack fluidStack) {
 		for (FluidTank tank : containedLiquids) {
 			if (tank.getFluid().isFluidEqual(fluidStack))
@@ -164,15 +192,41 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 		}
 		return amount;
 	}
-	
+
 	public LinkedList<int[]> getNeighbors() {
 		return neighborLocations;
 	}
-	
+
 	public int getLiquidIndex() {
 		return toExtractFromTank;
 	}
 
+	public int getBrightness() {
+		if (FluidHelper.hasLiquid(this)) {
+			FluidStack liquid = containedLiquids.get(toExtractFromTank).getFluid();
+			if (liquid.getFluid().canBePlacedInWorld())
+				return Block.lightValue[liquid.getFluid().getBlockID()];
+		}
+		return 0;
+	}
+	
+	public int getNumLayers() {
+		int count = 0;
+		LinkedList<Integer> counted = new LinkedList<Integer>();
+		for (int[] arr : neighborLocations)
+			if (!counted.contains(arr[1])) {
+				counted.add(arr[1]);
+				count++;
+			}
+		return count;		
+	}
+	
+	public int getPerLayer() {
+		if (getNumLayers() == 0)
+			return getTankCapacity();
+		return getTankCapacity() / getNumLayers();
+	}
+	
 	/*
 	 * Misc Methods
 	 */
@@ -183,7 +237,7 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 		}
 		toExtractFromTank++;
 	}
-	
+
 	public void refreshTankCapacity() {
 		for (FluidTank fluidTank : containedLiquids)
 			fluidTank.setCapacity(getTankCapacity());
@@ -193,9 +247,13 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 		int newCap = (int) ((((neighborLocations.size() + 1) * INTERNAL_SIZE) * (BONUS_MULT)) * (Math.pow(upgradeMult, powerOf)) * FluidContainerRegistry.BUCKET_VOLUME);
 		tankCapacity = newCap < (INTERNAL_SIZE * FluidContainerRegistry.BUCKET_VOLUME) ? INTERNAL_SIZE * FluidContainerRegistry.BUCKET_VOLUME : newCap;
 		refreshTankCapacity();
-		
+
 		if (getLiquidIndex() > containedLiquids.size())
 			toExtractFromTank = containedLiquids.size(); 
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		
+		if (!FluidHelper.hasPotion(this))
+			potionMeta = -1;
 	}
 
 	/*
@@ -203,26 +261,23 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 	 */
 	@Override
 	public void updateEntity() {		
-		doCount();
-
-		if (countMet()) { //perform events every maxTickCount
-			refresh(); //resize capacity of FluidTank Array
-		}
-		
 		if (worldObj.isRemote) { //client side
-			
+			doCount();
+
+			if (countMet()) 
+				worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
 		}
-		
+
 		if (!worldObj.isRemote) { //server side
-		/*	doCount();
+			doCount();
 
 			if (countMet()) { //perform events every maxTickCount
 				refresh(); //resize capacity of FluidTank Array
-		 			
-				System.out.println("Number of Liquids: " + this.numLiquids);
+				/*System.out.println("Number of Liquids: " + this.numLiquids);
 				System.out.println("Capacity: " + this.tankCapacity);
 				System.out.println("Tanks: " + this.neighborLocations.size());
 				System.out.println("Contained Liquids: " + this.containedLiquids.size()); */	
+			}
 		}
 	}
 
@@ -239,16 +294,27 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 		toExtractFromTank = tagCompound.getInteger("index");
 		camoMeta[0] = tagCompound.getInteger("blockID");
 		camoMeta[1] = tagCompound.getInteger("meta");
+		dyeColorMeta = tagCompound.getInteger("dye");
+		potionMeta = tagCompound.getInteger("potion");
 
 		NBTTagList tankTag = tagCompound.getTagList("Tanks");
-        containedLiquids.clear();
+		containedLiquids.clear();
 
-        for (int iter = 0; iter < tankTag.tagCount(); iter++) {
-            NBTTagCompound nbt = (NBTTagCompound) tankTag.tagAt(iter);
-            FluidTank tank = new FluidTank(tankCapacity);
-            tank.readFromNBT(nbt);
-            containedLiquids.add(tank);
-        }
+		for (int iter = 0; iter < tankTag.tagCount(); iter++) {
+			NBTTagCompound nbt = (NBTTagCompound) tankTag.tagAt(iter);
+			FluidTank tank = new FluidTank(tankCapacity);
+			tank.readFromNBT(nbt);
+			containedLiquids.add(tank);
+		}
+
+		NBTTagList neighborTag = tagCompound.getTagList("Neighbor");
+		neighborLocations.clear();
+
+		for (int iter = 0; iter < neighborTag.tagCount(); iter++) {
+			NBTTagCompound nbt = (NBTTagCompound) neighborTag.tagAt(iter);
+			int[] i = nbt.getIntArray("neighbor" + iter);
+			neighborLocations.add(i);
+		}
 	}
 
 	@Override
@@ -260,17 +326,26 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 		tagCompound.setInteger("index", toExtractFromTank);
 		tagCompound.setInteger("blockID", camoMeta[0]);
 		tagCompound.setInteger("meta", camoMeta[1]);
+		tagCompound.setInteger("dye", dyeColorMeta);
+		tagCompound.setInteger("potion", potionMeta);
 
 		NBTTagList taglist = new NBTTagList();
-        for (FluidTank tank : containedLiquids) {
-            NBTTagCompound nbt = new NBTTagCompound();
-            tank.writeToNBT(nbt);
-            taglist.appendTag(nbt);
-        }
+		for (FluidTank tank : containedLiquids) {
+			NBTTagCompound nbt = new NBTTagCompound();
+			tank.writeToNBT(nbt);
+			taglist.appendTag(nbt);
+		}
 
-        tagCompound.setTag("Tanks", taglist);
+		tagCompound.setTag("Tanks", taglist);
 
+		NBTTagList neighborsList = new NBTTagList();
+		for (int i = 0; i < neighborLocations.size(); i++) {
+			NBTTagCompound nbt = new NBTTagCompound();
+			nbt.setIntArray("neighbor" + i, neighborLocations.get(i));
+			neighborsList.appendTag(nbt);
+		}
 
+		tagCompound.setTag("Neighbor", neighborsList);
 	}
 
 	@Override
@@ -282,7 +357,7 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 
 	@Override
 	public void onDataPacket (INetworkManager net, Packet132TileEntityData packet) {
-		readFromNBT(packet.customParam1);
+		readFromNBT(packet.data);
 	}
 
 	/*
@@ -336,7 +411,7 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 		for (FluidTank fluidTank : containedLiquids)
 			if (fluidTank.getFluid().isFluidEqual(resource))
 				return fluidTank.drain(resource.amount, doDrain);
-
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		return null;
 	}
 
@@ -344,7 +419,7 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
 		if (containedLiquids.isEmpty())
 			return null;
-
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		return containedLiquids.get(toExtractFromTank).drain(maxDrain, doDrain);
 	}
 
@@ -363,22 +438,22 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 		return null;
 	}
 
-	
+
 	/*
 	 * @IPowerEater
 	 */
-	
+
 	@Override
 	public int consume() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	
+
 	/*
 	 * @IStorageUnit
 	 */
-	
+
 	@Override
 	public int fillUnit() {
 		// TODO Auto-generated method stub
