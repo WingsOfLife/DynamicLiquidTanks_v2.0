@@ -3,9 +3,9 @@ package doc.mods.dynamictanks.common;
 public class ModConfig
 {
 	public static class BlockIDs {
-		public static int blockController = 4194;
-		public static int blockTank = 4195;
-		public static int blockUpgrade = 4196;
+		public static int blockController = 3194;
+		public static int blockTank = 3195;
+		public static int blockUpgrade = 3196;
 	}
 	
 	public static class ItemIDs {
@@ -17,6 +17,6 @@ public class ModConfig
 	}
 	
 	public static class FluidIDs {
-		public static int fluidPotion = 4197;
+		public static int fluidPotion = 3197;
 	}
 }

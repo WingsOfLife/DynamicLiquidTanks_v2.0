@@ -1,8 +1,13 @@
 package doc.mods.dynamictanks.helpers;
 
 import net.minecraft.block.Block;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.common.ForgeDirection;
+import doc.mods.dynamictanks.block.BlockManager;
+import doc.mods.dynamictanks.tileentity.ControllerTileEntity;
+import doc.mods.dynamictanks.tileentity.TankTileEntity;
 
 public class ConnectedTexturesHelper {
 
@@ -148,6 +153,40 @@ public class ConnectedTexturesHelper {
 		return Block.blocksList[blockId].getBlockTextureFromSide(dir);
 	}
 
+	public static boolean shouldSideRender(IBlockAccess world, int x, int y, int z, int side, Block block)
+	{
+		ForgeDirection dir = ForgeDirection.getOrientation(side).getOpposite();
+
+		if(world.getBlockId(x, y, z) == block.blockID 
+				|| world.getBlockId(x, y, z) == BlockManager.BlockTankController.blockID) {
+			TileEntity tmpTile = world.getBlockTileEntity(x, y, z);
+			if(tmpTile instanceof TankTileEntity) {
+				TankTileEntity tile = (TankTileEntity) tmpTile;
+
+				if(world.getBlockId(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ) == block.blockID ||
+						world.getBlockId(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ) == BlockManager.BlockTankController.blockID) {
+
+					TileEntity fTmpTile = world.getBlockTileEntity(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
+
+					if(fTmpTile instanceof ControllerTileEntity) {
+						ControllerTileEntity fTile = (ControllerTileEntity) fTmpTile;
+
+						if(tile.getCamo()[0] == -1 && fTile.getCamo() != -1)
+							return false;
+					}
+					else if(fTmpTile instanceof TankTileEntity) {
+						TankTileEntity fTile = (TankTileEntity) fTmpTile;
+
+						if(tile.getCamo()[0] == -1 && fTile.getCamo()[0] != -1)
+							return false;
+					}
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
 	public static int getBlockId(IBlockAccess par1World, int x, int y, int z) {
 		return par1World.getBlockId(x, y, z);
 	}
@@ -157,12 +196,11 @@ public class ConnectedTexturesHelper {
 	}
 
 	private static int[] transBlockIds = {18, 20};
-	public static boolean isCamoTransparent(int camoId)
-	{
-		for(int i=0; i<transBlockIds.length; i++) {
-			if(camoId == transBlockIds[i])
+
+	public static boolean isCamoTransparent(int camoId) {
+		for (int i=0; i<transBlockIds.length; i++)
+			if (camoId == transBlockIds[i])
 				return true;
-		}
 		return false;
 	}
 

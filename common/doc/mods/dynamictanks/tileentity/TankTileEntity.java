@@ -77,15 +77,14 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
 		float cap = getControllerTE().getPerLayer();
 		
 		if (amnt > (cap * getLayer()))
-			return 1.00f;
+			return worldObj.getBlockId(xCoord, yCoord + 1, zCoord) != 0 ? 1.00f : 0.999f;
 		
 		if (amnt < (cap * getLayer())) {
 			float leftOver = (cap * getLayer()) - amnt;
 			return 1.0f - leftOver / cap;
 		}
 		
-		//TODO == case?
-		return 1.00f;
+		return worldObj.getBlockId(xCoord, yCoord + 1, zCoord) != 0 ? 1.00f : 0.999f;
 	}
 	
 	public void setCamo(int blockID) {
@@ -168,6 +167,7 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
 		super.readFromNBT(tagCompound);
 		ControllerCoords = tagCompound.getIntArray("controllerLoc");
 		camoMeta = tagCompound.getIntArray("camo");
+		dyeIndex = tagCompound.getInteger("dye");
 	}
 
 	@Override
@@ -175,6 +175,7 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
 		super.writeToNBT(tagCompound);
 		tagCompound.setIntArray("controllerLoc", ControllerCoords);
 		tagCompound.setIntArray("camo", camoMeta);
+		tagCompound.setInteger("dye", dyeIndex);
 	}
 
 	@Override
@@ -195,17 +196,17 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
 	
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-		return getControllerTE().fill(from, resource, doFill);
+		return getControllerTE() != null ? getControllerTE().fill(from, resource, doFill) : null;
 	}
 
 	@Override
 	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-		return getControllerTE().drain(from, resource, doDrain);
+		return getControllerTE() != null ? getControllerTE().drain(from, resource, doDrain) : null;
 	}
 
 	@Override
 	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-		return getControllerTE().drain(from, maxDrain, doDrain);
+		return getControllerTE() != null ? getControllerTE().drain(from, maxDrain, doDrain) : null;
 	}
 
 	@Override

@@ -14,12 +14,15 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import doc.mods.dynamictanks.DynamicLiquidTanksCore;
 import doc.mods.dynamictanks.client.ClientProxy;
 import doc.mods.dynamictanks.helpers.ConnectedTexturesHelper;
+import doc.mods.dynamictanks.helpers.ItemHelper;
 import doc.mods.dynamictanks.tileentity.ControllerTileEntity;
 import doc.mods.dynamictanks.tileentity.TankTileEntity;
 
@@ -82,13 +85,96 @@ public class BlockTank extends BlockContainer {
 	public boolean onBlockActivated (World world, int x, int y, int z, EntityPlayer player, int side, float clickX, float clickY, float clickZ) {
 		TankTileEntity tank = (TankTileEntity) world.getBlockTileEntity(x, y, z);
 		ItemStack heldItem = player.inventory.getCurrentItem();
-
+		/*
 		if (heldItem == null || heldItem.itemID != blockID) {
 			if (tank != null && tank.hasController())
 				player.openGui(DynamicLiquidTanksCore.instance, 0, world, x, y, z);
 			return true;
 		}
+		return false;*/
+		
+		if (tank == null || !tank.hasController())
+			return false;
+		
+		ControllerTileEntity conTE = (ControllerTileEntity) tank.getControllerTE();
+
+		if (heldItem != null && heldItem.itemID == Item.potion.itemID) {
+			FluidStack potion = new FluidStack(DynamicLiquidTanksCore.fluidPotion, FluidContainerRegistry.BUCKET_VOLUME);
+
+			int amount = conTE.fill(ForgeDirection.UNKNOWN, potion, false);
+			if (amount == potion.amount && (conTE.getPotion() == -1 || conTE.getPotion() == heldItem.getItemDamage())) {
+				conTE.fill(ForgeDirection.UNKNOWN, potion, true);
+				ItemHelper.removeSingleItem(heldItem);
+				player.inventory.addItemStackToInventory(new ItemStack(Item.glassBottle, 1));
+				conTE.setPotion(heldItem.getItemDamage());
+				return true;
+			}
+		} 
+		else if (heldItem != null && heldItem.itemID == Item.glassBottle.itemID && conTE.getPotion() != -1 && conTE.getAllLiquids().get(conTE.getLiquidIndex()).getFluid().isFluidEqual(new FluidStack(DynamicLiquidTanksCore.fluidPotion, FluidContainerRegistry.BUCKET_VOLUME))) {
+			FluidStack fillLiquid = conTE.getAllLiquids().get(conTE.getLiquidIndex()).getFluid();
+			if (conTE.getAllLiquids().get(conTE.getLiquidIndex()).getFluidAmount() < 1000)
+				return false;
+			conTE.drain(ForgeDirection.UNKNOWN, FluidContainerRegistry.BUCKET_VOLUME, true);
+			ItemHelper.removeSingleItem(heldItem);
+			player.inventory.addItemStackToInventory(new ItemStack(Item.potion, 1, conTE.getPotion()));
+			if (conTE.getAllLiquids().get(conTE.getLiquidIndex()).getFluidAmount() == 0)
+				conTE.setPotion(-1);
+		}
+		else if (heldItem != null && FluidContainerRegistry.isContainer(heldItem)) {
+			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(player.getCurrentEquippedItem());
+			if (liquid != null)
+			{
+				int amount = conTE.fill(ForgeDirection.UNKNOWN, liquid, false);
+				if (amount == liquid.amount)
+				{
+					conTE.fill(ForgeDirection.UNKNOWN, liquid, true);
+					if (!player.capabilities.isCreativeMode)
+						player.inventory.setInventorySlotContents(player.inventory.currentItem, consumeItem(heldItem));
+					return true;
+				}
+				else
+					return true;
+			}
+			else if (FluidContainerRegistry.isBucket(heldItem) && conTE != null) {
+				if (conTE.getLiquidIndex() > conTE.getAllLiquids().size())
+					conTE.setLiquidIndex(conTE.getAllLiquids().size()); 
+
+				FluidStack fillLiquid = conTE.getAllLiquids().get(conTE.getLiquidIndex()).getFluid();
+				ItemStack fillStack = FluidContainerRegistry.fillFluidContainer(fillLiquid, heldItem);
+				if (fillStack != null)
+				{
+					conTE.drain(ForgeDirection.UNKNOWN, FluidContainerRegistry.getFluidForFilledItem(fillStack).amount, true);
+					if (!player.capabilities.isCreativeMode)
+					{
+						if (heldItem.stackSize == 1)
+						{
+							player.inventory.setInventorySlotContents(player.inventory.currentItem, fillStack);
+						}
+						else
+						{
+							player.inventory.setInventorySlotContents(player.inventory.currentItem, consumeItem(heldItem));
+
+							if (!player.inventory.addItemStackToInventory(fillStack))
+							{
+								player.dropPlayerItem(fillStack);
+							}
+						}
+					}
+					return true;
+				}
+				else
+				{
+					return true;
+				}
+			}
+		}
+
+		if (!FluidContainerRegistry.isContainer(heldItem) && heldItem == null || heldItem.itemID != blockID) {
+			player.openGui(DynamicLiquidTanksCore.instance, 0, world, x, y, z);
+			return true;
+		}
 		return false;
+
 	}
 
 	public static ItemStack consumeItem (ItemStack stack)
@@ -216,7 +302,13 @@ public class BlockTank extends BlockContainer {
 	 @Override
 	 public boolean shouldSideBeRendered (IBlockAccess world, int x, int y, int z, int side) {
 		 int blockID = world.getBlockId(x, y, z);
+		 TileEntity tank = world.getBlockTileEntity(x, y, z);
+		 
+		 if (tank instanceof TankTileEntity && tank != null)
+			 if (((TankTileEntity) tank).getCamo()[0] != -1)
+				 return true;
 		 return blockID == this.blockID ? false : super.shouldSideBeRendered(world, x, y, z, side);
+		 //return ConnectedTexturesHelper.shouldSideRender(world, x, y, z, side, this);
 	 }
 
 }

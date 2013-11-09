@@ -28,7 +28,7 @@ public class liquidDiamondItem extends Item {
 
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean bool) {
-		list.add("Life left: " + (stack.getMaxDamage() - stack.getItemDamage()) + " seconds");
+		list.add("Life: " + (stack.getMaxDamage() - stack.getItemDamage()) + " seconds");
 	}
 
 	@Override
@@ -50,7 +50,7 @@ public class liquidDiamondItem extends Item {
 	public void onUpdate(ItemStack par1ItemStack, World par2World, Entity par3Entity, int par4, boolean par5) {
 		ticksExisted++;
 		
-		if (ticksExisted >= 20) {
+		if (ticksExisted % 30 == 0) {
 			par1ItemStack.damageItem(1, (EntityLivingBase) par3Entity);
 			if ((par1ItemStack.getMaxDamage() - par1ItemStack.getItemDamage()) == 0) {
 				((EntityPlayer) par3Entity).inventory.consumeInventoryItem(par1ItemStack.itemID);
