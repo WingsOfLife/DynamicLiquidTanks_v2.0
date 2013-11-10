@@ -49,6 +49,8 @@ public class DuctTileEntity extends CountableTileEntity {
 	public boolean extractor = false;
 
 	public FluidStack movingFluid = null;
+	
+	public int sentTo = 0;
 
 	public DuctTileEntity() {
 		maxTickCount = 61;
@@ -83,10 +85,12 @@ public class DuctTileEntity extends CountableTileEntity {
 								int amountInTank = tankFluid.amount;
 								if (tankFluid != null && (movingFluid == null || tankFluid.isFluidEqual(movingFluid))) { 
 									if ((amountInTank - maxExtract) >= 0) {
-										movingFluid = new FluidStack(((IFluidHandler) tile).getTankInfo(ForgeDirection.UNKNOWN)[0].fluid.getFluid(), maxExtract);
+										FluidStack fluidMove = new FluidStack(((IFluidHandler) tile).getTankInfo(ForgeDirection.UNKNOWN)[0].fluid.getFluid(), maxExtract);
+										fill(fluidMove, fluidMove.amount, new int[] { -1, -1, -1 });
 										((IFluidHandler) tile).drain(ForgeDirection.UNKNOWN, maxExtract, true);
 									} else { 
-										movingFluid = new FluidStack(((IFluidHandler) tile).getTankInfo(ForgeDirection.UNKNOWN)[0].fluid.getFluid(), maxExtract + ((amountInTank - maxExtract)));
+										FluidStack fluidMove  = new FluidStack(((IFluidHandler) tile).getTankInfo(ForgeDirection.UNKNOWN)[0].fluid.getFluid(), maxExtract + ((amountInTank - maxExtract)));
+										fill(fluidMove, movingFluid.amount, new int[] { -1, -1, -1 });
 										((IFluidHandler) tile).drain(ForgeDirection.UNKNOWN, maxExtract + ((amountInTank - maxExtract)), true);
 									}
 								}
@@ -109,9 +113,11 @@ public class DuctTileEntity extends CountableTileEntity {
 					if (tile instanceof DuctTileEntity) {
 						DuctTileEntity duct = (DuctTileEntity) tile;
 						if (movingFluid != null) {
-							duct.passOn(movingFluid, new int[] { xCoord, yCoord, zCoord });
+							//duct.passOn(movingFluid, new int[] { xCoord, yCoord, zCoord });
+							duct.fill(movingFluid, movingFluid.amount, new int[] { xCoord, yCoord, zCoord });
 							previousLocation = new int[] { -1, -1, -1 };
-							movingFluid = null;
+							//movingFluid = null;
+							drain(movingFluid.amount);
 						}
 					} 
 					else if (tile instanceof IFluidHandler && !extractor) {
@@ -119,7 +125,8 @@ public class DuctTileEntity extends CountableTileEntity {
 						if (movingFluid != null) {
 							handler.fill(ForgeDirection.UNKNOWN, movingFluid, true);
 							previousLocation = new int[] { -1, -1, -1 };
-							movingFluid = null;
+							//movingFluid = null;
+							drain(movingFluid.amount);
 						}
 					}
 				}
@@ -131,6 +138,37 @@ public class DuctTileEntity extends CountableTileEntity {
 	 * Transfer Liquid
 	 */
 
+	public boolean fill(FluidStack fluidStack, int passAmnt, int[] prevLoc) {
+		if (movingFluid != null) {
+			if (movingFluid.isFluidEqual(fluidStack)) {
+				int newAmount = passAmnt + movingFluid.amount;
+				movingFluid.amount = newAmount;
+				sentTo = passAmnt;
+				previousLocation = prevLoc;
+				return true;
+			}
+			return false;
+		} else {
+			previousLocation = prevLoc;
+			movingFluid = fluidStack;
+			sentTo = passAmnt;
+			return true;
+		}
+	}
+	
+	public void drain(int amount) {
+		if (movingFluid == null)
+			return;
+		
+		int newAmount = movingFluid.amount - amount;
+		
+		movingFluid = new FluidStack(movingFluid.getFluid(), newAmount);
+		sentTo = 0;
+		
+		if (movingFluid != null && movingFluid.amount <= 0)
+			movingFluid = null;
+	}
+	
 	public void passOn(FluidStack toPass, int[] comingFrom) {
 		movingFluid = toPass;
 		previousLocation = comingFrom;
