@@ -20,19 +20,23 @@ public class BlockManager {
 	public static BlockTankController BlockTankController = null;
 	public static BlockTank BlockTank = null;
 	public static BlockUpgrade BlockUpgrade = null;
+	public static BlockDuct BlockDuct = null;
 	
 	public static void registerBlocks() {
 		BlockTankController = new BlockTankController(ModConfig.BlockIDs.blockController);
 		BlockTank = new BlockTank(ModConfig.BlockIDs.blockTank);
 		BlockUpgrade = new BlockUpgrade(ModConfig.BlockIDs.blockUpgrade);
+		BlockDuct = new BlockDuct(ModConfig.BlockIDs.blockDuct);
 		
 		GameRegistry.registerBlock(BlockTankController, ControllerItem.class, "dynamictanks.blocks.blockController");
 		GameRegistry.registerBlock(BlockTank, "dynamictanks.blocks.blockTank");
 		GameRegistry.registerBlock(BlockUpgrade, "dynamictanks.blocks.blockUpgrade");
+		GameRegistry.registerBlock(BlockDuct, "dynamictanks.blocks.blockDuct");
 		
 		LanguageRegistry.addName(BlockTankController, "Tank Controller");
 		LanguageRegistry.addName(BlockTank, "Tank");
 		LanguageRegistry.addName(BlockUpgrade, "Upgrade Module");
+		LanguageRegistry.addName(BlockDuct, "Duct");
 	}
 	
 	public static void registerCraftingRecipes() {

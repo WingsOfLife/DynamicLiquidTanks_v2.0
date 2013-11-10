@@ -8,6 +8,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import doc.mods.dynamictanks.client.gui.ContainerController;
 import doc.mods.dynamictanks.client.gui.GuiController;
 import doc.mods.dynamictanks.tileentity.ControllerTileEntity;
+import doc.mods.dynamictanks.tileentity.DuctTileEntity;
 import doc.mods.dynamictanks.tileentity.TankTileEntity;
 import doc.mods.dynamictanks.tileentity.UpgradeTileEntity;
 
@@ -20,6 +21,7 @@ public class CommonProxy implements IGuiHandler {
 		GameRegistry.registerTileEntity(ControllerTileEntity.class, "dynamictanks.tile.controllerTile");
 		GameRegistry.registerTileEntity(TankTileEntity.class, "dynamictanks.tile.tankTile");
 		GameRegistry.registerTileEntity(UpgradeTileEntity.class, "dynamictanks.tile.upgradeTile");
+		GameRegistry.registerTileEntity(DuctTileEntity.class, "dynamictanks.tile.ductTile");
 	}
 
 	@Override

@@ -6,6 +6,7 @@ public class ModConfig
 		public static int blockController = 3194;
 		public static int blockTank = 3195;
 		public static int blockUpgrade = 3196;
+		public static int blockDuct = 3197;
 	}
 	
 	public static class ItemIDs {
@@ -17,6 +18,6 @@ public class ModConfig
 	}
 	
 	public static class FluidIDs {
-		public static int fluidPotion = 3197;
+		public static int fluidPotion = 3193;
 	}
 }
