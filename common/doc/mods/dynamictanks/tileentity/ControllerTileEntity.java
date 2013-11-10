@@ -435,7 +435,7 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 
 	@Override
 	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
-		return null;
+		return new FluidTankInfo[] { new FluidTankInfo(containedLiquids.get(toExtractFromTank).getFluid(), containedLiquids.get(toExtractFromTank).getCapacity()) };
 	}
 
 
