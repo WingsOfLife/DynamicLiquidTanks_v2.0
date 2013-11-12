@@ -22,4 +22,8 @@ public class StringHelper {
 	public static String Cap(String input) {
 		return input.substring(0, 1).toUpperCase() + input.substring(1);
 	}
+	
+	public static String removeSpaces(String s) {
+		return s.replaceAll(" ", "");
+	}
 }

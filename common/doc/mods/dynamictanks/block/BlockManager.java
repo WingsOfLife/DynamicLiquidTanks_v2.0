@@ -62,5 +62,12 @@ public class BlockManager {
 			'I', Block.blockNetherQuartz,
 			'L', ItemManager.liquidDiamond
 		});
+		
+		GameRegistry.addShapedRecipe(new ItemStack(BlockDuct, 4), new Object[] {
+			"PBP", "RRR", "PBP",
+			'P', Block.thinGlass,
+			'B', Block.fenceIron,
+			'R', Item.redstone
+		});
 	}
 }

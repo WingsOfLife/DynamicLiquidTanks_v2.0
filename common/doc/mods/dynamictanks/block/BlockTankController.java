@@ -22,6 +22,7 @@ import net.minecraftforge.fluids.FluidStack;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import doc.mods.dynamictanks.DynamicLiquidTanksCore;
+import doc.mods.dynamictanks.Fluids.FluidManager;
 import doc.mods.dynamictanks.helpers.ConnectedTexturesHelper;
 import doc.mods.dynamictanks.helpers.FluidHelper;
 import doc.mods.dynamictanks.helpers.ItemHelper;
@@ -170,7 +171,7 @@ public class BlockTankController extends BlockContainer {
 
 		/* Potion Collision */
 		FluidStack currentLiquid = controller.getAllLiquids().get(controller.getLiquidIndex()).getFluid();
-		if (heldItem == null && currentLiquid != null && currentLiquid.isFluidEqual(new FluidStack(DynamicLiquidTanksCore.fluidPotion, FluidContainerRegistry.BUCKET_VOLUME))) {
+		if (heldItem == null && currentLiquid != null && currentLiquid.isFluidEqual(new FluidStack(FluidManager.potionFluid, FluidContainerRegistry.BUCKET_VOLUME))) {
 			if (par5EntityPlayer != null && controller.getPotion() != -1 && 
 					(currentLiquid.amount - (FluidContainerRegistry.BUCKET_VOLUME / 10)) >= 0) {
 				PotionEffectHelper.applyPotionEffects((EntityPlayer) par5EntityPlayer, controller.getPotion(), false);
@@ -200,7 +201,7 @@ public class BlockTankController extends BlockContainer {
 		ControllerTileEntity conTE = (ControllerTileEntity) world.getBlockTileEntity(x, y, z);
 
 		if (heldItem != null && heldItem.itemID == Item.potion.itemID) {
-			FluidStack potion = new FluidStack(DynamicLiquidTanksCore.fluidPotion, FluidContainerRegistry.BUCKET_VOLUME);
+			FluidStack potion = new FluidStack(FluidManager.potionFluid, FluidContainerRegistry.BUCKET_VOLUME);
 
 			int amount = conTE.fill(ForgeDirection.UNKNOWN, potion, false);
 			if (amount == potion.amount && (conTE.getPotion() == -1 || conTE.getPotion() == heldItem.getItemDamage())) {
@@ -211,7 +212,7 @@ public class BlockTankController extends BlockContainer {
 				return true;
 			}
 		} 
-		else if (heldItem != null && heldItem.itemID == Item.glassBottle.itemID && conTE.getPotion() != -1 && conTE.getAllLiquids().get(conTE.getLiquidIndex()).getFluid().isFluidEqual(new FluidStack(DynamicLiquidTanksCore.fluidPotion, FluidContainerRegistry.BUCKET_VOLUME))) {
+		else if (heldItem != null && heldItem.itemID == Item.glassBottle.itemID && conTE.getPotion() != -1 && conTE.getAllLiquids().get(conTE.getLiquidIndex()).getFluid().isFluidEqual(new FluidStack(FluidManager.potionFluid, FluidContainerRegistry.BUCKET_VOLUME))) {
 			FluidStack fillLiquid = conTE.getAllLiquids().get(conTE.getLiquidIndex()).getFluid();
 			if (conTE.getAllLiquids().get(conTE.getLiquidIndex()).getFluidAmount() < 1000)
 				return false;

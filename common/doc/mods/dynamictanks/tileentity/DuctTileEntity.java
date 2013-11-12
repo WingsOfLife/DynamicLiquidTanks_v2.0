@@ -49,31 +49,32 @@ public class DuctTileEntity extends CountableTileEntity {
 	public boolean extractor = false;
 
 	public FluidStack movingFluid = null;
-	
+
 	public int sentTo = 0;
+	public int pathCheck = 0;
+	public final int MAX_AMNT = 5 * FluidContainerRegistry.BUCKET_VOLUME;
 
 	public DuctTileEntity() {
 		maxTickCount = 61;
 		maxTickCountSec = 5;
 	}
 
-	public void updateEntity() {
+	public void updateEntity() {		
+		/*
+		 * Render Update
+		 */
+
+		for (int i = 0; i < 6; i++) 
+			if (i < blockInDir.length)
+				blockInDir[i] = blockInDirection(VALID_DIRECTIONS[i]);
+
+
+		/*
+		 * Extract Liquid From Inventory
+		 */
 		if (!worldObj.isRemote) {
 			doCount();
 			doCountSec();
-			/*
-			 * Render Update
-			 */
-
-			for (int i = 0; i < 6; i++) 
-				if (i < blockInDir.length)
-					blockInDir[i] = blockInDirection(VALID_DIRECTIONS[i]);
-
-
-			/*
-			 * Extract Liquid From Inventory
-			 */
-
 			if (countMet()) {
 				if (findNearTank().size() > 0 && extractor) {
 					int[] randomTank = findNearTank().get(0);
@@ -86,12 +87,16 @@ public class DuctTileEntity extends CountableTileEntity {
 								if (tankFluid != null && (movingFluid == null || tankFluid.isFluidEqual(movingFluid))) { 
 									if ((amountInTank - maxExtract) >= 0) {
 										FluidStack fluidMove = new FluidStack(((IFluidHandler) tile).getTankInfo(ForgeDirection.UNKNOWN)[0].fluid.getFluid(), maxExtract);
-										fill(fluidMove, fluidMove.amount, new int[] { -1, -1, -1 });
-										((IFluidHandler) tile).drain(ForgeDirection.UNKNOWN, maxExtract, true);
+										if (fluidMove != null && (movingFluid == null || movingFluid.amount < MAX_AMNT)) {
+											fill(fluidMove, fluidMove.amount, new int[] { -1, -1, -1 });
+											((IFluidHandler) tile).drain(ForgeDirection.UNKNOWN, maxExtract, true);
+										}
 									} else { 
 										FluidStack fluidMove  = new FluidStack(((IFluidHandler) tile).getTankInfo(ForgeDirection.UNKNOWN)[0].fluid.getFluid(), maxExtract + ((amountInTank - maxExtract)));
-										fill(fluidMove, movingFluid.amount, new int[] { -1, -1, -1 });
-										((IFluidHandler) tile).drain(ForgeDirection.UNKNOWN, maxExtract + ((amountInTank - maxExtract)), true);
+										if (fluidMove != null && (movingFluid == null || movingFluid.amount < MAX_AMNT)) {
+											fill(fluidMove, movingFluid.amount, new int[] { -1, -1, -1 });
+											((IFluidHandler) tile).drain(ForgeDirection.UNKNOWN, maxExtract + ((amountInTank - maxExtract)), true);
+										}
 									}
 								}
 							}
@@ -99,35 +104,33 @@ public class DuctTileEntity extends CountableTileEntity {
 					}
 				}
 			}
+		}
 
-			/*
-			 * Liquid Pathing
-			 */
-			if (movingFluid == null)
-				return;
+		/*
+		 * Liquid Pathing
+		 */
+		if (movingFluid == null)
+			return;
 
-			if (numberOfPaths().size() > 0 && countMetSec()) {
-				int[] randomPath = numberOfPaths().get(0);
-				if (randomPath.length == 3 && movingFluid != null) {
-					TileEntity tile = worldObj.getBlockTileEntity(randomPath[0], randomPath[1],	randomPath[2]);
-					if (tile instanceof DuctTileEntity) {
-						DuctTileEntity duct = (DuctTileEntity) tile;
-						if (movingFluid != null) {
-							//duct.passOn(movingFluid, new int[] { xCoord, yCoord, zCoord });
-							duct.fill(movingFluid, movingFluid.amount, new int[] { xCoord, yCoord, zCoord });
-							previousLocation = new int[] { -1, -1, -1 };
-							//movingFluid = null;
-							drain(movingFluid.amount);
-						}
-					} 
-					else if (tile instanceof IFluidHandler && !extractor) {
-						IFluidHandler handler = (IFluidHandler) tile;
-						if (movingFluid != null) {
-							handler.fill(ForgeDirection.UNKNOWN, movingFluid, true);
-							previousLocation = new int[] { -1, -1, -1 };
-							//movingFluid = null;
-							drain(movingFluid.amount);
-						}
+		if (numberOfPaths().size() > 0 && countMetSec()) {
+			int[] randomPath = numberOfPaths().get(0);
+			if (randomPath.length == 3 && movingFluid != null) {
+				TileEntity tile = worldObj.getBlockTileEntity(randomPath[0], randomPath[1],	randomPath[2]);
+				if (tile instanceof DuctTileEntity) {
+					DuctTileEntity duct = (DuctTileEntity) tile;
+					if (movingFluid != null && (duct.movingFluid == null || duct.movingFluid.amount < MAX_AMNT)) {
+						duct.fill(movingFluid, movingFluid.amount, pathCheck < 5 ? new int[] { xCoord, yCoord, zCoord } : new int[] { -1, -1, -1 });
+						previousLocation = new int[] { -1, -1, -1 };
+						drain(movingFluid.amount);
+						pathCheck = pathCheck < 5 ? pathCheck + 1 : 0;
+					}
+				} 
+				else if (tile instanceof IFluidHandler && !extractor) {
+					IFluidHandler handler = (IFluidHandler) tile;
+					if (movingFluid != null) {
+						handler.fill(ForgeDirection.UNKNOWN, movingFluid, true);
+						previousLocation = new int[] { -1, -1, -1 };
+						drain(movingFluid.amount);
 					}
 				}
 			}
@@ -155,24 +158,24 @@ public class DuctTileEntity extends CountableTileEntity {
 			return true;
 		}
 	}
-	
+
 	public void drain(int amount) {
 		if (movingFluid == null)
 			return;
-		
+
 		int newAmount = movingFluid.amount - amount;
-		
+
 		movingFluid = new FluidStack(movingFluid.getFluid(), newAmount);
 		sentTo = 0;
-		
+
 		if (movingFluid != null && movingFluid.amount <= 0)
 			movingFluid = null;
 	}
-	
-	public void passOn(FluidStack toPass, int[] comingFrom) {
+
+	/*public void passOn(FluidStack toPass, int[] comingFrom) {
 		movingFluid = toPass;
 		previousLocation = comingFrom;
-	}
+	}*/
 
 	public ArrayList<int[]> numberOfPaths() {
 		ArrayList<int[]> validPaths = new ArrayList<int[]>();
@@ -243,6 +246,7 @@ public class DuctTileEntity extends CountableTileEntity {
 		blockInDir = tagCompound.getIntArray("blocksWhere");
 		extractor = tagCompound.getBoolean("extractor");
 		previousLocation = tagCompound.getIntArray("prev");
+		sentTo = tagCompound.getInteger("amntSent");
 
 		if (tagCompound.getBoolean("hasLiquid"))
 			movingFluid = new FluidStack(tagCompound.getInteger("itemID"), tagCompound.getInteger("amount"));
@@ -256,6 +260,7 @@ public class DuctTileEntity extends CountableTileEntity {
 		tagCompound.setIntArray("blocksWhere", blockInDir);
 		tagCompound.setBoolean("extractor", extractor);
 		tagCompound.setIntArray("prev", previousLocation);
+		tagCompound.setInteger("amntSent", sentTo);
 
 		tagCompound.setBoolean("hasLiquid", movingFluid != null);
 		if (movingFluid != null) {

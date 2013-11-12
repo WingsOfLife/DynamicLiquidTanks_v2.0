@@ -19,12 +19,12 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
 	 * Controller Sync Vars
 	 */
 	protected int[] ControllerCoords = { -1, -1, -1 }; // coords of tank's
-														// controllers
+	// controllers
 
 	/*
 	 * Self Vars
 	 */
-	
+
 	protected int[] camoMeta = { -1, 0 };	
 	protected int dyeIndex = -1;
 
@@ -37,56 +37,56 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
 	/*
 	 * Self Methods
 	 */
-	
+
 	public boolean hasCamo() {
 		return camoMeta[0] != -1;
 	}
-	
+
 	public int[] getCamo() {
 		return camoMeta;
 	}
-	
+
 	public int[] getControllerCoords() {
 		return ControllerCoords;
 	}
-	
+
 	public int getDye() {
 		return dyeIndex;
 	}
-	
+
 	public boolean hasController() {
 		return ControllerCoords != null && ControllerCoords[0] != -1;
 	}
 
 	public void setControllerPos(int[] locs) {
 		if (!hasController()) {
- 			for (int i = 0; i < 3; i++)
+			for (int i = 0; i < 3; i++)
 				ControllerCoords[i] = locs[i];				
 		}
 	}
-	
+
 	public int getLayer() {
 		return hasController() ? (yCoord - RendererHelper.smallestIndex(getControllerTE().getNeighbors())) + 1 : -1;
 	}
-	
+
 	public float amntToRender() {
 		if (!hasController() || getControllerTE().getAllLiquids().isEmpty()) 
 			return -1;
-		
+
 		float amnt = getControllerTE().getAllLiquids().get(getControllerTE().getLiquidIndex()).getFluidAmount();
 		float cap = getControllerTE().getPerLayer();
-		
+
 		if (amnt > (cap * getLayer()))
 			return worldObj.getBlockId(xCoord, yCoord + 1, zCoord) != 0 ? 1.00f : 0.999f;
-		
+
 		if (amnt < (cap * getLayer())) {
 			float leftOver = (cap * getLayer()) - amnt;
 			return 1.0f - leftOver / cap;
 		}
-		
+
 		return worldObj.getBlockId(xCoord, yCoord + 1, zCoord) != 0 ? 1.00f : 0.999f;
 	}
-	
+
 	public void setCamo(int blockID) {
 		camoMeta[0] = blockID;
 	}
@@ -99,11 +99,11 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
 	public void setDye(int meta) {
 		dyeIndex = meta;
 	}
-	
+
 	public boolean searchForController(World wObj) {
 		TankTileEntity tankTE = null;
 		ControllerTileEntity controllerTE = null;
-		
+
 		int currentX = xCoord;
 		int currentY = yCoord;
 		int currentZ = zCoord;
@@ -133,31 +133,30 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
 		}
 		return false;
 	}
-	
+
 	public ControllerTileEntity getControllerTE() {
 		return hasController() ? (ControllerTileEntity) worldObj.getBlockTileEntity(ControllerCoords[0], ControllerCoords[1], ControllerCoords[2]) : null;
 	}
-	
+
 	/*
 	 * TileEntity Methods
 	 */
 	@Override
 	public void updateEntity() {		
-		if (worldObj.isRemote) { // client side
+		/*if (worldObj.isRemote) { // client side
 
 		}
 
 		if (!worldObj.isRemote) { // server side
-			doCount();
+		 */			doCount();
 
-			if (countMet()) { // perform events every maxTickCount
-				if (!hasController()) { //check if already has controller
-					searchForController(worldObj);
-				}
-			}
-		}
+		 if (countMet()) { // perform events every maxTickCount
+			 if (!hasController()) { //check if already has controller
+				 searchForController(worldObj);
+			 }
+		 }
 	}
-	
+
 	/*
 	 * Syncing Methods
 	 */
@@ -193,7 +192,7 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
 	/*
 	 * IFluidHandler
 	 */
-	
+
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
 		return getControllerTE() != null ? getControllerTE().fill(from, resource, doFill) : null;

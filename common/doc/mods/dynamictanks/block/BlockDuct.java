@@ -1,14 +1,20 @@
 package doc.mods.dynamictanks.block;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemDye;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import doc.mods.dynamictanks.DynamicLiquidTanksCore;
 import doc.mods.dynamictanks.client.ClientProxy;
 import doc.mods.dynamictanks.tileentity.DuctTileEntity;
+import doc.mods.dynamictanks.tileentity.TankTileEntity;
 
 public class BlockDuct extends BlockContainer {
 
@@ -29,6 +35,7 @@ public class BlockDuct extends BlockContainer {
 		return false;
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public int getRenderType() {
 		return ClientProxy.ductRender;
@@ -61,7 +68,6 @@ public class BlockDuct extends BlockContainer {
 
 			if (!par1World.isRemote) par5EntityPlayer.addChatMessage("Duct at: " + duct.xCoord + ", " + duct.yCoord + " , " + duct.zCoord + " extract mode is: " + duct.extractor);
 		}
-		//par5EntityPlayer.addChatMessage("Contains Fluid: " + (duct.movingFluid != null));
 	}
 
 }

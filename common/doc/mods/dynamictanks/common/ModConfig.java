@@ -15,9 +15,22 @@ public class ModConfig
 		public static int ironPlateItem = 16714;
 		public static int liquidDiamondItem = 16715;
 		public static int softDiamondItem = 16716;
+		public static int bucketPotion = 16717;
 	}
 	
 	public static class FluidIDs {
-		public static int fluidPotion = 3193;
+		public static int potion = 3199;
+		public static int regen = 3200;
+		public static int swift = 3201;
+		public static int fire = 3202;
+		public static int poison = 3203;
+		public static int healing = 3204;
+		public static int night = 3205;
+		public static int weak = 3206;
+		public static int strength = 3207;
+		public static int slow = 3208;
+		public static int harming = 3209;
+		public static int water = 3210;
+		public static int invis = 3211;
 	}
 }

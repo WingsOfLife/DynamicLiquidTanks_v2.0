@@ -242,12 +242,21 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 		for (FluidTank fluidTank : containedLiquids)
 			fluidTank.setCapacity(getTankCapacity());
 	}
+	
+	public void overflowingCheck() {
+		for (FluidTank fT : containedLiquids)
+			if (fT.getFluid() != null)
+				if (fT.getFluidAmount() > fT.getCapacity())
+					fT.getFluid().amount = fT.getCapacity();
+	}
 
 	public void refresh() {
 		int newCap = (int) ((((neighborLocations.size() + 1) * INTERNAL_SIZE) * (BONUS_MULT)) * (Math.pow(upgradeMult, powerOf)) * FluidContainerRegistry.BUCKET_VOLUME);
 		tankCapacity = newCap < (INTERNAL_SIZE * FluidContainerRegistry.BUCKET_VOLUME) ? INTERNAL_SIZE * FluidContainerRegistry.BUCKET_VOLUME : newCap;
 		refreshTankCapacity();
-
+		
+		overflowingCheck();
+		
 		if (getLiquidIndex() > containedLiquids.size())
 			toExtractFromTank = containedLiquids.size(); 
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);

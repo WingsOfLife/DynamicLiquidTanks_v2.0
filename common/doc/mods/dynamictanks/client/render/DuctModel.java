@@ -105,6 +105,8 @@ public class DuctModel extends ModelBase {
 	public void render(float f5)
 	{
 		Center.render(f5);
+		Left.render(f5);
+		Right.render(f5);
 	}
 
 

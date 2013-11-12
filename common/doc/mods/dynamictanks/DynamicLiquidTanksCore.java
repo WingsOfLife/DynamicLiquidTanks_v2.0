@@ -1,6 +1,5 @@
 package doc.mods.dynamictanks;
 
-import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -8,9 +7,6 @@ import net.minecraftforge.common.Configuration;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-
-import org.apache.commons.lang3.ObjectUtils;
-
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -21,8 +17,6 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import doc.mods.dynamictanks.Fluids.FluidManager;
 import doc.mods.dynamictanks.block.BlockManager;
 import doc.mods.dynamictanks.common.CommonProxy;
@@ -41,13 +35,10 @@ public class DynamicLiquidTanksCore
 	@SidedProxy(clientSide = "doc.mods.dynamictanks.client.ClientProxy", serverSide = "doc.mods.dynamictanks.common.CommonProxy")
 	public static CommonProxy proxy;
 
-	private static Fluid dltFluidPotion;
-	public static Fluid fluidPotion;
-
 	public static CreativeTabs tabDynamicTanks = new CreativeTabs("tabDynamicTanks") {
 		@Override
 		public ItemStack getIconItemStack() {
-			return new ItemStack(BlockManager.BlockTank, 1, 0);
+			return new ItemStack(BlockManager.BlockTank);
 		}
 	};
 
@@ -67,30 +58,23 @@ public class DynamicLiquidTanksCore
 		ModConfig.ItemIDs.softDiamondItem = configFile.getItem("Softened Diamond", ModConfig.ItemIDs.softDiamondItem).getInt();
 		ModConfig.ItemIDs.upgradeItems = configFile.getItem("Upgrades", ModConfig.ItemIDs.upgradeItems).getInt();
 
-		ModConfig.FluidIDs.fluidPotion = configFile.getBlock("FluidPotion", ModConfig.FluidIDs.fluidPotion).getInt();
+		ModConfig.FluidIDs.regen = configFile.getBlock("Regen", ModConfig.FluidIDs.regen).getInt();
 
 		if(configFile.hasChanged())
 			configFile.save();
-
-		//Fluid
-		dltFluidPotion = new Fluid("potion").setDensity(800).setViscosity(1500);
-		FluidRegistry.registerFluid(dltFluidPotion);
-
-		fluidPotion = FluidRegistry.getFluid("potion");
-		fluidPotion.setBlockID(ModConfig.FluidIDs.fluidPotion);
 	}
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		GameRegistry.registerCraftingHandler(new CraftingHandler());
-
+		
 		ItemManager.registerItems();		
 		BlockManager.registerBlocks();
 		FluidManager.registerFluids();
 
 		ItemManager.registerRecipes();
 		BlockManager.registerCraftingRecipes();
-
+		
 		proxy.registerTileEntities();
 		proxy.setCustomRenders();
 
@@ -100,11 +84,7 @@ public class DynamicLiquidTanksCore
 	}
 
 	@ForgeSubscribe
-	@SideOnly(Side.CLIENT)
-	public void textureHook(TextureStitchEvent.Post event) {
-		if (event.map.textureType == 0) {
-			dltFluidPotion.setIcons(FluidManager.fluidPotion.getBlockTextureFromSide(1));
-			fluidPotion.setIcons(FluidManager.fluidPotion.getBlockTextureFromSide(1));
-		}
+	public void postStitch(TextureStitchEvent.Post event) {
+		FluidManager.potionFluid.setIcons(FluidManager.potionBlock.getBlockTextureFromSide(0), FluidManager.potionBlock.getBlockTextureFromSide(1));
 	}
 }

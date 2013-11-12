@@ -6,6 +6,7 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import doc.mods.dynamictanks.DynamicLiquidTanksCore;
+import doc.mods.dynamictanks.Fluids.FluidManager;
 import doc.mods.dynamictanks.tileentity.ControllerTileEntity;
 
 public class FluidHelper {
@@ -46,11 +47,11 @@ public class FluidHelper {
 		return (int) f;
 	}
 
-	public static boolean hasPotion(ControllerTileEntity controller) {
+	public static boolean hasPotion(ControllerTileEntity controller) { //TODO
 		if (controller != null) 
 			for (FluidTank fT : controller.getAllLiquids())
 				if (fT.getFluid() != null)
-					if (fT.getFluid().equals(new FluidStack(DynamicLiquidTanksCore.fluidPotion, FluidContainerRegistry.BUCKET_VOLUME)))
+					if (fT.getFluid().equals(new FluidStack(FluidManager.potionFluid, FluidContainerRegistry.BUCKET_VOLUME))) 
 						return true;
 
 		return false;
