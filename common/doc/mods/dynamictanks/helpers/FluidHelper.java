@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
-import doc.mods.dynamictanks.DynamicLiquidTanksCore;
+import net.minecraft.block.Block;
 import doc.mods.dynamictanks.Fluids.FluidManager;
 import doc.mods.dynamictanks.tileentity.ControllerTileEntity;
 
@@ -54,6 +54,16 @@ public class FluidHelper {
 					if (fT.getFluid().equals(new FluidStack(FluidManager.potionFluid, FluidContainerRegistry.BUCKET_VOLUME))) 
 						return true;
 
+		return false;
+	}
+
+	public static boolean isLiquidPotion(ControllerTileEntity controller, int index) {
+		if (controller != null && controller.getAllLiquids().get(index).getFluid() != null) {
+			int currentFluidBlockId = controller.getAllLiquids().get(index).getFluid().getFluid().getBlockID();
+			for (int i = 0; i < FluidManager.blockType.size(); i++)
+				if (FluidManager.blockType.get(i).blockID == currentFluidBlockId)
+					return true;
+		}
 		return false;
 	}
 }

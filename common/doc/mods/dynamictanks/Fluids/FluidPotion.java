@@ -17,6 +17,7 @@ import net.minecraftforge.fluids.Fluid;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import doc.mods.dynamictanks.DynamicLiquidTanksCore;
+import doc.mods.dynamictanks.client.particle.ParticleEffects;
 import doc.mods.dynamictanks.helpers.PotionEffectHelper;
 import doc.mods.dynamictanks.helpers.PotionIdHelper;
 import doc.mods.dynamictanks.helpers.StringHelper;
@@ -37,7 +38,7 @@ public class FluidPotion extends BlockFluidClassic {
 
 	@Override
 	public Icon getIcon(int side, int meta) {
-		return side != 0 && side != 1 ? this.theIcon[1] : this.theIcon[0];
+		return side != 0 && side != 1 ? this.theIcon[0] : this.theIcon[0];
 	}
 
 	@Override
@@ -71,7 +72,13 @@ public class FluidPotion extends BlockFluidClassic {
 	public void updateTick(World world, int x, int y, int z, Random rand) {
 		super.updateTick(world, x, y, z, rand);
 		int rndValue = rand.nextInt(100);
-		if (rndValue >= 60)
+		if (rndValue <= 50)
 			this.drain(world, x, y, z, true);
+	}
+	
+	@Override
+	public void randomDisplayTick(World par1World, int par2, int par3, int par4, Random par5Random) {
+		ParticleEffects.spawnParticle("coloredSwirl", (double)((float)par2 + par5Random.nextFloat()), (double)((float)par3 + par5Random.nextFloat()), (double)((float)par4 + par5Random.nextFloat()), 0.0D, 0.0D, 0.0D);
+		//par1World.spawnParticle("suspended", (double)((float)par2 + par5Random.nextFloat()), (double)((float)par3 + par5Random.nextFloat()), (double)((float)par4 + par5Random.nextFloat()), 0.0D, 0.0D, 0.0D);
 	}
 }

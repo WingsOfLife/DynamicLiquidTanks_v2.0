@@ -113,7 +113,14 @@ public class GuiController extends GuiContainer {
 		for (int v = 0; v < output.length; v++)
 			output[v].drawTextBox();
 
-		drawString(fontRenderer, "Liquid: " + StringHelper.Cap(FluidHelper.getName(controller.getAllLiquids(), controller.getLiquidIndex())), guiLeft + 20, guiTop + 76, 0xFFFFFF);
+		String liquidName = StringHelper.Cap(FluidHelper.getName(controller.getAllLiquids(), controller.getLiquidIndex()));
+		String type = "Liquid: ";
+		if (FluidHelper.isLiquidPotion(controller, controller.getLiquidIndex())) {
+			liquidName = StringHelper.returnLastWord(FluidHelper.getName(controller.getAllLiquids(), controller.getLiquidIndex()));
+			type = "Potion ";
+		}
+		
+		drawString(fontRenderer, type + liquidName, guiLeft + 20, guiTop + 76, 0xFFFFFF);
 		drawString(fontRenderer, "Stored: " + StringHelper.parseCommas("" + FluidHelper.getTotal(controller.getAllLiquids(), controller.getAllLiquids().get(controller.getLiquidIndex()).getFluid(), 0, 0), "", " mB"), guiLeft + 20, guiTop + 86, 0xFFFFFF);
 
 		if (!FluidHelper.hasLiquid(controller))

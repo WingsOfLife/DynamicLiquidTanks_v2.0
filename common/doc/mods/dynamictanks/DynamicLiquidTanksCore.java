@@ -58,7 +58,19 @@ public class DynamicLiquidTanksCore
 		ModConfig.ItemIDs.softDiamondItem = configFile.getItem("Softened Diamond", ModConfig.ItemIDs.softDiamondItem).getInt();
 		ModConfig.ItemIDs.upgradeItems = configFile.getItem("Upgrades", ModConfig.ItemIDs.upgradeItems).getInt();
 
-		ModConfig.FluidIDs.regen = configFile.getBlock("Regen", ModConfig.FluidIDs.regen).getInt();
+		ModConfig.FluidIDs.potion = configFile.getBlock("potion", ModConfig.FluidIDs.potion).getInt();
+		ModConfig.FluidIDs.regen = configFile.getBlock("regen", ModConfig.FluidIDs.regen).getInt();
+		ModConfig.FluidIDs.swift = configFile.getBlock("swift", ModConfig.FluidIDs.swift).getInt();
+		ModConfig.FluidIDs.fire = configFile.getBlock("fire", ModConfig.FluidIDs.fire).getInt();
+		ModConfig.FluidIDs.poison = configFile.getBlock("poison", ModConfig.FluidIDs.poison).getInt();
+		ModConfig.FluidIDs.healing = configFile.getBlock("healing", ModConfig.FluidIDs.healing).getInt();
+		ModConfig.FluidIDs.night = configFile.getBlock("night", ModConfig.FluidIDs.night).getInt();
+		ModConfig.FluidIDs.weak = configFile.getBlock("weak", ModConfig.FluidIDs.weak).getInt();
+		ModConfig.FluidIDs.strength = configFile.getBlock("strength", ModConfig.FluidIDs.strength).getInt();
+		ModConfig.FluidIDs.slow = configFile.getBlock("slow", ModConfig.FluidIDs.slow).getInt();
+		ModConfig.FluidIDs.harming = configFile.getBlock("harming", ModConfig.FluidIDs.harming).getInt();
+		ModConfig.FluidIDs.water = configFile.getBlock("water", ModConfig.FluidIDs.water).getInt();
+		ModConfig.FluidIDs.invis = configFile.getBlock("invis", ModConfig.FluidIDs.invis).getInt();
 
 		if(configFile.hasChanged())
 			configFile.save();
@@ -74,6 +86,7 @@ public class DynamicLiquidTanksCore
 
 		ItemManager.registerRecipes();
 		BlockManager.registerCraftingRecipes();
+		FluidManager.registerCraftingRecipes();
 		
 		proxy.registerTileEntities();
 		proxy.setCustomRenders();
@@ -81,10 +94,12 @@ public class DynamicLiquidTanksCore
 		LanguageRegistry.instance().addStringLocalization("multifurnace.container.multifurnace", "Multi-Furnace");
 
 		NetworkRegistry.instance().registerGuiHandler(this, proxy);
+		FluidManager.registerBuckets();
 	}
 
 	@ForgeSubscribe
 	public void postStitch(TextureStitchEvent.Post event) {
 		FluidManager.potionFluid.setIcons(FluidManager.potionBlock.getBlockTextureFromSide(0), FluidManager.potionBlock.getBlockTextureFromSide(1));
+		FluidManager.regenFluid.setIcons(FluidManager.regenBlock.getBlockTextureFromSide(0), FluidManager.regenBlock.getBlockTextureFromSide(1));
 	}
 }

@@ -26,4 +26,9 @@ public class StringHelper {
 	public static String removeSpaces(String s) {
 		return s.replaceAll(" ", "");
 	}
+	
+	public static String returnLastWord(String s) {
+		String[] split = s.split(" ");
+		return Cap(removeSpaces(split[split.length - 1]));
+	}
 }
