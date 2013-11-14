@@ -100,7 +100,7 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
 		dyeIndex = meta;
 	}
 
-	public boolean searchForController(World wObj) {
+	public boolean searchForController() {
 		TankTileEntity tankTE = null;
 		ControllerTileEntity controllerTE = null;
 
@@ -113,16 +113,16 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
 			loc[0] = currentX - dir.offsetX;
 			loc[1] = currentY - dir.offsetY;
 			loc[2] = currentZ - dir.offsetZ;
-			BlockID = wObj.getBlockId(loc[0], loc[1], loc[2]);
+			BlockID = worldObj.getBlockId(loc[0], loc[1], loc[2]);
 			if (BlockID == BlockManager.BlockTankController.blockID) {
-				controllerTE = (ControllerTileEntity) wObj.getBlockTileEntity(loc[0], loc[1], loc[2]);				
+				controllerTE = (ControllerTileEntity) worldObj.getBlockTileEntity(loc[0], loc[1], loc[2]);				
 				controllerTE.addNeighbor(new int[] { currentX, currentY, currentZ });
 				setControllerPos(loc);
 				return true;
 			} else if (BlockID == BlockManager.BlockTank.blockID && !hasController()) {
-				tankTE = (TankTileEntity) wObj.getBlockTileEntity(loc[0], loc[1], loc[2]);
+				tankTE = (TankTileEntity) worldObj.getBlockTileEntity(loc[0], loc[1], loc[2]);
 				if (tankTE.hasController()) {
-					controllerTE = (ControllerTileEntity) wObj.getBlockTileEntity(tankTE.getControllerCoords()[0], tankTE.getControllerCoords()[1], tankTE.getControllerCoords()[2]);
+					controllerTE = (ControllerTileEntity) worldObj.getBlockTileEntity(tankTE.getControllerCoords()[0], tankTE.getControllerCoords()[1], tankTE.getControllerCoords()[2]);
 					if (controllerTE != null) {
 						setControllerPos(tankTE.ControllerCoords);
 						controllerTE.addNeighbor(new int[] { currentX, currentY, currentZ });
@@ -152,7 +152,7 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
 
 		 if (countMet()) { // perform events every maxTickCount
 			 if (!hasController()) { //check if already has controller
-				 searchForController(worldObj);
+				 searchForController();
 			 }
 		 }
 	}
