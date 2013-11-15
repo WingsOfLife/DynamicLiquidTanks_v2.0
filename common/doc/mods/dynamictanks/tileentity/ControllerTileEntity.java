@@ -41,7 +41,7 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 	protected int[] camoMeta = { -1, -1 }; // first var camo, second var meta	
 	protected int dyeColorMeta = -1; //dyeColor
 	protected int potionMeta = -1;
-	
+
 	protected double BONUS_MULT = 1.05;
 	protected int INTERNAL_SIZE = 16;
 
@@ -121,11 +121,11 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 	public void setDyeColor(int meta) {
 		dyeColorMeta = meta;
 	}
-	
+
 	public void setPotion(int meta) {
 		potionMeta = meta;
 	}
-	
+
 	public void setLiquidIndex(int val) {
 		toExtractFromTank = val;
 	}
@@ -147,11 +147,11 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 	public int getCamo() {
 		return camoMeta[0];
 	}
-	
+
 	public int getCamoMeta() {
 		return camoMeta[1];
 	}
-	
+
 	public int getDyeColor() {
 		return dyeColorMeta;
 	}
@@ -159,7 +159,7 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 	public int getPotion() {
 		return potionMeta;
 	}
-	
+
 	public int getStored() {
 		int count = 0;
 		for (FluidTank tank : containedLiquids)
@@ -209,7 +209,7 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 		}
 		return 0;
 	}
-	
+
 	public int getNumLayers() {
 		int count = 0;
 		LinkedList<Integer> counted = new LinkedList<Integer>();
@@ -220,13 +220,13 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 			}
 		return count;		
 	}
-	
+
 	public int getPerLayer() {
 		if (getNumLayers() == 0)
 			return getTankCapacity();
 		return getTankCapacity() / getNumLayers();
 	}
-	
+
 	/*
 	 * Misc Methods
 	 */
@@ -242,7 +242,7 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 		for (FluidTank fluidTank : containedLiquids)
 			fluidTank.setCapacity(getTankCapacity());
 	}
-	
+
 	public void overflowingCheck() {
 		for (FluidTank fT : containedLiquids)
 			if (fT.getFluid() != null)
@@ -254,13 +254,13 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 		int newCap = (int) ((((neighborLocations.size() + 1) * INTERNAL_SIZE) * (BONUS_MULT)) * (Math.pow(upgradeMult, powerOf)) * FluidContainerRegistry.BUCKET_VOLUME);
 		tankCapacity = newCap < (INTERNAL_SIZE * FluidContainerRegistry.BUCKET_VOLUME) ? INTERNAL_SIZE * FluidContainerRegistry.BUCKET_VOLUME : newCap;
 		refreshTankCapacity();
-		
+
 		overflowingCheck();
-		
+
 		if (getLiquidIndex() > containedLiquids.size())
 			toExtractFromTank = containedLiquids.size(); 
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-		
+
 		if (!FluidHelper.hasPotion(this))
 			potionMeta = -1;
 	}
@@ -276,18 +276,10 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 			if (countMet()) 
 				worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
 		}
+		doCount();
 
-		if (!worldObj.isRemote) { //server side
-			doCount();
-
-			if (countMet()) { //perform events every maxTickCount
-				refresh(); //resize capacity of FluidTank Array
-				/*System.out.println("Number of Liquids: " + this.numLiquids);
-				System.out.println("Capacity: " + this.tankCapacity);
-				System.out.println("Tanks: " + this.neighborLocations.size());
-				System.out.println("Contained Liquids: " + this.containedLiquids.size()); */	
-			}
-		}
+		if (countMet()) //perform events every maxTickCount
+			refresh(); //resize capacity of FluidTank Array*/	
 	}
 
 	/*

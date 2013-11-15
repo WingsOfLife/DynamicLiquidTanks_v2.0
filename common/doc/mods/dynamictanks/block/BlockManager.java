@@ -21,22 +21,34 @@ public class BlockManager {
 	public static BlockTank BlockTank = null;
 	public static BlockUpgrade BlockUpgrade = null;
 	public static BlockDuct BlockDuct = null;
+	public static BlockHauntedDirt BlockHD = null;
+	public static BlockHauntedWood BlockHW = null;
+	public static BlockHauntedLeaves BlockHL = null;
 	
 	public static void registerBlocks() {
 		BlockTankController = new BlockTankController(ModConfig.BlockIDs.blockController);
 		BlockTank = new BlockTank(ModConfig.BlockIDs.blockTank);
 		BlockUpgrade = new BlockUpgrade(ModConfig.BlockIDs.blockUpgrade);
 		BlockDuct = new BlockDuct(ModConfig.BlockIDs.blockDuct);
+		BlockHD = new BlockHauntedDirt(ModConfig.BlockIDs.blockHauntedDirt);
+		BlockHW = new BlockHauntedWood(ModConfig.BlockIDs.blockHauntedWood);
+		BlockHL = new BlockHauntedLeaves(ModConfig.BlockIDs.blockHauntedLeaf);
 		
 		GameRegistry.registerBlock(BlockTankController, ControllerItem.class, "dynamictanks.blocks.blockController");
 		GameRegistry.registerBlock(BlockTank, "dynamictanks.blocks.blockTank");
 		GameRegistry.registerBlock(BlockUpgrade, "dynamictanks.blocks.blockUpgrade");
 		GameRegistry.registerBlock(BlockDuct, "dynamictanks.blocks.blockDuct");
+		GameRegistry.registerBlock(BlockHD, "dynamictanks.blocks.blockHauntedDirt");
+		GameRegistry.registerBlock(BlockHW, "dynamictanks.blocks.blockHauntedWood");
+		GameRegistry.registerBlock(BlockHL, "dynamictanks.blocks.blockHauntedLeaf");
 		
 		LanguageRegistry.addName(BlockTankController, "Tank Controller");
 		LanguageRegistry.addName(BlockTank, "Tank");
 		LanguageRegistry.addName(BlockUpgrade, "Upgrade Module");
 		LanguageRegistry.addName(BlockDuct, "Duct");
+		LanguageRegistry.addName(BlockHD, "Mystic Mud");
+		LanguageRegistry.addName(BlockHW, "Mystic Wood");
+		LanguageRegistry.addName(BlockHL, "Mystic Leaf");
 	}
 	
 	public static void registerCraftingRecipes() {

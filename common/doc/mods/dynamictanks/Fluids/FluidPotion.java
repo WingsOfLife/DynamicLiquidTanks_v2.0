@@ -70,12 +70,26 @@ public class FluidPotion extends BlockFluidClassic {
 
 	@Override
 	public void updateTick(World world, int x, int y, int z, Random rand) {
-		super.updateTick(world, x, y, z, rand);
+		int meta = world.getBlockMetadata(x, y, z);
+		if (meta == 0)
+			super.updateTick(world, x, y, z, rand);
+
 		int rndValue = rand.nextInt(100);
-		if (rndValue <= 50)
-			this.drain(world, x, y, z, true);
+		if (isSourceBlock(world, x, y, z)) {
+			if (rndValue <= 30)
+				if (meta == 0)
+					this.drain(world, x, y, z, true);
+		}
 	}
 	
+	@Override
+    public boolean canDrain(World world, int x, int y, int z) {
+		int meta = world.getBlockMetadata(x, y, z);
+		if (meta == 0)
+			return isSourceBlock(world, x, y, z);
+		return false;
+    }
+
 	@Override
 	public void randomDisplayTick(World par1World, int par2, int par3, int par4, Random par5Random) {
 		ParticleEffects.spawnParticle("coloredSwirl", (double)((float)par2 + par5Random.nextFloat()), (double)((float)par3 + par5Random.nextFloat()), (double)((float)par4 + par5Random.nextFloat()), 0.0D, 0.0D, 0.0D);

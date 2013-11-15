@@ -4,9 +4,8 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -18,6 +17,8 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import doc.mods.dynamictanks.Fluids.FluidManager;
+import doc.mods.dynamictanks.biome.BiomeManager;
+import doc.mods.dynamictanks.biome.GenerateFluidPuddles;
 import doc.mods.dynamictanks.block.BlockManager;
 import doc.mods.dynamictanks.common.CommonProxy;
 import doc.mods.dynamictanks.common.CraftingHandler;
@@ -74,6 +75,8 @@ public class DynamicLiquidTanksCore
 
 		if(configFile.hasChanged())
 			configFile.save();
+		
+		//MinecraftForge.TERRAIN_GEN_BUS.register(new GenerateFluidPuddles());
 	}
 
 	@EventHandler
@@ -87,6 +90,8 @@ public class DynamicLiquidTanksCore
 		ItemManager.registerRecipes();
 		BlockManager.registerCraftingRecipes();
 		FluidManager.registerCraftingRecipes();
+		
+		BiomeManager.registerBiomes();
 		
 		proxy.registerTileEntities();
 		proxy.setCustomRenders();

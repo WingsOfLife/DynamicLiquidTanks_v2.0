@@ -3,6 +3,9 @@ package doc.mods.dynamictanks.common;
 public class ModConfig
 {
 	public static class BlockIDs {
+		public static int blockHauntedDirt = 249;
+		public static int blockHauntedWood = 3192;
+		public static int blockHauntedLeaf = 3193;
 		public static int blockController = 3194;
 		public static int blockTank = 3195;
 		public static int blockUpgrade = 3196;

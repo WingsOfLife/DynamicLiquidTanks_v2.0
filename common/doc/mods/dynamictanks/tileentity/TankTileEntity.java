@@ -143,18 +143,25 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
 	 */
 	@Override
 	public void updateEntity() {		
-		/*if (worldObj.isRemote) { // client side
+		if (worldObj.isRemote) { // client side
+			doCount();
 
+			if (countMet()) { // perform events every maxTickCount
+				if (!hasController()) { //check if already has controller
+					searchForController();
+				}
+			}
 		}
 
 		if (!worldObj.isRemote) { // server side
-		 */			doCount();
+			doCount();
 
-		 if (countMet()) { // perform events every maxTickCount
-			 if (!hasController()) { //check if already has controller
-				 searchForController();
-			 }
-		 }
+			if (countMet()) { // perform events every maxTickCount
+				if (!hasController()) { //check if already has controller
+					searchForController();
+				}
+			}
+		}
 	}
 
 	/*
