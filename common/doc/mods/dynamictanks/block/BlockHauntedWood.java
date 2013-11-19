@@ -20,8 +20,10 @@ public class BlockHauntedWood extends Block {
 	
 	public BlockHauntedWood(int par1) {
 		super(par1, Material.wood);
-		setHardness(.5f);
+		setHardness(1.0f);
 		setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);
+		setUnlocalizedName("dynamictanks.blocks.blockHauntedWood");
+		setStepSound(soundWoodFootstep);
 	}
 	
 	@SideOnly(Side.CLIENT)
@@ -31,12 +33,14 @@ public class BlockHauntedWood extends Block {
 
 	@SideOnly(Side.CLIENT)
 	public Icon getBlockTexture(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5) {
+		int meta = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
 		if (par5 == 0 || par5 == 1)
 			return topIcon;
-		else {
+		else if (meta != 0) {
 			Random rnd = new Random();
 			return sideIcons[rnd.nextInt(sideIcons.length)];
-		}
+		} else
+			return sideIcons[0];
 	}
 	
 	@SideOnly(Side.CLIENT)

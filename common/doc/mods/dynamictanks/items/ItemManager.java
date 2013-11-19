@@ -9,7 +9,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import doc.mods.dynamictanks.Fluids.FluidManager;
 import doc.mods.dynamictanks.common.ModConfig;
-import doc.mods.dynamictanks.helpers.PotionIdHelper;
+import doc.mods.dynamictanks.helpers.PotionHelper;
 
 public class ItemManager {
 

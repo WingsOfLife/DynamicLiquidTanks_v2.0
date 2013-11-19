@@ -174,7 +174,7 @@ public class BlockTankController extends BlockContainer {
 		if (heldItem == null && currentLiquid != null && currentLiquid.isFluidEqual(new FluidStack(FluidManager.potionFluid, FluidContainerRegistry.BUCKET_VOLUME))) {
 			if (par5EntityPlayer != null && controller.getPotion() != -1 && 
 					(currentLiquid.amount - (FluidContainerRegistry.BUCKET_VOLUME / 10)) >= 0) {
-				PotionEffectHelper.applyPotionEffects((EntityPlayer) par5EntityPlayer, controller.getPotion(), false);
+				PotionEffectHelper.applyPotionEffects((EntityPlayer) par5EntityPlayer, controller.getPotion(), 10, false);
 				controller.drain(ForgeDirection.UNKNOWN, FluidContainerRegistry.BUCKET_VOLUME / 10, true);
 				if (currentLiquid.amount == 0)
 					controller.setPotion(-1);

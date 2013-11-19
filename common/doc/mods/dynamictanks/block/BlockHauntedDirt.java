@@ -20,8 +20,10 @@ public class BlockHauntedDirt extends Block {
 
 	public BlockHauntedDirt(int par1) {
 		super(par1, Material.grass);
-		setHardness(1.0F);
+		setHardness(0.5F);
 		setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);
+		setUnlocalizedName("dynamictanks.blocks.blockHauntedDirt");
+		setStepSound(soundGrassFootstep);
 	}
 
 	@SideOnly(Side.CLIENT)

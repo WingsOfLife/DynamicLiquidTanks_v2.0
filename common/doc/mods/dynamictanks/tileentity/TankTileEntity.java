@@ -147,9 +147,10 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
 			doCount();
 
 			if (countMet()) { // perform events every maxTickCount
-				if (!hasController()) { //check if already has controller
+				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+				/*if (!hasController()) { //check if already has controller
 					searchForController();
-				}
+				}*/
 			}
 		}
 

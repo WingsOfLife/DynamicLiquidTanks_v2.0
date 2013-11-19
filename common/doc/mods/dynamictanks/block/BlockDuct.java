@@ -23,6 +23,7 @@ public class BlockDuct extends BlockContainer {
 		setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);
 		setHardness(0.5F);
 		setBlockBounds(0.375f, 0.35f, 0.375f, 0.625f, 0.6f, 0.625f);
+		setUnlocalizedName("dynamictanks.blocks.blockDuct");
 	}
 
 	@Override

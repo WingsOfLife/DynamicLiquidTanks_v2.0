@@ -9,7 +9,7 @@ public class BiomeManager {
 	public static BiomeGenBase potionBiome;
 	
 	public static void registerBiomes() {
-		potionBiome = new PotionBiome(137).setBiomeName("Haunted Forest");
+		potionBiome = new PotionBiome(137).setBiomeName("Haunted Forest").setDisableRain();
 		
 		GameRegistry.registerWorldGenerator(new TreeGenerator());
 		

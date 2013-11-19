@@ -17,7 +17,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 import doc.mods.dynamictanks.common.BucketHandler;
 import doc.mods.dynamictanks.common.ModConfig;
 import doc.mods.dynamictanks.helpers.PotionDamage;
-import doc.mods.dynamictanks.helpers.PotionIdHelper;
+import doc.mods.dynamictanks.helpers.PotionHelper;
 import doc.mods.dynamictanks.items.ItemManager;
 
 public class FluidManager {
@@ -61,129 +61,129 @@ public class FluidManager {
 		GameRegistry.registerBlock(potionBlock, "potion");
 		LanguageRegistry.addName(potionBlock, "potion");
 
-		regenFluid = new Fluid(PotionIdHelper.nameFromMeta(0)).setBlockID(ModConfig.FluidIDs.regen).setViscosity(3500).setLuminosity(7);
+		regenFluid = new Fluid(PotionHelper.nameFromMeta(0)).setBlockID(ModConfig.FluidIDs.regen).setViscosity(3500).setLuminosity(7);
 		FluidRegistry.registerFluid(regenFluid);
 		regenBlock = new FluidPotion(ModConfig.FluidIDs.regen, regenFluid, Material.water, 
-				PotionIdHelper.nameFromMeta(0), PotionIdHelper.potions[0]);
-		GameRegistry.registerBlock(regenBlock, PotionIdHelper.nameFromMeta(0));
-		LanguageRegistry.addName(regenBlock, PotionIdHelper.nameFromMeta(0));
+				PotionHelper.nameFromMeta(0), PotionHelper.potions[0]);
+		GameRegistry.registerBlock(regenBlock, PotionHelper.nameFromMeta(0));
+		LanguageRegistry.addName(regenBlock, PotionHelper.nameFromMeta(0));
 		FluidContainerRegistry.registerFluidContainer(new FluidContainerData(new FluidStack(regenFluid, 1000),
 				new ItemStack(ItemManager.buckets, 1, 0), new ItemStack(Item.bucketEmpty)));
 		blockType.add(regenBlock);
 
-		swiftFluid = new Fluid(PotionIdHelper.nameFromMeta(1)).setBlockID(ModConfig.FluidIDs.swift).setViscosity(3500).setLuminosity(7);
+		swiftFluid = new Fluid(PotionHelper.nameFromMeta(1)).setBlockID(ModConfig.FluidIDs.swift).setViscosity(3500).setLuminosity(7);
 		FluidRegistry.registerFluid(swiftFluid);
 		swiftBlock = new FluidPotion(ModConfig.FluidIDs.swift, swiftFluid, Material.water, 
-				PotionIdHelper.nameFromMeta(1), PotionIdHelper.potions[1]);
-		GameRegistry.registerBlock(swiftBlock, PotionIdHelper.nameFromMeta(1));
-		LanguageRegistry.addName(swiftBlock, PotionIdHelper.nameFromMeta(1));
+				PotionHelper.nameFromMeta(1), PotionHelper.potions[1]);
+		GameRegistry.registerBlock(swiftBlock, PotionHelper.nameFromMeta(1));
+		LanguageRegistry.addName(swiftBlock, PotionHelper.nameFromMeta(1));
 		FluidContainerRegistry.registerFluidContainer(new FluidContainerData(new FluidStack(swiftFluid, 1000),
 				new ItemStack(ItemManager.buckets, 1, 1), new ItemStack(Item.bucketEmpty)));
 		blockType.add(swiftBlock);
 
-		fireFluid = new Fluid(PotionIdHelper.nameFromMeta(2)).setBlockID(ModConfig.FluidIDs.fire).setViscosity(3500).setLuminosity(7);
+		fireFluid = new Fluid(PotionHelper.nameFromMeta(2)).setBlockID(ModConfig.FluidIDs.fire).setViscosity(3500).setLuminosity(7);
 		FluidRegistry.registerFluid(fireFluid);
 		fireBlock = new FluidPotion(ModConfig.FluidIDs.fire, fireFluid, Material.water, 
-				PotionIdHelper.nameFromMeta(2), PotionIdHelper.potions[2]);
-		GameRegistry.registerBlock(fireBlock, PotionIdHelper.nameFromMeta(2));
-		LanguageRegistry.addName(fireBlock, PotionIdHelper.nameFromMeta(2));
+				PotionHelper.nameFromMeta(2), PotionHelper.potions[2]);
+		GameRegistry.registerBlock(fireBlock, PotionHelper.nameFromMeta(2));
+		LanguageRegistry.addName(fireBlock, PotionHelper.nameFromMeta(2));
 		FluidContainerRegistry.registerFluidContainer(new FluidContainerData(new FluidStack(fireFluid, 1000),
 				new ItemStack(ItemManager.buckets, 1, 2), new ItemStack(Item.bucketEmpty)));
 		blockType.add(fireBlock);
 
-		poisonFluid = new Fluid(PotionIdHelper.nameFromMeta(3)).setBlockID(ModConfig.FluidIDs.poison).setViscosity(3500).setLuminosity(7);
+		poisonFluid = new Fluid(PotionHelper.nameFromMeta(3)).setBlockID(ModConfig.FluidIDs.poison).setViscosity(3500).setLuminosity(7);
 		FluidRegistry.registerFluid(poisonFluid);
 		poisonBlock = new FluidPotion(ModConfig.FluidIDs.poison, poisonFluid, Material.water, 
-				PotionIdHelper.nameFromMeta(3), PotionIdHelper.potions[3]);
-		GameRegistry.registerBlock(poisonBlock, PotionIdHelper.nameFromMeta(3));
-		LanguageRegistry.addName(poisonBlock, PotionIdHelper.nameFromMeta(3));
+				PotionHelper.nameFromMeta(3), PotionHelper.potions[3]);
+		GameRegistry.registerBlock(poisonBlock, PotionHelper.nameFromMeta(3));
+		LanguageRegistry.addName(poisonBlock, PotionHelper.nameFromMeta(3));
 		FluidContainerRegistry.registerFluidContainer(new FluidContainerData(new FluidStack(poisonFluid, 1000),
 				new ItemStack(ItemManager.buckets, 1, 3), new ItemStack(Item.bucketEmpty)));
 		blockType.add(poisonBlock);
 
-		healingFluid = new Fluid(PotionIdHelper.nameFromMeta(4)).setBlockID(ModConfig.FluidIDs.healing).setViscosity(3500).setLuminosity(7);
+		healingFluid = new Fluid(PotionHelper.nameFromMeta(4)).setBlockID(ModConfig.FluidIDs.healing).setViscosity(3500).setLuminosity(7);
 		FluidRegistry.registerFluid(healingFluid);
 		healingBlock = new FluidPotion(ModConfig.FluidIDs.healing, healingFluid, Material.water, 
-				PotionIdHelper.nameFromMeta(4), PotionIdHelper.potions[4]);
-		GameRegistry.registerBlock(healingBlock, PotionIdHelper.nameFromMeta(4));
-		LanguageRegistry.addName(healingBlock, PotionIdHelper.nameFromMeta(4));
+				PotionHelper.nameFromMeta(4), PotionHelper.potions[4]);
+		GameRegistry.registerBlock(healingBlock, PotionHelper.nameFromMeta(4));
+		LanguageRegistry.addName(healingBlock, PotionHelper.nameFromMeta(4));
 		FluidContainerRegistry.registerFluidContainer(new FluidContainerData(new FluidStack(healingFluid, 1000),
 				new ItemStack(ItemManager.buckets, 1, 4), new ItemStack(Item.bucketEmpty)));
 		blockType.add(healingBlock);
 
-		nightFluid = new Fluid(PotionIdHelper.nameFromMeta(5)).setBlockID(ModConfig.FluidIDs.night).setViscosity(3500).setLuminosity(7);
+		nightFluid = new Fluid(PotionHelper.nameFromMeta(5)).setBlockID(ModConfig.FluidIDs.night).setViscosity(3500).setLuminosity(7);
 		FluidRegistry.registerFluid(nightFluid);
 		nightBlock = new FluidPotion(ModConfig.FluidIDs.night, nightFluid, Material.water, 
-				PotionIdHelper.nameFromMeta(5), PotionIdHelper.potions[5]);
-		GameRegistry.registerBlock(nightBlock, PotionIdHelper.nameFromMeta(5));
-		LanguageRegistry.addName(nightBlock, PotionIdHelper.nameFromMeta(5));
+				PotionHelper.nameFromMeta(5), PotionHelper.potions[5]);
+		GameRegistry.registerBlock(nightBlock, PotionHelper.nameFromMeta(5));
+		LanguageRegistry.addName(nightBlock, PotionHelper.nameFromMeta(5));
 		FluidContainerRegistry.registerFluidContainer(new FluidContainerData(new FluidStack(nightFluid, 1000),
 				new ItemStack(ItemManager.buckets, 1, 5), new ItemStack(Item.bucketEmpty)));
 		blockType.add(nightBlock);
 
-		weakFluid = new Fluid(PotionIdHelper.nameFromMeta(6)).setBlockID(ModConfig.FluidIDs.weak).setViscosity(3500).setLuminosity(7);
+		weakFluid = new Fluid(PotionHelper.nameFromMeta(6)).setBlockID(ModConfig.FluidIDs.weak).setViscosity(3500).setLuminosity(7);
 		FluidRegistry.registerFluid(weakFluid);
 		weakBlock = new FluidPotion(ModConfig.FluidIDs.weak, weakFluid, Material.water, 
-				PotionIdHelper.nameFromMeta(6), PotionIdHelper.potions[6]);
-		GameRegistry.registerBlock(weakBlock, PotionIdHelper.nameFromMeta(6));
-		LanguageRegistry.addName(weakBlock, PotionIdHelper.nameFromMeta(6));
+				PotionHelper.nameFromMeta(6), PotionHelper.potions[6]);
+		GameRegistry.registerBlock(weakBlock, PotionHelper.nameFromMeta(6));
+		LanguageRegistry.addName(weakBlock, PotionHelper.nameFromMeta(6));
 		FluidContainerRegistry.registerFluidContainer(new FluidContainerData(new FluidStack(weakFluid, 1000),
 				new ItemStack(ItemManager.buckets, 1, 6), new ItemStack(Item.bucketEmpty)));
 		blockType.add(weakBlock);
 
-		strengthFluid = new Fluid(PotionIdHelper.nameFromMeta(7)).setBlockID(ModConfig.FluidIDs.strength).setViscosity(3500).setLuminosity(7);
+		strengthFluid = new Fluid(PotionHelper.nameFromMeta(7)).setBlockID(ModConfig.FluidIDs.strength).setViscosity(3500).setLuminosity(7);
 		FluidRegistry.registerFluid(strengthFluid);
 		strengthBlock = new FluidPotion(ModConfig.FluidIDs.strength, strengthFluid, Material.water, 
-				PotionIdHelper.nameFromMeta(7), PotionIdHelper.potions[7]);
-		GameRegistry.registerBlock(strengthBlock, PotionIdHelper.nameFromMeta(7));
-		LanguageRegistry.addName(strengthBlock, PotionIdHelper.nameFromMeta(7));
+				PotionHelper.nameFromMeta(7), PotionHelper.potions[7]);
+		GameRegistry.registerBlock(strengthBlock, PotionHelper.nameFromMeta(7));
+		LanguageRegistry.addName(strengthBlock, PotionHelper.nameFromMeta(7));
 		FluidContainerRegistry.registerFluidContainer(new FluidContainerData(new FluidStack(strengthFluid, 1000),
 				new ItemStack(ItemManager.buckets, 1, 7), new ItemStack(Item.bucketEmpty)));
 		blockType.add(strengthBlock);
 
-		slowFluid = new Fluid(PotionIdHelper.nameFromMeta(8)).setBlockID(ModConfig.FluidIDs.slow).setViscosity(3500).setLuminosity(8);
+		slowFluid = new Fluid(PotionHelper.nameFromMeta(8)).setBlockID(ModConfig.FluidIDs.slow).setViscosity(3500).setLuminosity(8);
 		FluidRegistry.registerFluid(slowFluid);
 		slowBlock = new FluidPotion(ModConfig.FluidIDs.slow, slowFluid, Material.water, 
-				PotionIdHelper.nameFromMeta(8), PotionIdHelper.potions[8]);
-		GameRegistry.registerBlock(slowBlock, PotionIdHelper.nameFromMeta(8));
-		LanguageRegistry.addName(slowBlock, PotionIdHelper.nameFromMeta(8));
+				PotionHelper.nameFromMeta(8), PotionHelper.potions[8]);
+		GameRegistry.registerBlock(slowBlock, PotionHelper.nameFromMeta(8));
+		LanguageRegistry.addName(slowBlock, PotionHelper.nameFromMeta(8));
 		FluidContainerRegistry.registerFluidContainer(new FluidContainerData(new FluidStack(slowFluid, 1000),
 				new ItemStack(ItemManager.buckets, 1, 8), new ItemStack(Item.bucketEmpty)));
 		blockType.add(slowBlock);
 
-		harmingFluid = new Fluid(PotionIdHelper.nameFromMeta(9)).setBlockID(ModConfig.FluidIDs.harming).setViscosity(3500).setLuminosity(9);
+		harmingFluid = new Fluid(PotionHelper.nameFromMeta(9)).setBlockID(ModConfig.FluidIDs.harming).setViscosity(3500).setLuminosity(9);
 		FluidRegistry.registerFluid(harmingFluid);
 		harmingBlock = new FluidPotion(ModConfig.FluidIDs.harming, harmingFluid, Material.water, 
-				PotionIdHelper.nameFromMeta(9), PotionIdHelper.potions[9]);
-		GameRegistry.registerBlock(harmingBlock, PotionIdHelper.nameFromMeta(9));
-		LanguageRegistry.addName(harmingBlock, PotionIdHelper.nameFromMeta(9));
+				PotionHelper.nameFromMeta(9), PotionHelper.potions[9]);
+		GameRegistry.registerBlock(harmingBlock, PotionHelper.nameFromMeta(9));
+		LanguageRegistry.addName(harmingBlock, PotionHelper.nameFromMeta(9));
 		FluidContainerRegistry.registerFluidContainer(new FluidContainerData(new FluidStack(harmingFluid, 1000),
 				new ItemStack(ItemManager.buckets, 1, 9), new ItemStack(Item.bucketEmpty)));
 		blockType.add(harmingBlock);
 
-		waterFluid = new Fluid(PotionIdHelper.nameFromMeta(10)).setBlockID(ModConfig.FluidIDs.water).setViscosity(3500).setLuminosity(10);
+		waterFluid = new Fluid(PotionHelper.nameFromMeta(10)).setBlockID(ModConfig.FluidIDs.water).setViscosity(3500).setLuminosity(10);
 		FluidRegistry.registerFluid(waterFluid);
 		waterBlock = new FluidPotion(ModConfig.FluidIDs.water, waterFluid, Material.water, 
-				PotionIdHelper.nameFromMeta(10), PotionIdHelper.potions[10]);
-		GameRegistry.registerBlock(waterBlock, PotionIdHelper.nameFromMeta(10));
-		LanguageRegistry.addName(waterBlock, PotionIdHelper.nameFromMeta(10));
+				PotionHelper.nameFromMeta(10), PotionHelper.potions[10]);
+		GameRegistry.registerBlock(waterBlock, PotionHelper.nameFromMeta(10));
+		LanguageRegistry.addName(waterBlock, PotionHelper.nameFromMeta(10));
 		FluidContainerRegistry.registerFluidContainer(new FluidContainerData(new FluidStack(waterFluid, 1000),
 				new ItemStack(ItemManager.buckets, 1, 10), new ItemStack(Item.bucketEmpty)));
 		blockType.add(waterBlock);
 
-		invisFluid = new Fluid(PotionIdHelper.nameFromMeta(11)).setBlockID(ModConfig.FluidIDs.invis).setViscosity(3500).setLuminosity(11);
+		invisFluid = new Fluid(PotionHelper.nameFromMeta(11)).setBlockID(ModConfig.FluidIDs.invis).setViscosity(3500).setLuminosity(11);
 		FluidRegistry.registerFluid(invisFluid);
 		invisBlock = new FluidPotion(ModConfig.FluidIDs.invis, invisFluid, Material.water, 
-				PotionIdHelper.nameFromMeta(11), PotionIdHelper.potions[11]);
-		GameRegistry.registerBlock(invisBlock, PotionIdHelper.nameFromMeta(11));
-		LanguageRegistry.addName(invisBlock, PotionIdHelper.nameFromMeta(11));
+				PotionHelper.nameFromMeta(11), PotionHelper.potions[11]);
+		GameRegistry.registerBlock(invisBlock, PotionHelper.nameFromMeta(11));
+		LanguageRegistry.addName(invisBlock, PotionHelper.nameFromMeta(11));
 		FluidContainerRegistry.registerFluidContainer(new FluidContainerData(new FluidStack(invisFluid, 1000),
 				new ItemStack(ItemManager.buckets, 1, 11), new ItemStack(Item.bucketEmpty)));
 		blockType.add(invisBlock);
 	}
 
 	public static void registerCraftingRecipes() {
-		GameRegistry.addShapedRecipe(new ItemStack(ItemManager.buckets, 1, 0), new Object[] {
+		/*GameRegistry.addShapedRecipe(new ItemStack(ItemManager.buckets, 1, 0), new Object[] {
 			"PP ", "W  ", "   ",
 			'P', new ItemStack(Item.potion, 1, PotionIdHelper.potions[0]),
 			'W', Item.bucketWater
@@ -253,8 +253,7 @@ public class FluidManager {
 			"PP ", "W  ", "   ",
 			'P', new ItemStack(Item.potion, 1, PotionIdHelper.potions[11]),
 			'W', Item.bucketWater
-		});
-		
+		});*/		
 	}
 
 	public static void registerBuckets() {

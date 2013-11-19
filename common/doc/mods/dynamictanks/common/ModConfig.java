@@ -4,6 +4,9 @@ public class ModConfig
 {
 	public static class BlockIDs {
 		public static int blockHauntedDirt = 249;
+		public static int blockDangerousFlower = 3189;
+		public static int blockHauntedSappling = 3190;
+		public static int blockHauntedPlanks = 3191;
 		public static int blockHauntedWood = 3192;
 		public static int blockHauntedLeaf = 3193;
 		public static int blockController = 3194;

@@ -251,6 +251,9 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 	}
 
 	public void refresh() {
+		if (toExtractFromTank > containedLiquids.size() - 1)
+			toExtractFromTank = 0;
+		
 		int newCap = (int) ((((neighborLocations.size() + 1) * INTERNAL_SIZE) * (BONUS_MULT)) * (Math.pow(upgradeMult, powerOf)) * FluidContainerRegistry.BUCKET_VOLUME);
 		tankCapacity = newCap < (INTERNAL_SIZE * FluidContainerRegistry.BUCKET_VOLUME) ? INTERNAL_SIZE * FluidContainerRegistry.BUCKET_VOLUME : newCap;
 		refreshTankCapacity();

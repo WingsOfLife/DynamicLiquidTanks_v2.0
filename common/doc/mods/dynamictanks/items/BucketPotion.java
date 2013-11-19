@@ -4,15 +4,19 @@ import java.util.List;
 
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Icon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import doc.mods.dynamictanks.DynamicLiquidTanksCore;
 import doc.mods.dynamictanks.Fluids.FluidManager;
+import doc.mods.dynamictanks.Fluids.PotionTileEntity;
+import doc.mods.dynamictanks.helpers.PotionHelper;
 
 public class BucketPotion extends ItemBucket {
 
@@ -20,19 +24,25 @@ public class BucketPotion extends ItemBucket {
 		"Regeneration", "Swiftness", "Fire Resistance",
 		"Poison", "Instant Health", "Night Vision",
 		"Weakness", "Strength", "Slowness",
-		 "Harming", "Water Breathing", "Invisibility"
+		"Harming", "Water Breathing", "Invisibility"
 	};
-	
+
+	private final float ticksPerSec = PotionHelper.ticksPerSec;
+	private final float maxExistance = PotionHelper.maxExistance;
+
 	public BucketPotion(int itemID) {
 		super(itemID, 0);
 		setContainerItem(Item.bucketEmpty);
-		this.setHasSubtypes(true);
+		setHasSubtypes(true);
 		setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);
 	}
 
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean bool) {
-		//list.add("Uses: " + (stack.getMaxDamage() - stack.getItemDamage()));
+		if(stack.stackTagCompound == null)
+			stack.setTagCompound(new NBTTagCompound());
+
+		list.add("Stability: " + (100 - (int) ((stack.stackTagCompound.getFloat("lengthExisted") / maxExistance) * 100)) + "%");
 	}
 
 	@Override
@@ -51,44 +61,65 @@ public class BucketPotion extends ItemBucket {
 	}	
 
 	@Override
+	public void onUpdate(ItemStack par1ItemStack, World par2World, Entity par3Entity, int par4, boolean par5) {
+		float ticksExisted = 0;
+
+		if ((100 - (int) ((par1ItemStack.stackTagCompound.getFloat("lengthExisted") / maxExistance) * 10)) <= -100)
+			return;
+		
+		if(par1ItemStack.stackTagCompound == null) {
+			par1ItemStack.setTagCompound(new NBTTagCompound());
+			par1ItemStack.stackTagCompound.setFloat("lengthExisted", 0);
+			ticksExisted = 0;			
+		} 
+		
+		if (par1ItemStack.stackTagCompound.hasKey("lengthExisted")) {
+			ticksExisted = par1ItemStack.stackTagCompound.getFloat("lengthExisted");
+			ticksExisted++;
+		}
+
+		par1ItemStack.stackTagCompound.setFloat("lengthExisted", ticksExisted);
+	}
+
+	@Override
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
 		MovingObjectPosition position = this.getMovingObjectPositionFromPlayer(world, player, false);
 		if (position == null)
 			return stack;
-		
+
 		int clickX = position.blockX;
-        int clickY = position.blockY;
-        int clickZ = position.blockZ;
-        if (!world.canMineBlock(player, clickX, clickY, clickZ))
-            return stack;
+		int clickY = position.blockY;
+		int clickZ = position.blockZ;
+		if (!world.canMineBlock(player, clickX, clickY, clickZ))
+			return stack;
 
-        if (position.sideHit == 0)
-            --clickY;
+		if (position.sideHit == 0)
+			--clickY;
 
-        if (position.sideHit == 1)
-            ++clickY;
+		if (position.sideHit == 1)
+			++clickY;
 
-        if (position.sideHit == 2)
-            --clickZ;
+		if (position.sideHit == 2)
+			--clickZ;
 
-        if (position.sideHit == 3)
-            ++clickZ;
+		if (position.sideHit == 3)
+			++clickZ;
 
-        if (position.sideHit == 4)
-            --clickX;
+		if (position.sideHit == 4)
+			--clickX;
 
-        if (position.sideHit == 5)
-            ++clickX;
+		if (position.sideHit == 5)
+			++clickX;
 
-        if (!player.canPlayerEdit(clickX, clickY, clickZ, position.sideHit, stack))
-            return stack;        
-        
-		if (tryPlaceContainedLiquid(world, clickX, clickY, clickZ, stack.getItemDamage()) && !player.capabilities.isCreativeMode)
+		if (!player.canPlayerEdit(clickX, clickY, clickZ, position.sideHit, stack))
+			return stack;        
+
+		if (tryPlaceContainedLiquid(world, stack, clickX, clickY, clickZ, stack.getItemDamage()) && !player.capabilities.isCreativeMode)
 			return new ItemStack(Item.bucketEmpty);
 		return stack;
 	}
 
-	public boolean tryPlaceContainedLiquid(World world, int clickX, int clickY, int clickZ, int type)
+	public boolean tryPlaceContainedLiquid(World world, ItemStack stack, int clickX, int clickY, int clickZ, int type)
 	{
 		if (!world.isAirBlock(clickX, clickY, clickZ) && world.getBlockMaterial(clickX, clickY, clickZ).isSolid())
 			return false;
@@ -96,13 +127,20 @@ public class BucketPotion extends ItemBucket {
 			int id = 0;
 			int metadata = 0;
 			world.setBlock(clickX, clickY, clickZ, FluidManager.blockType.get(type).blockID, metadata, 3);
+			if (stack.stackTagCompound != null) {
+				PotionTileEntity potionTile = (PotionTileEntity) world.getBlockTileEntity(clickX, clickY, clickZ);
+				if (stack.stackTagCompound.hasKey("lengthExisted")) {
+					float test = stack.stackTagCompound.getFloat("lengthExisted");
+					potionTile.setExistance(stack.stackTagCompound.getFloat("lengthExisted"));
+				}
+			}
 			return true;
 		}
 	}
-	
+
 	@Override
-    public void getSubItems(int id, CreativeTabs tab, List list) {
-        for (int i = 0; i < 12; i++)
-            list.add(new ItemStack(id, 1, i));
-    }
+	public void getSubItems(int id, CreativeTabs tab, List list) {
+		for (int i = 0; i < 12; i++)
+			list.add(new ItemStack(id, 1, i));
+	}
 }
