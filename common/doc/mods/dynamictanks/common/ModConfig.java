@@ -22,6 +22,7 @@ public class ModConfig
 		public static int liquidDiamondItem = 16715;
 		public static int softDiamondItem = 16716;
 		public static int bucketPotion = 16717;
+		public static int chalciePotion = 16718;
 	}
 	
 	public static class FluidIDs {

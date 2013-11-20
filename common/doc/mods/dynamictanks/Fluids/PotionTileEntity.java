@@ -2,7 +2,7 @@ package doc.mods.dynamictanks.Fluids;
 
 import java.util.Random;
 
-import doc.mods.dynamictanks.helpers.PotionHelper;
+import doc.mods.dynamictanks.helpers.CPotionHelper;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
@@ -13,8 +13,8 @@ import net.minecraftforge.fluids.BlockFluidBase;
 
 public class PotionTileEntity extends TileEntity {
 
-	private final float ticksPerSec = PotionHelper.ticksPerSec;
-	private final float maxExistance = PotionHelper.maxExistance;
+	private final float ticksPerSec = CPotionHelper.ticksPerSec;
+	private final float maxExistance = CPotionHelper.maxExistance;
 
 	protected float ticksExisted = 0;
 	
@@ -26,7 +26,7 @@ public class PotionTileEntity extends TileEntity {
 	}
 
 	public int getPotency() {
-		return (int) ((ticksExisted / maxExistance) * 100);
+		return (int) (100 - ((ticksExisted / maxExistance) * 100));
 	}
 	
 	public void setExistance(float newExistance) {

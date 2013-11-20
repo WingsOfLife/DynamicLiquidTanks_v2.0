@@ -3,12 +3,16 @@ package doc.mods.dynamictanks.client;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.client.MinecraftForgeClient;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import doc.mods.dynamictanks.client.gui.GuiController;
 import doc.mods.dynamictanks.client.render.DuctRender;
+import doc.mods.dynamictanks.client.render.PotionBucketDamage;
+import doc.mods.dynamictanks.client.render.PotionChaliceDamage;
 import doc.mods.dynamictanks.client.render.RenderTank;
 import doc.mods.dynamictanks.common.CommonProxy;
+import doc.mods.dynamictanks.items.ItemManager;
 import doc.mods.dynamictanks.tileentity.ControllerTileEntity;
 import doc.mods.dynamictanks.tileentity.DuctTileEntity;
 import doc.mods.dynamictanks.tileentity.TankTileEntity;
@@ -29,6 +33,9 @@ public class ClientProxy extends CommonProxy {
 		RenderingRegistry.registerBlockHandler(new DuctRender());
 		
 		ClientRegistry.bindTileEntitySpecialRenderer(DuctTileEntity.class, new DuctRender());
+		
+		MinecraftForgeClient.registerItemRenderer(ItemManager.buckets.itemID, new PotionBucketDamage());
+		MinecraftForgeClient.registerItemRenderer(ItemManager.chalice.itemID, new PotionChaliceDamage());
 	}
 
 	@Override

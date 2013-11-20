@@ -19,14 +19,15 @@ import net.minecraftforge.fluids.Fluid;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import doc.mods.dynamictanks.client.particle.ParticleEffects;
+import doc.mods.dynamictanks.helpers.CPotionHelper;
 import doc.mods.dynamictanks.helpers.PotionEffectHelper;
 import doc.mods.dynamictanks.helpers.StringHelper;
 
 public class FluidPotion extends BlockFluidClassic implements ITileEntityProvider {
 
 	protected int mainMeta = 0;
-	protected int[] existanceMult = { 1, 3, 5, 10, 15, 20, 25, 30, 35, 40 };
-	
+	//protected int[] existanceMult = { 1, 3, 5, 10, 15, 20, 25, 30, 35, 40 };
+
 	public FluidPotion(int id, Fluid fluid, Material material, String name, int metaAssociation) {
 		super(id, fluid, material);
 		setUnlocalizedName("dynamictanks.fluids." + StringHelper.removeSpaces(name));
@@ -69,12 +70,12 @@ public class FluidPotion extends BlockFluidClassic implements ITileEntityProvide
 		TileEntity tile = par1World.getBlockTileEntity(par2, par3, par4);
 		if (par5Entity instanceof EntityPlayer && tile instanceof PotionTileEntity && isSourceBlock(par1World, par2, par3, par4)) {
 			PotionTileEntity potionTile = (PotionTileEntity) tile;
-			
+
 			if (!((EntityPlayer) par5Entity).getActivePotionEffects().isEmpty())
 				return;			
-			
+
 			potionTile.removeRndStability();
-			PotionEffectHelper.applyPotionEffects((EntityPlayer) par5Entity, mainMeta, existanceMult[potionTile.getPotency() > (existanceMult.length - 1) ? 9 : potionTile.getPotency()], false);
+			PotionEffectHelper.applyPotionEffects((EntityPlayer) par5Entity, mainMeta, CPotionHelper.getDuration(potionTile.getPotency()), false);
 		}
 	}
 
@@ -94,7 +95,8 @@ public class FluidPotion extends BlockFluidClassic implements ITileEntityProvide
 
 	@Override
 	public void randomDisplayTick(World par1World, int par2, int par3, int par4, Random par5Random) {
-		ParticleEffects.spawnParticle("coloredSwirl", (double)((float)par2 + par5Random.nextFloat()), (double)((float)par3 + par5Random.nextFloat()), (double)((float)par4 + par5Random.nextFloat()), 0.0D, 0.0D, 0.0D);
+		for (int i = 0; i < 21; i++) 
+			ParticleEffects.spawnParticle("coloredSwirl", (double)((float)par2 + par5Random.nextFloat()), (double)((float)par3 + par5Random.nextFloat()), (double)((float)par4 + par5Random.nextFloat()), 0.0D, 0.0D, 0.0D);
 	}
 
 	/*

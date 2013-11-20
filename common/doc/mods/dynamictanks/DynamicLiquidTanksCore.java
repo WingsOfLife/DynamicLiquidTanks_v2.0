@@ -2,15 +2,14 @@ package doc.mods.dynamictanks;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeSubscribe;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -18,11 +17,11 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import doc.mods.dynamictanks.Fluids.FluidManager;
 import doc.mods.dynamictanks.biome.BiomeManager;
-import doc.mods.dynamictanks.biome.GenerateFluidPuddles;
 import doc.mods.dynamictanks.block.BlockManager;
 import doc.mods.dynamictanks.common.CommonProxy;
 import doc.mods.dynamictanks.common.CraftingHandler;
 import doc.mods.dynamictanks.common.ModConfig;
+import doc.mods.dynamictanks.common.TextureHandler;
 import doc.mods.dynamictanks.items.ItemManager;
 import doc.mods.dynamictanks.packets.PacketHandler;
 
@@ -101,10 +100,9 @@ public class DynamicLiquidTanksCore
 		NetworkRegistry.instance().registerGuiHandler(this, proxy);
 		FluidManager.registerBuckets();
 	}
-
-	@ForgeSubscribe
-	public void postStitch(TextureStitchEvent.Post event) {
-		FluidManager.potionFluid.setIcons(FluidManager.potionBlock.getBlockTextureFromSide(0), FluidManager.potionBlock.getBlockTextureFromSide(1));
-		FluidManager.regenFluid.setIcons(FluidManager.regenBlock.getBlockTextureFromSide(0), FluidManager.regenBlock.getBlockTextureFromSide(1));
+	
+	@EventHandler
+	public void postInit(FMLPostInitializationEvent event) {
+		MinecraftForge.EVENT_BUS.register(new TextureHandler());
 	}
 }
