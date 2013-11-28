@@ -39,5 +39,6 @@ public class ModConfig
 		public static int harming = 3209;
 		public static int water = 3210;
 		public static int invis = 3211;
+		public static int clense = 3212;
 	}
 }

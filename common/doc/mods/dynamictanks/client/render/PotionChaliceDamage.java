@@ -54,6 +54,16 @@ public class PotionChaliceDamage implements IItemRenderer {
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 		Tessellator tessellator = Tessellator.instance;
+		// ====================== Black Bar ==========================
+		tessellator.startDrawing(GL11.GL_QUADS);
+		tessellator.setColorRGBA(0, 0, 0, 192);
+		tessellator.addVertex(1, 1, 0);
+		tessellator.addVertex(1, 15, 0);
+		tessellator.addVertex(2, 15, 0);
+		tessellator.addVertex(2, 1, 0);
+		tessellator.draw();
+		
+		// ====================== Damage Bar ==========================
 		tessellator.startDrawing(GL11.GL_QUADS);
 		tessellator.setColorRGBA(whatColor(actualPercent)[0], whatColor(actualPercent)[1], 
 				whatColor(actualPercent)[2], 256);

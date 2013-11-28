@@ -16,7 +16,6 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import doc.mods.dynamictanks.common.BucketHandler;
 import doc.mods.dynamictanks.common.ModConfig;
-import doc.mods.dynamictanks.helpers.PotionDamage;
 import doc.mods.dynamictanks.helpers.CPotionHelper;
 import doc.mods.dynamictanks.items.ItemManager;
 
@@ -24,6 +23,7 @@ public class FluidManager {
 
 	public static ArrayList<Block> blockType = new ArrayList<Block>();
 
+	public static Block clenseBlock = null;
 	public static Block potionBlock = null;
 	public static FluidPotion regenBlock = null;
 	public static FluidPotion swiftBlock = null;
@@ -38,6 +38,7 @@ public class FluidManager {
 	public static FluidPotion waterBlock = null;
 	public static FluidPotion invisBlock = null;
 
+	public static Fluid clenseFluid = null;
 	public static Fluid potionFluid = null;
 	public static Fluid regenFluid = null;
 	public static Fluid swiftFluid = null;
@@ -53,7 +54,7 @@ public class FluidManager {
 	public static Fluid invisFluid = null;
 
 	public static void registerFluids() {
-
+		
 		potionFluid = new Fluid("potion").setBlockID(ModConfig.FluidIDs.potion).setViscosity(3500).setLuminosity(7);
 		FluidRegistry.registerFluid(potionFluid);
 		potionBlock = new FluidPotion(ModConfig.FluidIDs.potion, potionFluid, Material.water, 
@@ -180,80 +181,18 @@ public class FluidManager {
 		FluidContainerRegistry.registerFluidContainer(new FluidContainerData(new FluidStack(invisFluid, 1000),
 				new ItemStack(ItemManager.buckets, 1, 11), new ItemStack(Item.bucketEmpty)));
 		blockType.add(invisBlock);
+		
+		clenseFluid = new Fluid("clensingWater").setBlockID(ModConfig.FluidIDs.clense).setViscosity(2500);
+		FluidRegistry.registerFluid(clenseFluid);
+		clenseBlock = new FluidClensing(ModConfig.FluidIDs.clense, clenseFluid, Material.water);
+		GameRegistry.registerBlock(clenseBlock, "dynamictanks.fluids.clensingWater");
+		LanguageRegistry.addName(clenseBlock, "Mystic Water");
+		FluidContainerRegistry.registerFluidContainer(new FluidContainerData(new FluidStack(clenseFluid, 1000),
+				new ItemStack(ItemManager.buckets, 1, 12), new ItemStack(Item.bucketEmpty)));
+		blockType.add(clenseBlock);
 	}
 
-	public static void registerCraftingRecipes() {
-		/*GameRegistry.addShapedRecipe(new ItemStack(ItemManager.buckets, 1, 0), new Object[] {
-			"PP ", "W  ", "   ",
-			'P', new ItemStack(Item.potion, 1, PotionIdHelper.potions[0]),
-			'W', Item.bucketWater
-		});
-		
-		GameRegistry.addShapedRecipe(new ItemStack(ItemManager.buckets, 1, 1), new Object[] {
-			"PP ", "W  ", "   ",
-			'P', new ItemStack(Item.potion, 1, PotionIdHelper.potions[1]),
-			'W', Item.bucketWater
-		});
-		
-		GameRegistry.addShapedRecipe(new ItemStack(ItemManager.buckets, 1, 2), new Object[] {
-			"PP ", "W  ", "   ",
-			'P', new ItemStack(Item.potion, 1, PotionIdHelper.potions[2]),
-			'W', Item.bucketWater
-		});
-		
-		GameRegistry.addShapedRecipe(new ItemStack(ItemManager.buckets, 1, 3), new Object[] {
-			"PP ", "W  ", "   ",
-			'P', new ItemStack(Item.potion, 1, PotionIdHelper.potions[3]),
-			'W', Item.bucketWater
-		});
-		
-		GameRegistry.addShapedRecipe(new ItemStack(ItemManager.buckets, 1, 4), new Object[] {
-			"PP ", "W  ", "   ",
-			'P', new ItemStack(Item.potion, 1, PotionIdHelper.potions[4]),
-			'W', Item.bucketWater
-		});
-		
-		GameRegistry.addShapedRecipe(new ItemStack(ItemManager.buckets, 1, 5), new Object[] {
-			"PP ", "W  ", "   ",
-			'P', new ItemStack(Item.potion, 1, PotionIdHelper.potions[5]),
-			'W', Item.bucketWater
-		});
-		
-		GameRegistry.addShapedRecipe(new ItemStack(ItemManager.buckets, 1, 6), new Object[] {
-			"PP ", "W  ", "   ",
-			'P', new ItemStack(Item.potion, 1, PotionIdHelper.potions[6]),
-			'W', Item.bucketWater
-		});
-		
-		GameRegistry.addShapedRecipe(new ItemStack(ItemManager.buckets, 1, 7), new Object[] {
-			"PP ", "W  ", "   ",
-			'P', new ItemStack(Item.potion, 1, PotionIdHelper.potions[7]),
-			'W', Item.bucketWater
-		});
-		
-		GameRegistry.addShapedRecipe(new ItemStack(ItemManager.buckets, 1, 8), new Object[] {
-			"PP ", "W  ", "   ",
-			'P', new ItemStack(Item.potion, 1, PotionIdHelper.potions[8]),
-			'W', Item.bucketWater
-		});
-		
-		GameRegistry.addShapedRecipe(new ItemStack(ItemManager.buckets, 1, 9), new Object[] {
-			"PP ", "W  ", "   ",
-			'P', new ItemStack(Item.potion, 1, PotionIdHelper.potions[9]),
-			'W', Item.bucketWater
-		});
-		
-		GameRegistry.addShapedRecipe(new ItemStack(ItemManager.buckets, 1, 10), new Object[] {
-			"PP ", "W  ", "   ",
-			'P', new ItemStack(Item.potion, 1, PotionIdHelper.potions[10]),
-			'W', Item.bucketWater
-		});
-		
-		GameRegistry.addShapedRecipe(new ItemStack(ItemManager.buckets, 1, 11), new Object[] {
-			"PP ", "W  ", "   ",
-			'P', new ItemStack(Item.potion, 1, PotionIdHelper.potions[11]),
-			'W', Item.bucketWater
-		});*/		
+	public static void registerCraftingRecipes() {	
 	}
 
 	public static void registerBuckets() {
@@ -269,6 +208,7 @@ public class FluidManager {
 		BucketHandler.INSTANCE.buckets.put(harmingBlock, new ItemStack(ItemManager.buckets, 1, 9));
 		BucketHandler.INSTANCE.buckets.put(waterBlock, new ItemStack(ItemManager.buckets, 1, 10));
 		BucketHandler.INSTANCE.buckets.put(invisBlock, new ItemStack(ItemManager.buckets, 1, 11));
+		BucketHandler.INSTANCE.buckets.put(clenseBlock, new ItemStack(ItemManager.buckets, 1, 12));
 		
 		BucketHandler.INSTANCE.chalice.put(regenBlock, new ItemStack(ItemManager.chalice, 1, 1));
 		BucketHandler.INSTANCE.chalice.put(swiftBlock, new ItemStack(ItemManager.chalice, 1, 2));
@@ -282,6 +222,7 @@ public class FluidManager {
 		BucketHandler.INSTANCE.chalice.put(harmingBlock, new ItemStack(ItemManager.chalice, 1, 10));
 		BucketHandler.INSTANCE.chalice.put(waterBlock, new ItemStack(ItemManager.chalice, 1, 11));
 		BucketHandler.INSTANCE.chalice.put(invisBlock, new ItemStack(ItemManager.chalice, 1, 12));
+		BucketHandler.INSTANCE.chalice.put(clenseBlock, new ItemStack(ItemManager.chalice, 1, 13));
 
 		MinecraftForge.EVENT_BUS.register(BucketHandler.INSTANCE);
 	}

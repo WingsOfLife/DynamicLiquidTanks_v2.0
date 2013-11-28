@@ -50,6 +50,7 @@ public class ItemManager {
 		LanguageRegistry.addName(new ItemStack(buckets, 1, 9), "Bucket of " + BucketPotion.names[9]);
 		LanguageRegistry.addName(new ItemStack(buckets, 1, 10), "Bucket of " + BucketPotion.names[10]);
 		LanguageRegistry.addName(new ItemStack(buckets, 1, 11), "Bucket of " + BucketPotion.names[11]);
+		LanguageRegistry.addName(new ItemStack(buckets, 1, 12), "Bucket of " + BucketPotion.names[12]);
 
 		// ================================ Chalice ========================== //
 		LanguageRegistry.addName(new ItemStack(chalice, 1, 0), "Chalice");
@@ -65,6 +66,7 @@ public class ItemManager {
 		LanguageRegistry.addName(new ItemStack(chalice, 1, 10), "Chalice of " + ChalicePotion.names[10]);
 		LanguageRegistry.addName(new ItemStack(chalice, 1, 11), "Chalice of " + ChalicePotion.names[11]);
 		LanguageRegistry.addName(new ItemStack(chalice, 1, 12), "Chalice of " + ChalicePotion.names[12]);
+		LanguageRegistry.addName(new ItemStack(chalice, 1, 13), "Chalice of " + ChalicePotion.names[13]);
 	}
 
 	public static void registerRecipes() {

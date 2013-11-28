@@ -14,6 +14,7 @@ import net.minecraft.util.Icon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import doc.mods.dynamictanks.DynamicLiquidTanksCore;
+import doc.mods.dynamictanks.Fluids.ClensingTileEntity;
 import doc.mods.dynamictanks.Fluids.FluidManager;
 import doc.mods.dynamictanks.Fluids.PotionTileEntity;
 import doc.mods.dynamictanks.helpers.CPotionHelper;
@@ -24,12 +25,13 @@ public class BucketPotion extends ItemBucket {
 		"Regeneration", "Swiftness", "Fire Resistance",
 		"Poison", "Instant Health", "Night Vision",
 		"Weakness", "Strength", "Slowness",
-		"Harming", "Water Breathing", "Invisibility"
+		"Harming", "Water Breathing", "Invisibility", "Cleansing"
 	};
 
 	private final float ticksPerSec = CPotionHelper.ticksPerSec;
 	private final float maxExistance = CPotionHelper.maxExistance;
-
+	private Icon cleansing;
+	
 	public BucketPotion(int itemID) {
 		super(itemID, 0);
 		setContainerItem(Item.bucketEmpty);
@@ -54,26 +56,30 @@ public class BucketPotion extends ItemBucket {
 	@Override
 	public void registerIcons(IconRegister register) {
 		itemIcon = register.registerIcon("dynamictanks:potionBucket");
+		cleansing = register.registerIcon("dynamictanks:cleansingBucket");
 	}
 
 	@Override
 	public Icon getIconFromDamage(int i) {
+		if (i == 12)
+			return cleansing;
 		return itemIcon;
 	}	
 
 	@Override
 	public void onUpdate(ItemStack par1ItemStack, World par2World, Entity par3Entity, int par4, boolean par5) {
 		float ticksExisted = 0;
-
-		if ((100 - (int) ((par1ItemStack.stackTagCompound.getFloat("lengthExisted") / maxExistance) * 10)) <= -100)
-			return;
 		
+		if (par1ItemStack.stackTagCompound != null && par1ItemStack.stackTagCompound.hasKey("lengthExisted"))
+			if ((100 - (int) ((par1ItemStack.stackTagCompound.getFloat("lengthExisted") / maxExistance) * 10)) <= -100)
+				return;
+
 		if(par1ItemStack.stackTagCompound == null) {
 			par1ItemStack.setTagCompound(new NBTTagCompound());
 			par1ItemStack.stackTagCompound.setFloat("lengthExisted", 0);
-			ticksExisted = 0;			
+			ticksExisted = 0;
 		} 
-		
+
 		if (par1ItemStack.stackTagCompound.hasKey("lengthExisted")) {
 			ticksExisted = par1ItemStack.stackTagCompound.getFloat("lengthExisted");
 			ticksExisted++;
@@ -128,12 +134,15 @@ public class BucketPotion extends ItemBucket {
 			int id = 0;
 			int metadata = 0;
 			world.setBlock(clickX, clickY, clickZ, FluidManager.blockType.get(type).blockID, metadata, 3);
-			if (stack.stackTagCompound != null) {
+			if (stack.stackTagCompound != null && world.getBlockTileEntity(clickX, clickY, clickZ) instanceof PotionTileEntity) {
 				PotionTileEntity potionTile = (PotionTileEntity) world.getBlockTileEntity(clickX, clickY, clickZ);
-				if (stack.stackTagCompound.hasKey("lengthExisted")) {
-					float test = stack.stackTagCompound.getFloat("lengthExisted");
+				if (stack.stackTagCompound.hasKey("lengthExisted"))
 					potionTile.setExistance(stack.stackTagCompound.getFloat("lengthExisted"));
-				}
+			}
+			if (stack.stackTagCompound != null && world.getBlockTileEntity(clickX, clickY, clickZ) instanceof ClensingTileEntity) {
+				ClensingTileEntity clenseTile = (ClensingTileEntity) world.getBlockTileEntity(clickX, clickY, clickZ);
+				if (stack.stackTagCompound.hasKey("damageHealed"))
+					clenseTile.setHealed(stack.stackTagCompound.getFloat("damageHealed"));
 			}
 			return true;
 		}

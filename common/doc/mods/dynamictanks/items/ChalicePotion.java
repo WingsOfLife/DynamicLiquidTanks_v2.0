@@ -17,6 +17,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.Event;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import doc.mods.dynamictanks.DynamicLiquidTanksCore;
+import doc.mods.dynamictanks.Fluids.ClensingTileEntity;
 import doc.mods.dynamictanks.Fluids.FluidManager;
 import doc.mods.dynamictanks.Fluids.PotionTileEntity;
 import doc.mods.dynamictanks.common.BucketHandler;
@@ -28,7 +29,8 @@ public class ChalicePotion extends ItemBucket {
 		"Empty", "Regeneration", "Swiftness", "Fire Resistance",
 		"Poison", "Instant Health", "Night Vision",
 		"Weakness", "Strength", "Slowness",
-		"Harming", "Water Breathing", "Invisibility"
+		"Harming", "Water Breathing", "Invisibility",
+		"Cleansing"
 	};
 
 	private final float ticksPerSec = CPotionHelper.ticksPerSec;
@@ -46,6 +48,14 @@ public class ChalicePotion extends ItemBucket {
 
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean bool) {
+		if (stack.getItemDamage() == 13 || stack.getItemDamage() == 0) {
+			if(stack.stackTagCompound == null)
+				stack.setTagCompound(new NBTTagCompound());
+
+			list.add("Damage: " + ((int) ((stack.stackTagCompound.getFloat("damage") / maxExistance) * 100)) + "%");
+			return;
+		}
+
 		if(stack.stackTagCompound == null)
 			stack.setTagCompound(new NBTTagCompound());
 
@@ -74,42 +84,54 @@ public class ChalicePotion extends ItemBucket {
 	public void onUpdate(ItemStack par1ItemStack, World par2World, Entity par3Entity, int par4, boolean par5) {
 		float ticksExisted = 0;
 		float chaliceDamage = 0;
+		float damageHealed = 0;
 		
-		if (par1ItemStack.stackTagCompound != null)
-			if ((100 - (int) ((par1ItemStack.stackTagCompound.getFloat("lengthExisted") / maxExistance) * 10)) >= 100)
-				return;
-		
-		if (par1ItemStack.stackTagCompound != null)
-			if (par1ItemStack.stackTagCompound.getFloat("damage") >= maxExistance)
-				return;
-
 		if(par1ItemStack.stackTagCompound == null) {			
 			par1ItemStack.setTagCompound(new NBTTagCompound());
 			par1ItemStack.stackTagCompound.setFloat("lengthExisted", 0);
 			par1ItemStack.stackTagCompound.setFloat("damage", 0);
 			ticksExisted = 0;	
 			chaliceDamage = 0;
+			if (par1ItemStack.getItemDamage() == 13) {
+				par1ItemStack.stackTagCompound.setFloat("damageHealed", 0);
+				damageHealed = 0;
+			}
 		} 
 
 		if (par1ItemStack.stackTagCompound.hasKey("lengthExisted")) {
-			ticksExisted = par1ItemStack.stackTagCompound.getFloat("lengthExisted");
-			ticksExisted--;
+			if (par1ItemStack.stackTagCompound.getFloat("damage") < maxExistance && ((100 - (int) ((par1ItemStack.stackTagCompound.getFloat("lengthExisted") / maxExistance) * 100)) >= 100)) {
+				ticksExisted = par1ItemStack.stackTagCompound.getFloat("lengthExisted");
+				ticksExisted--;
+			}
 		}
-		
+
 		if (par1ItemStack.stackTagCompound.hasKey("damage")) {
 			chaliceDamage = par1ItemStack.stackTagCompound.getFloat("damage");
-			chaliceDamage = chaliceDamage + 4;
+			if (par1ItemStack.getItemDamage() == 13) {
+				if (chaliceDamage > 0 && damageHealed <= ClensingTileEntity.maxHealing) {
+					chaliceDamage--;
+					damageHealed++;
+				}
+			} else
+				chaliceDamage = chaliceDamage + 4;
 		}
 
-
+		if (damageHealed >= ClensingTileEntity.maxHealing) {
+			par1ItemStack = new ItemStack(ItemManager.chalice, 1, 0);
+			par1ItemStack.setTagCompound(new NBTTagCompound());
+		}
+		
 		par1ItemStack.stackTagCompound.setFloat("lengthExisted", ticksExisted);
 		par1ItemStack.stackTagCompound.setFloat("damage", chaliceDamage);
+		par1ItemStack.stackTagCompound.setFloat("damageHealed", damageHealed);
 	}
 
 	@Override
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
 		MovingObjectPosition position = this.getMovingObjectPositionFromPlayer(world, player, true);
-
+		float damage = 0;
+		if (stack.stackTagCompound != null && stack.stackTagCompound.hasKey("damage"))
+			damage = stack.stackTagCompound.getFloat("damage");
 		if (stack.getItemDamage() == 0) {
 			if (position == null) {
 				return stack;
@@ -125,12 +147,15 @@ public class ChalicePotion extends ItemBucket {
 				}
 				if (event.getResult() == Event.Result.ALLOW && event.result != null) {
 					TileEntity potionTile = world.getBlockTileEntity(event.target.blockX, event.target.blockY, event.target.blockZ);
-					if (potionTile instanceof PotionTileEntity) {
-						if (event.result.stackTagCompound == null) {
-							event.result.setTagCompound(new NBTTagCompound());
-						}
+
+					if (event.result.stackTagCompound == null)
+						event.result.setTagCompound(new NBTTagCompound());
+					if (potionTile instanceof PotionTileEntity)
 						event.result.stackTagCompound.setFloat("lengthExisted", ((PotionTileEntity) potionTile).getExistance());
-					}
+					if (potionTile instanceof ClensingTileEntity)
+						event.result.stackTagCompound.setFloat("damageHealed", ((ClensingTileEntity) potionTile).getHealed());
+					event.result.stackTagCompound.setFloat("damage", damage);
+
 					world.setBlock(event.target.blockX, event.target.blockY, event.target.blockZ, 0);
 					if (player.capabilities.isCreativeMode) {
 						return stack;
@@ -178,8 +203,12 @@ public class ChalicePotion extends ItemBucket {
 		if (!player.canPlayerEdit(clickX, clickY, clickZ, position.sideHit, stack))
 			return stack;        
 
-		if (tryPlaceContainedLiquid(world, stack, clickX, clickY, clickZ, (stack.getItemDamage() - 1)) && !player.capabilities.isCreativeMode)
-			return new ItemStack(ItemManager.chalice);
+		if (tryPlaceContainedLiquid(world, stack, clickX, clickY, clickZ, (stack.getItemDamage() - 1)) && !player.capabilities.isCreativeMode) {
+			ItemStack emptyChalice = new ItemStack(ItemManager.chalice);
+			emptyChalice.setTagCompound(new NBTTagCompound());
+			emptyChalice.stackTagCompound.setFloat("damage", damage);
+			return emptyChalice;
+		}
 		return stack;
 	}
 
@@ -191,11 +220,16 @@ public class ChalicePotion extends ItemBucket {
 			int id = 0;
 			int metadata = 0;
 			world.setBlock(clickX, clickY, clickZ, FluidManager.blockType.get(type).blockID, metadata, 3);
-			if (stack.stackTagCompound != null) {
+			if (stack.stackTagCompound != null && world.getBlockTileEntity(clickX, clickY, clickZ) instanceof PotionTileEntity) {
 				PotionTileEntity potionTile = (PotionTileEntity) world.getBlockTileEntity(clickX, clickY, clickZ);
 				if (stack.stackTagCompound.hasKey("lengthExisted")) {
-					float test = stack.stackTagCompound.getFloat("lengthExisted");
 					potionTile.setExistance(stack.stackTagCompound.getFloat("lengthExisted"));
+				}
+			}
+			if (stack.stackTagCompound != null && world.getBlockTileEntity(clickX, clickY, clickZ) instanceof ClensingTileEntity) {
+				ClensingTileEntity potionTile = (ClensingTileEntity) world.getBlockTileEntity(clickX, clickY, clickZ);
+				if (stack.stackTagCompound.hasKey("damageHealed")) {
+					potionTile.setHealed(stack.stackTagCompound.getFloat("damageHealed"));
 				}
 			}
 			return true;
@@ -207,15 +241,4 @@ public class ChalicePotion extends ItemBucket {
 		for (int i = 0; i < 13; i++)
 			list.add(new ItemStack(id, 1, i));
 	}
-
-	/*@Override
-	public boolean hasContainerItem()
-	{
-		return true;
-	}
-
-	@Override
-	public ItemStack getContainerItemStack(ItemStack itemstack) {
-		return new ItemStack(ItemManager.chalice, 1, 0);
-	}*/	
 }

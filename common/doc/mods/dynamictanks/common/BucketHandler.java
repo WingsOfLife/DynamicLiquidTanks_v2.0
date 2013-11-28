@@ -13,6 +13,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
+import doc.mods.dynamictanks.Fluids.ClensingTileEntity;
 import doc.mods.dynamictanks.Fluids.PotionTileEntity;
 import doc.mods.dynamictanks.items.ItemManager;
 
@@ -52,8 +53,13 @@ public class BucketHandler {
 				if (bucket.stackTagCompound == null) {
 					bucket.setTagCompound(new NBTTagCompound());
 				}
-				float test = ((PotionTileEntity) potionTile).getExistance();
 				bucket.stackTagCompound.setFloat("lengthExisted", ((PotionTileEntity) potionTile).getExistance());
+			}
+			if (potionTile instanceof ClensingTileEntity) {
+				if (bucket.stackTagCompound == null) {
+					bucket.setTagCompound(new NBTTagCompound());
+				}
+				bucket.stackTagCompound.setFloat("damageHealed", ((ClensingTileEntity) potionTile).getHealed());
 			}
 			return bucket;
 		} else

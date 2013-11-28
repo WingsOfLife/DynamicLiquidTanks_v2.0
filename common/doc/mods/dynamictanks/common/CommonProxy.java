@@ -5,6 +5,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
+import doc.mods.dynamictanks.Fluids.ClensingTileEntity;
 import doc.mods.dynamictanks.Fluids.PotionTileEntity;
 import doc.mods.dynamictanks.client.gui.ContainerController;
 import doc.mods.dynamictanks.client.gui.GuiController;
@@ -24,6 +25,7 @@ public class CommonProxy implements IGuiHandler {
 		GameRegistry.registerTileEntity(UpgradeTileEntity.class, "dynamictanks.tile.upgradeTile");
 		GameRegistry.registerTileEntity(DuctTileEntity.class, "dynamictanks.tile.ductTile");
 		GameRegistry.registerTileEntity(PotionTileEntity.class, "dynamictanks.tile.potionTile");
+		GameRegistry.registerTileEntity(ClensingTileEntity.class, "dynamictanks.tile.cleansingTile");
 	}
 
 	@Override
