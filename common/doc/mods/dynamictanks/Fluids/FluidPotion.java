@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionHelper;
 import net.minecraft.tileentity.TileEntity;
@@ -70,7 +71,7 @@ public class FluidPotion extends BlockFluidClassic implements ITileEntityProvide
 	}
 
 	@Override
-	public void onEntityCollidedWithBlock(World par1World, int par2, int par3, int par4, Entity par5Entity) {
+	public void onEntityCollidedWithBlock(World par1World, int par2, int par3, int par4, Entity par5Entity) {		
 		TileEntity tile = par1World.getBlockTileEntity(par2, par3, par4);
 		if (par5Entity instanceof EntityPlayer && tile instanceof PotionTileEntity && isSourceBlock(par1World, par2, par3, par4)) {
 			PotionTileEntity potionTile = (PotionTileEntity) tile;
