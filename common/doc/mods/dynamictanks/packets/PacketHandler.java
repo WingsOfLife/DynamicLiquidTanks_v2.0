@@ -17,6 +17,7 @@ import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 import doc.mods.dynamictanks.helpers.ItemHelper;
 import doc.mods.dynamictanks.tileentity.ControllerTileEntity;
+import doc.mods.dynamictanks.tileentity.TankTileEntity;
 import doc.mods.dynamictanks.tileentity.UpgradeTileEntity;
 
 public class PacketHandler implements IPacketHandler {
@@ -28,6 +29,7 @@ public class PacketHandler implements IPacketHandler {
 		public static final int camoMeta = 3;
 		public static final int extractIndex = 4;
 		public static final int dyeColorSet = 5;
+		public static final int syncNeighbors = 6;
 	}
 
 	@Override
@@ -79,11 +81,15 @@ public class PacketHandler implements IPacketHandler {
 			((ControllerTileEntity) tileAtLoc).setLiquidIndex((int) value);
 		else if (id == PacketHandler.PacketIDs.dyeColorSet)
 			((ControllerTileEntity) tileAtLoc).setDyeColor((int) value);
+		else if (id == PacketHandler.PacketIDs.syncNeighbors) {
+			ControllerTileEntity controllerTE = (ControllerTileEntity) world.getBlockTileEntity((int) value,(int) itemID,(int) meta);
+			controllerTE.addNeighbor(new int[] { (int) xAdd, (int) yAdd, (int) zAdd });
+		}
 		
 		world.markBlockForUpdate(x, y, z);
 		world.markBlockForRenderUpdate(x, y, z);
 	}
-
+	
 	public static void sendPacketWithInt(int id, float value, float itemID, float meta, double xAdd, double yAdd, double zAdd, int x, int y, int z) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(16);
 		DataOutputStream outputStream = new DataOutputStream(bos);

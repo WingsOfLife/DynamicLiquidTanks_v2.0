@@ -97,6 +97,12 @@ public class ItemManager {
 			'L', new ItemStack(liquidDiamond, 1, Short.MAX_VALUE)
 		});
 
+		GameRegistry.addShapedRecipe(new ItemStack(chalice, 1), new Object[] {
+			"ICI", " I ", "III",
+			'I', Item.ingotGold,
+			'C', new ItemStack(buckets, 1, 12)
+		});
+		
 		GameRegistry.addShapelessRecipe(new ItemStack(softDiamond), 
 				new ItemStack(hammerItem, 1, 0), Item.diamond
 				);	

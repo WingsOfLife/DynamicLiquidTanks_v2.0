@@ -3,6 +3,7 @@ package doc.mods.dynamictanks.Fluids;
 import java.util.Random;
 
 import doc.mods.dynamictanks.helpers.CPotionHelper;
+import doc.mods.dynamictanks.potionrecipe.PotionInverse;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
@@ -46,10 +47,9 @@ public class PotionTileEntity extends TileEntity {
 		ticksExisted++;
 
 		if (ticksExisted >= maxExistance) {
-			worldObj.setBlock(xCoord, yCoord, zCoord, Block.waterStill.blockID);
+			int blockId = worldObj.getBlockId(xCoord, yCoord, zCoord);
+			worldObj.setBlock(xCoord, yCoord, zCoord, PotionInverse.getInverse(blockId));
 			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-			/*BlockFluidBase myBlock = (BlockFluidBase) Block.blocksList[worldObj.getBlockId(xCoord, yCoord, zCoord)];
-			myBlock.drain(worldObj, xCoord, yCoord, zCoord, true);*/
 		}
 	}
 

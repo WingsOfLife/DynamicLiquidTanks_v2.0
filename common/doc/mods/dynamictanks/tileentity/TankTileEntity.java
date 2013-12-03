@@ -12,6 +12,7 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import doc.mods.dynamictanks.block.BlockManager;
 import doc.mods.dynamictanks.client.render.RendererHelper;
+import doc.mods.dynamictanks.packets.PacketHandler;
 
 public class TankTileEntity extends CountableTileEntity implements IFluidHandler {
 
@@ -117,6 +118,8 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
 			if (BlockID == BlockManager.BlockTankController.blockID) {
 				controllerTE = (ControllerTileEntity) worldObj.getBlockTileEntity(loc[0], loc[1], loc[2]);				
 				controllerTE.addNeighbor(new int[] { currentX, currentY, currentZ });
+				if (worldObj.isRemote)
+					PacketHandler.sendPacketWithInt(PacketHandler.PacketIDs.syncNeighbors, loc[0], loc[1], loc[2], currentX, currentY, currentZ, xCoord, yCoord, zCoord);
 				setControllerPos(loc);
 				return true;
 			} else if (BlockID == BlockManager.BlockTank.blockID && !hasController()) {
@@ -124,6 +127,8 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
 				if (tankTE.hasController()) {
 					controllerTE = (ControllerTileEntity) worldObj.getBlockTileEntity(tankTE.getControllerCoords()[0], tankTE.getControllerCoords()[1], tankTE.getControllerCoords()[2]);
 					if (controllerTE != null) {
+						if (worldObj.isRemote)
+							PacketHandler.sendPacketWithInt(PacketHandler.PacketIDs.syncNeighbors, tankTE.getControllerCoords()[0], tankTE.getControllerCoords()[1], tankTE.getControllerCoords()[2], currentX, currentY, currentZ, xCoord, yCoord, zCoord);
 						setControllerPos(tankTE.ControllerCoords);
 						controllerTE.addNeighbor(new int[] { currentX, currentY, currentZ });
 						return true;
@@ -142,18 +147,17 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
 	 * TileEntity Methods
 	 */
 	@Override
-	public void updateEntity() {		
+	public void updateEntity() {	
 		if (worldObj.isRemote) { // client side
 			doCount();
 
 			if (countMet()) { // perform events every maxTickCount
-				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-				/*if (!hasController()) { //check if already has controller
+				if (!hasController()) { //check if already has controller
 					searchForController();
-				}*/
+				}
 			}
 		}
-
+		
 		if (!worldObj.isRemote) { // server side
 			doCount();
 

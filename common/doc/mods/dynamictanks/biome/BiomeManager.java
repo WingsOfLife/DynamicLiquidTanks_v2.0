@@ -14,7 +14,7 @@ public class BiomeManager {
 		GameRegistry.registerWorldGenerator(new TreeGenerator());
 		
 		GameRegistry.addBiome(potionBiome);
-		BiomeDictionary.registerBiomeType(potionBiome, BiomeDictionary.Type.MAGICAL, BiomeDictionary.Type.WASTELAND);
+		BiomeDictionary.registerBiomeType(potionBiome, BiomeDictionary.Type.MAGICAL);
 	}
 	
 }

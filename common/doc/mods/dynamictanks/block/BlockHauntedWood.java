@@ -13,9 +13,8 @@ import doc.mods.dynamictanks.DynamicLiquidTanksCore;
 
 public class BlockHauntedWood extends Block {
 
-	@SideOnly(Side.CLIENT)
+
 	Icon[] sideIcons = new Icon[3];
-	@SideOnly(Side.CLIENT)
 	Icon topIcon;
 	
 	public BlockHauntedWood(int par1) {

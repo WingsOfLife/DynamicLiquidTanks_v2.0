@@ -16,11 +16,11 @@ public class PotionBucketDamage implements IItemRenderer {
 	private static RenderItem renderItem = new RenderItem();
 
 	float actualPercent = 100;
-	
+
 	int[] cRed = { 56, 248, 217 };
 	int[] cGreen = { 212, 255, 0};
 	int[] cBlue = { 0, 59, 0 };
-	
+
 	@Override
 	public boolean handleRenderType(ItemStack itemStack, ItemRenderType type) {
 		return type == ItemRenderType.INVENTORY;
@@ -35,7 +35,7 @@ public class PotionBucketDamage implements IItemRenderer {
 	public void renderItem(ItemRenderType type, ItemStack itemStack, Object... data) {
 		FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
 		float percent = 15;
-		
+
 		if (itemStack.stackTagCompound != null && itemStack.stackTagCompound.hasKey("lengthExisted")) {
 			percent = (((itemStack.stackTagCompound.getFloat("lengthExisted") / CPotionHelper.maxExistance) * 15));
 			actualPercent = (100 - ((itemStack.stackTagCompound.getFloat("lengthExisted") / CPotionHelper.maxExistance) * 100));
@@ -52,6 +52,16 @@ public class PotionBucketDamage implements IItemRenderer {
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 		Tessellator tessellator = Tessellator.instance;
+		// ====================== Black Bar ==========================
+		tessellator.startDrawing(GL11.GL_QUADS);
+		tessellator.setColorRGBA(0, 0, 0, 192);
+		tessellator.addVertex(1, 1, 0);
+		tessellator.addVertex(1, 15, 0);
+		tessellator.addVertex(2, 15, 0);
+		tessellator.addVertex(2, 1, 0);
+		tessellator.draw();
+
+		// ====================== Damage Bar ==========================
 		tessellator.startDrawing(GL11.GL_QUADS);
 		tessellator.setColorRGBA(whatColor(actualPercent)[0], whatColor(actualPercent)[1], 
 				whatColor(actualPercent)[2], 256);
@@ -66,7 +76,7 @@ public class PotionBucketDamage implements IItemRenderer {
 
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 	}
-	
+
 	public int[] whatColor(float percent) {
 		if (percent <= 100 && percent >= 70)
 			return new int[] { cRed[0], cGreen[0], cBlue[0] };

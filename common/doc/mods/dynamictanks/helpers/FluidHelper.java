@@ -58,7 +58,7 @@ public class FluidHelper {
 	}
 
 	public static boolean isLiquidPotion(ControllerTileEntity controller, int index) {
-		if (controller != null && controller.getAllLiquids().get(index).getFluid() != null) {
+		if (controller != null && !controller.getAllLiquids().isEmpty() && controller.getAllLiquids().get(index).getFluid() != null) {
 			int currentFluidBlockId = controller.getAllLiquids().get(index).getFluid().getFluid().getBlockID();
 			for (int i = 0; i < FluidManager.blockType.size(); i++)
 				if (FluidManager.blockType.get(i).blockID == currentFluidBlockId)

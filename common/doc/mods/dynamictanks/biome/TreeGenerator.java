@@ -20,6 +20,14 @@ public class TreeGenerator implements IWorldGenerator {
 
 		BiomeGenBase b = world.getBiomeGenForCoords(BlockX, BlockZ); 
 
+		for(int i = 0; i < 1; i++){
+			int Xcoord1 = BlockX + random.nextInt(16);
+			int Ycoord1 = random.nextInt(90);
+			int Zcoord1 = BlockZ + random.nextInt(16);
+
+			(new WorldGenFountainOfYouth()).generate(world, random, Xcoord1, Ycoord1, Zcoord1);
+		}
+		
 		if (!b.biomeName.equals("Haunted Forest"))
 			return;
 

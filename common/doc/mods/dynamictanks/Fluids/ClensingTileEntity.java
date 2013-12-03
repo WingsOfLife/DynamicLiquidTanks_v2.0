@@ -1,11 +1,13 @@
 package doc.mods.dynamictanks.Fluids;
 
+import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
 import doc.mods.dynamictanks.helpers.CPotionHelper;
+import doc.mods.dynamictanks.potionrecipe.PotionInverse;
 
 public class ClensingTileEntity extends TileEntity {
 
@@ -20,6 +22,14 @@ public class ClensingTileEntity extends TileEntity {
 	
 	public void setHealed(float damage) {
 		damageHealed = damage;
+	}
+	
+	@Override
+	public void updateEntity() {
+		if (damageHealed >= maxHealing) {
+			worldObj.setBlock(xCoord, yCoord, zCoord, Block.waterStill.blockID);
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		}			
 	}
 	
 	/*

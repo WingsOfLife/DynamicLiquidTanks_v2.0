@@ -21,7 +21,7 @@ import doc.mods.dynamictanks.api.IStorageUnit;
 import doc.mods.dynamictanks.api.PowerController;
 import doc.mods.dynamictanks.helpers.FluidHelper;
 
-public class ControllerTileEntity extends CountableTileEntity implements IFluidHandler, IPowerEater, IStorageUnit {
+public class ControllerTileEntity extends CountableTileEntity implements IFluidHandler {
 
 	/*
 	 * list vars
@@ -273,12 +273,12 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 	 */
 	@Override
 	public void updateEntity() {		
-		if (worldObj.isRemote) { //client side
+		/*if (worldObj.isRemote) { //client side
 			doCount();
 
 			if (countMet()) 
 				worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
-		}
+		}*/
 		doCount();
 
 		if (countMet()) //perform events every maxTickCount
@@ -316,7 +316,7 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 
 		for (int iter = 0; iter < neighborTag.tagCount(); iter++) {
 			NBTTagCompound nbt = (NBTTagCompound) neighborTag.tagAt(iter);
-			int[] i = nbt.getIntArray("neighbor" + iter);
+			int[] i = nbt.getIntArray("adjacentTanks");
 			neighborLocations.add(i);
 		}
 	}
@@ -345,7 +345,7 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 		NBTTagList neighborsList = new NBTTagList();
 		for (int i = 0; i < neighborLocations.size(); i++) {
 			NBTTagCompound nbt = new NBTTagCompound();
-			nbt.setIntArray("neighbor" + i, neighborLocations.get(i));
+			nbt.setIntArray("adjacentTanks", neighborLocations.get(i));
 			neighborsList.appendTag(nbt);
 		}
 
@@ -440,33 +440,5 @@ public class ControllerTileEntity extends CountableTileEntity implements IFluidH
 	@Override
 	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
 		return new FluidTankInfo[] { new FluidTankInfo(containedLiquids.get(toExtractFromTank).getFluid(), containedLiquids.get(toExtractFromTank).getCapacity()) };
-	}
-
-
-	/*
-	 * @IPowerEater
-	 */
-
-	@Override
-	public int consume() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-
-	/*
-	 * @IStorageUnit
-	 */
-
-	@Override
-	public int fillUnit() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int drainUnit() {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 }

@@ -1,5 +1,7 @@
 package doc.mods.dynamictanks.Fluids;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
@@ -9,6 +11,8 @@ import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.potion.PotionEffect;
+import net.minecraft.potion.PotionHelper;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
@@ -71,8 +75,16 @@ public class FluidPotion extends BlockFluidClassic implements ITileEntityProvide
 		if (par5Entity instanceof EntityPlayer && tile instanceof PotionTileEntity && isSourceBlock(par1World, par2, par3, par4)) {
 			PotionTileEntity potionTile = (PotionTileEntity) tile;
 
-			if (!((EntityPlayer) par5Entity).getActivePotionEffects().isEmpty())
-				return;			
+			List list = PotionHelper.getPotionEffects(mainMeta, false);
+
+			if (list != null) {
+				Iterator iterator = list.iterator();
+
+				while (iterator.hasNext()) {
+					if (((EntityPlayer) par5Entity).isPotionActive(((PotionEffect) iterator.next()).getPotionID()))
+						return;		
+				}
+			}
 
 			potionTile.removeRndStability();
 			PotionEffectHelper.applyPotionEffects((EntityPlayer) par5Entity, mainMeta, CPotionHelper.getDuration(potionTile.getPotency()), false);

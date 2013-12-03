@@ -86,6 +86,9 @@ public class ChalicePotion extends ItemBucket {
 		float chaliceDamage = 0;
 		float damageHealed = 0;
 		
+		if (par1ItemStack.getItemDamage() == 0)
+			return;
+		
 		if(par1ItemStack.stackTagCompound == null) {			
 			par1ItemStack.setTagCompound(new NBTTagCompound());
 			par1ItemStack.stackTagCompound.setFloat("lengthExisted", 0);

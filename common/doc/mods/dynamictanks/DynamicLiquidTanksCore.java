@@ -2,13 +2,19 @@ package doc.mods.dynamictanks;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
+
+import com.google.common.collect.ImmutableList;
+
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
+import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
@@ -16,6 +22,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import doc.mods.dynamictanks.Fluids.FluidManager;
+import doc.mods.dynamictanks.api.PotionRecipe;
 import doc.mods.dynamictanks.biome.BiomeManager;
 import doc.mods.dynamictanks.block.BlockManager;
 import doc.mods.dynamictanks.common.CommonProxy;
@@ -99,10 +106,22 @@ public class DynamicLiquidTanksCore
 
 		NetworkRegistry.instance().registerGuiHandler(this, proxy);
 		FluidManager.registerBuckets();
+		
+		PotionRecipe.addRecipe(PotionRecipe.Types.Healing, PotionRecipe.collisionType.Entity, false, 0, 0);
 	}
 	
 	@EventHandler
-	public void postInit(FMLPostInitializationEvent event) {
-		MinecraftForge.EVENT_BUS.register(new TextureHandler());
+	public void receiveModCommunication(IMCEvent event) {
+		ImmutableList<IMCMessage> messages = event.getMessages();
+		
+		for (IMCMessage currentMessage : messages) {
+			if (currentMessage.key.equals("addInversionRecipe")) {
+				NBTTagCompound received = currentMessage.getNBTValue();
+				
+				System.out.println("New Thing: " + received.getString("Type"));
+				
+			}
+				
+		}
 	}
 }
