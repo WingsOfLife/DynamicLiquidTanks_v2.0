@@ -58,12 +58,22 @@ public class DynamicLiquidTanksCore
 		ModConfig.BlockIDs.blockController = configFile.getBlock("BlockController", ModConfig.BlockIDs.blockController).getInt();
 		ModConfig.BlockIDs.blockTank = configFile.getBlock("BlockTank", ModConfig.BlockIDs.blockTank).getInt();
 		ModConfig.BlockIDs.blockUpgrade = configFile.getBlock("BlockUpgrade", ModConfig.BlockIDs.blockUpgrade).getInt();
+		ModConfig.BlockIDs.blockDuct = configFile.getBlock("BlockDuct", ModConfig.BlockIDs.blockDuct).getInt();
+		//ModConfig.BlockIDs.blockHauntedDirt = configFile.getBlock("BlockMysticDirt", ModConfig.BlockIDs.blockHauntedDirt).getInt();
+		ModConfig.BlockIDs.blockDangerousFlower = configFile.getBlock("BlockDangerousFlower", ModConfig.BlockIDs.blockDangerousFlower).getInt();
+		ModConfig.BlockIDs.blockHauntedSappling = configFile.getBlock("BlockDangerousSappling", ModConfig.BlockIDs.blockHauntedSappling).getInt();
+		ModConfig.BlockIDs.blockHauntedPlanks = configFile.getBlock("BlockMysticPlanks", ModConfig.BlockIDs.blockHauntedPlanks).getInt();
+		ModConfig.BlockIDs.blockHauntedWood = configFile.getBlock("BlockMysticWood", ModConfig.BlockIDs.blockHauntedWood).getInt();
+		ModConfig.BlockIDs.blockHauntedLeaf = configFile.getBlock("BlockMysticLeaf", ModConfig.BlockIDs.blockHauntedLeaf).getInt();
+		
 
 		ModConfig.ItemIDs.hammerItem = configFile.getItem("Hammer", ModConfig.ItemIDs.hammerItem).getInt();
 		ModConfig.ItemIDs.ironPlateItem = configFile.getItem("Iron Mass", ModConfig.ItemIDs.ironPlateItem).getInt();
 		ModConfig.ItemIDs.liquidDiamondItem = configFile.getItem("Softened Diamond Mass", ModConfig.ItemIDs.liquidDiamondItem).getInt();
 		ModConfig.ItemIDs.softDiamondItem = configFile.getItem("Softened Diamond", ModConfig.ItemIDs.softDiamondItem).getInt();
 		ModConfig.ItemIDs.upgradeItems = configFile.getItem("Upgrades", ModConfig.ItemIDs.upgradeItems).getInt();
+		ModConfig.ItemIDs.bucketPotion = configFile.getItem("Buckets", ModConfig.ItemIDs.bucketPotion).getInt();
+		ModConfig.ItemIDs.chalciePotion = configFile.getItem("Chalice", ModConfig.ItemIDs.chalciePotion).getInt();
 
 		ModConfig.FluidIDs.potion = configFile.getBlock("potion", ModConfig.FluidIDs.potion).getInt();
 		ModConfig.FluidIDs.regen = configFile.getBlock("regen", ModConfig.FluidIDs.regen).getInt();

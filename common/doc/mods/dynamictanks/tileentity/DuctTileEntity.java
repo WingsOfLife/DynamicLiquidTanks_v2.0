@@ -15,6 +15,7 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidHandler;
+import doc.mods.dynamictanks.Fluids.FluidManager;
 import doc.mods.dynamictanks.block.BlockManager;
 
 public class DuctTileEntity extends CountableTileEntity {
@@ -45,6 +46,7 @@ public class DuctTileEntity extends CountableTileEntity {
 	public int[] blockInDir = { FALSE, FALSE, FALSE, FALSE, FALSE, FALSE };
 
 	public int[] previousLocation = { -1, -1, -1 };
+	public int[] lastCheck = { -1, -1, -1 };
 
 	public boolean extractor = false;
 
@@ -68,143 +70,106 @@ public class DuctTileEntity extends CountableTileEntity {
 			if (i < blockInDir.length)
 				blockInDir[i] = blockInDirection(VALID_DIRECTIONS[i]);
 
-
-		/*
-		 * Extract Liquid From Inventory
-		 */
-		if (!worldObj.isRemote) {
-			doCount();
-			doCountSec();
-			if (countMet()) {
-				if (findNearTank().size() > 0 && extractor) {
-					int[] randomTank = findNearTank().get(0);
-					if (randomTank.length == 3) {
-						TileEntity tile = worldObj.getBlockTileEntity(randomTank[0], randomTank[1],	randomTank[2]);
-						if (tile instanceof IFluidHandler) {
-							FluidStack tankFluid = ((IFluidHandler) tile).getTankInfo(ForgeDirection.UNKNOWN)[0].fluid;
-							if (tankFluid != null) {
-								int amountInTank = tankFluid.amount;
-								if (tankFluid != null && (movingFluid == null || tankFluid.isFluidEqual(movingFluid))) { 
-									if ((amountInTank - maxExtract) >= 0) {
-										FluidStack fluidMove = new FluidStack(((IFluidHandler) tile).getTankInfo(ForgeDirection.UNKNOWN)[0].fluid.getFluid(), maxExtract);
-										if (fluidMove != null && (movingFluid == null || movingFluid.amount < MAX_AMNT)) {
-											fill(fluidMove, fluidMove.amount, new int[] { -1, -1, -1 });
-											((IFluidHandler) tile).drain(ForgeDirection.UNKNOWN, maxExtract, true);
-										}
-									} else { 
-										FluidStack fluidMove  = new FluidStack(((IFluidHandler) tile).getTankInfo(ForgeDirection.UNKNOWN)[0].fluid.getFluid(), maxExtract + ((amountInTank - maxExtract)));
-										if (fluidMove != null && (movingFluid == null || movingFluid.amount < MAX_AMNT)) {
-											fill(fluidMove, movingFluid.amount, new int[] { -1, -1, -1 });
-											((IFluidHandler) tile).drain(ForgeDirection.UNKNOWN, maxExtract + ((amountInTank - maxExtract)), true);
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
 		/*
 		 * Liquid Pathing
 		 */
-		if (movingFluid == null)
-			return;
 
-		if (numberOfPaths().size() > 0 && countMetSec()) {
+		if (lastCheck[0] == -1)
+			lastCheck[0] = xCoord;
+		if (lastCheck[1] == -1)
+			lastCheck[1] = yCoord;
+		if (lastCheck[2] == -1)
+			lastCheck[2] = zCoord;
+
+		doCountSec();
+		if (countMetSec() && extractor) {
+			extractorSearch();
+			if (numberOfPaths().isEmpty())
+				return;
 			int[] randomPath = numberOfPaths().get(0);
-			if (randomPath.length == 3 && movingFluid != null) {
+			if (randomPath.length == 3) {
 				TileEntity tile = worldObj.getBlockTileEntity(randomPath[0], randomPath[1],	randomPath[2]);
 				if (tile instanceof DuctTileEntity) {
 					DuctTileEntity duct = (DuctTileEntity) tile;
-					if (movingFluid != null && (duct.movingFluid == null || duct.movingFluid.amount < MAX_AMNT)) {
-						duct.fill(movingFluid, movingFluid.amount, pathCheck < 5 ? new int[] { xCoord, yCoord, zCoord } : new int[] { -1, -1, -1 });
-						previousLocation = new int[] { -1, -1, -1 };
-						drain(movingFluid.amount);
-						pathCheck = pathCheck < 5 ? pathCheck + 1 : 0;
-					}
+					lastCheck[0] = duct.xCoord;
+					lastCheck[1] = duct.yCoord;
+					lastCheck[2] = duct.zCoord;
 				} 
-				else if (tile instanceof IFluidHandler && !extractor) {
+				else if (tile instanceof IFluidHandler) {
 					IFluidHandler handler = (IFluidHandler) tile;
-					if (movingFluid != null) {
-						handler.fill(ForgeDirection.UNKNOWN, movingFluid, true);
+					if(handler.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid == null) {
+						if (movingFluid != null)
+							handler.fill(ForgeDirection.UNKNOWN, movingFluid, true);
 						previousLocation = new int[] { -1, -1, -1 };
-						drain(movingFluid.amount);
+						lastCheck = new int[] { xCoord, yCoord, zCoord };
+						movingFluid = null;
+						return;
 					}
+					if (handler.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid.amount + 1 * FluidContainerRegistry.BUCKET_VOLUME <= handler.getTankInfo(ForgeDirection.UNKNOWN)[0].capacity)
+						if (movingFluid != null)
+							handler.fill(ForgeDirection.UNKNOWN, movingFluid, true);
+					previousLocation = new int[] { -1, -1, -1 };
+					lastCheck = new int[] { xCoord, yCoord, zCoord };
+					movingFluid = null;
 				}
 			}
 		}
 	}
-
-	/*
-	 * Transfer Liquid
-	 */
-
-	public boolean fill(FluidStack fluidStack, int passAmnt, int[] prevLoc) {
-		if (movingFluid != null) {
-			if (movingFluid.isFluidEqual(fluidStack)) {
-				int newAmount = passAmnt + movingFluid.amount;
-				movingFluid.amount = newAmount;
-				sentTo = passAmnt;
-				previousLocation = prevLoc;
-				return true;
-			}
-			return false;
-		} else {
-			previousLocation = prevLoc;
-			movingFluid = fluidStack;
-			sentTo = passAmnt;
-			return true;
-		}
-	}
-
-	public void drain(int amount) {
-		if (movingFluid == null)
-			return;
-
-		int newAmount = movingFluid.amount - amount;
-
-		movingFluid = new FluidStack(movingFluid.getFluid(), newAmount);
-		sentTo = 0;
-
-		if (movingFluid != null && movingFluid.amount <= 0)
-			movingFluid = null;
-	}
-
-	/*public void passOn(FluidStack toPass, int[] comingFrom) {
-		movingFluid = toPass;
-		previousLocation = comingFrom;
-	}*/
 
 	public ArrayList<int[]> numberOfPaths() {
 		ArrayList<int[]> validPaths = new ArrayList<int[]>();
 
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			TileEntity tile = worldObj.getBlockTileEntity(xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ);
+			TileEntity tile = worldObj.getBlockTileEntity(lastCheck[0] + dir.offsetX, lastCheck[1] + dir.offsetY, lastCheck[2] + dir.offsetZ);
 			if (tile instanceof DuctTileEntity)
-				if (tile.xCoord != previousLocation[0] || tile.yCoord != previousLocation[1] || tile.zCoord != previousLocation[2])
-					validPaths.add(new int[] { xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ });
-			if (tile instanceof IFluidHandler)
-				validPaths.add(new int[] { xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ });
+				if (!((DuctTileEntity) tile).extractor)
+					if (tile.xCoord != previousLocation[0] || tile.yCoord != previousLocation[1] || tile.zCoord != previousLocation[2])
+						validPaths.add(new int[] { lastCheck[0] + dir.offsetX, lastCheck[1] + dir.offsetY, lastCheck[2] + dir.offsetZ });
+			if (tile instanceof IFluidHandler && (xCoord != lastCheck[0] || yCoord != lastCheck[1] || zCoord != lastCheck[2]))
+				validPaths.add(new int[] { lastCheck[0] + dir.offsetX, lastCheck[1] + dir.offsetY, lastCheck[2] + dir.offsetZ });
 		}
 
 		Collections.shuffle(validPaths);
 		return validPaths;
 	}
 
-	public ArrayList<int[]> findNearTank() {
+	/*public ArrayList<int[]> findNearTank() {
 		ArrayList<int[]> validPaths = new ArrayList<int[]>();
 
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			TileEntity tile = worldObj.getBlockTileEntity(xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ);
+			TileEntity tile = worldObj.getBlockTileEntity(lastCheck[0] + dir.offsetX, lastCheck[1] + dir.offsetY, lastCheck[2] + dir.offsetZ);
 			if (tile instanceof IFluidHandler)
 				if (tile.xCoord != previousLocation[0] && tile.yCoord != previousLocation[1] && tile.zCoord != previousLocation[2])
-					validPaths.add(new int[] { xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ });				
+					validPaths.add(new int[] { lastCheck[0] + dir.offsetX, lastCheck[1] + dir.offsetY, lastCheck[2] + dir.offsetZ });				
 		}
 
 		Collections.shuffle(validPaths);
 		return validPaths;
+	}*/
+
+	public ArrayList<IFluidHandler> extractorSearch() {
+		ArrayList<IFluidHandler> extractorTanks = new ArrayList<IFluidHandler>();
+		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			int xCord = xCoord - dir.offsetX;
+			int yCord = yCoord - dir.offsetY;
+			int zCord = zCoord - dir.offsetZ;
+
+			TileEntity search = worldObj
+					.getBlockTileEntity(xCord, yCord, zCord);
+			if (search instanceof IFluidHandler && movingFluid == null) {
+				IFluidHandler extractHere = (IFluidHandler) search;
+				extractorTanks.add(extractHere);
+				if (extractHere.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid.amount
+						- 1 * FluidContainerRegistry.BUCKET_VOLUME > 0) {
+					extractHere.drain(ForgeDirection.UNKNOWN,
+							new FluidStack(extractHere.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid,
+									1 * FluidContainerRegistry.BUCKET_VOLUME), true);
+					movingFluid = new FluidStack(extractHere.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid,
+							1 * FluidContainerRegistry.BUCKET_VOLUME);
+				}
+			}
+		}
+		return extractorTanks;
 	}
 
 	/*

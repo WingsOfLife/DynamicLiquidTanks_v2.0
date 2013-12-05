@@ -13,7 +13,7 @@ import doc.mods.dynamictanks.DynamicLiquidTanksCore;
 
 public class BlockHauntedWood extends Block {
 
-
+	Random rnd = new Random();
 	Icon[] sideIcons = new Icon[3];
 	Icon topIcon;
 	
@@ -36,7 +36,6 @@ public class BlockHauntedWood extends Block {
 		if (par5 == 0 || par5 == 1)
 			return topIcon;
 		else if (meta != 0) {
-			Random rnd = new Random();
 			return sideIcons[rnd.nextInt(sideIcons.length)];
 		} else
 			return sideIcons[0];

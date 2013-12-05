@@ -13,8 +13,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
-import doc.mods.dynamictanks.Fluids.ClensingTileEntity;
-import doc.mods.dynamictanks.Fluids.PotionTileEntity;
+import doc.mods.dynamictanks.Fluids.tileentity.ClensingTileEntity;
+import doc.mods.dynamictanks.Fluids.tileentity.PotionTileEntity;
 import doc.mods.dynamictanks.items.ItemManager;
 
 public class BucketHandler {

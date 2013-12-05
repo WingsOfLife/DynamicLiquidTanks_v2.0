@@ -43,8 +43,18 @@ public class PotionBucketDamage implements IItemRenderer {
 
 		// ====================== Render item texture ======================
 		Icon icon = itemStack.getIconIndex();
-		renderItem.renderIcon(1, 0, icon, 16, 16);
+		if (itemStack.getItemDamage() == 13)
+			renderItem.renderIcon(0, 0, icon, 16, 16);
+		else if (itemStack.getItemDamage() == 12)
+			renderItem.renderIcon(0, 0, icon, 16, 16);
+		else
+			renderItem.renderIcon(1, 0, icon, 16, 16);
 
+		if (itemStack.getItemDamage() == 13)
+			return;
+		if (itemStack.getItemDamage() == 12)
+			return;
+		
 		// ====================== Render OpenGL square shape ======================
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		GL11.glEnable(GL11.GL_BLEND);

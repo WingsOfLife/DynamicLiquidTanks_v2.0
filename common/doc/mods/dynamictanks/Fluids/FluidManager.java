@@ -25,6 +25,9 @@ public class FluidManager {
 
 	public static Block clenseBlock = null;
 	public static Block potionBlock = null;
+	
+	public static FluidTNT tntBlock = null;
+	
 	public static FluidPotion regenBlock = null;
 	public static FluidPotion swiftBlock = null;
 	public static FluidPotion fireBlock = null;
@@ -40,6 +43,9 @@ public class FluidManager {
 
 	public static Fluid clenseFluid = null;
 	public static Fluid potionFluid = null;
+	
+	public static Fluid tntFluid = null;
+	
 	public static Fluid regenFluid = null;
 	public static Fluid swiftFluid = null;
 	public static Fluid fireFluid = null;
@@ -190,6 +196,15 @@ public class FluidManager {
 		FluidContainerRegistry.registerFluidContainer(new FluidContainerData(new FluidStack(clenseFluid, 1000),
 				new ItemStack(ItemManager.buckets, 1, 12), new ItemStack(Item.bucketEmpty)));
 		blockType.add(clenseBlock);
+		
+		tntFluid = new Fluid("fluidTNT").setBlockID(ModConfig.FluidIDs.tnt).setViscosity(4500);
+		FluidRegistry.registerFluid(tntFluid);
+		tntBlock = new FluidTNT(ModConfig.FluidIDs.tnt, tntFluid, Material.water, "tntFluid");
+		GameRegistry.registerBlock(tntBlock, "dynamictanks.fluids.tntFluid");
+		LanguageRegistry.addName(tntBlock, "Fluid TNT");
+		FluidContainerRegistry.registerFluidContainer(new FluidContainerData(new FluidStack(tntFluid, 1000),
+				new ItemStack(ItemManager.buckets, 1, 13), new ItemStack(Item.bucketEmpty)));
+		blockType.add(tntBlock);
 	}
 
 	public static void registerCraftingRecipes() {	
@@ -209,6 +224,7 @@ public class FluidManager {
 		BucketHandler.INSTANCE.buckets.put(waterBlock, new ItemStack(ItemManager.buckets, 1, 10));
 		BucketHandler.INSTANCE.buckets.put(invisBlock, new ItemStack(ItemManager.buckets, 1, 11));
 		BucketHandler.INSTANCE.buckets.put(clenseBlock, new ItemStack(ItemManager.buckets, 1, 12));
+		BucketHandler.INSTANCE.buckets.put(tntBlock, new ItemStack(ItemManager.buckets, 1, 13));
 		
 		BucketHandler.INSTANCE.chalice.put(regenBlock, new ItemStack(ItemManager.chalice, 1, 1));
 		BucketHandler.INSTANCE.chalice.put(swiftBlock, new ItemStack(ItemManager.chalice, 1, 2));

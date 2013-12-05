@@ -23,6 +23,7 @@ import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import doc.mods.dynamictanks.Fluids.tileentity.PotionTileEntity;
 import doc.mods.dynamictanks.client.particle.ParticleEffects;
 import doc.mods.dynamictanks.helpers.CPotionHelper;
 import doc.mods.dynamictanks.helpers.PotionEffectHelper;

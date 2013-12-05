@@ -14,9 +14,9 @@ import net.minecraft.util.Icon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import doc.mods.dynamictanks.DynamicLiquidTanksCore;
-import doc.mods.dynamictanks.Fluids.ClensingTileEntity;
 import doc.mods.dynamictanks.Fluids.FluidManager;
-import doc.mods.dynamictanks.Fluids.PotionTileEntity;
+import doc.mods.dynamictanks.Fluids.tileentity.ClensingTileEntity;
+import doc.mods.dynamictanks.Fluids.tileentity.PotionTileEntity;
 import doc.mods.dynamictanks.helpers.CPotionHelper;
 
 public class BucketPotion extends ItemBucket {
@@ -25,12 +25,14 @@ public class BucketPotion extends ItemBucket {
 		"Regeneration", "Swiftness", "Fire Resistance",
 		"Poison", "Instant Health", "Night Vision",
 		"Weakness", "Strength", "Slowness",
-		"Harming", "Water Breathing", "Invisibility", "Cleansing"
+		"Harming", "Water Breathing", "Invisibility", 
+		"Cleansing", "TNT"
 	};
 
 	private final float ticksPerSec = CPotionHelper.ticksPerSec;
 	private final float maxExistance = CPotionHelper.maxExistance;
 	private Icon cleansing;
+	private Icon nitro;
 	
 	public BucketPotion(int itemID) {
 		super(itemID, 0);
@@ -57,18 +59,24 @@ public class BucketPotion extends ItemBucket {
 	public void registerIcons(IconRegister register) {
 		itemIcon = register.registerIcon("dynamictanks:potionBucket");
 		cleansing = register.registerIcon("dynamictanks:cleansingBucket");
+		nitro =  register.registerIcon("dynamictanks:nitroBucket");
 	}
 
 	@Override
 	public Icon getIconFromDamage(int i) {
 		if (i == 12)
 			return cleansing;
+		else if (i == 13)
+			return nitro;
 		return itemIcon;
 	}	
 
 	@Override
 	public void onUpdate(ItemStack par1ItemStack, World par2World, Entity par3Entity, int par4, boolean par5) {
 		float ticksExisted = 0;
+		
+		if (par1ItemStack.getItemDamage() == 12 || par1ItemStack.getItemDamage() == 13)
+			return;
 		
 		if (par1ItemStack.stackTagCompound != null && par1ItemStack.stackTagCompound.hasKey("lengthExisted"))
 			if ((100 - (int) ((par1ItemStack.stackTagCompound.getFloat("lengthExisted") / maxExistance) * 10)) <= -100)
@@ -150,7 +158,7 @@ public class BucketPotion extends ItemBucket {
 
 	@Override
 	public void getSubItems(int id, CreativeTabs tab, List list) {
-		for (int i = 0; i < 13; i++)
+		for (int i = 0; i < 14; i++)
 			list.add(new ItemStack(id, 1, i));
 	}
 }

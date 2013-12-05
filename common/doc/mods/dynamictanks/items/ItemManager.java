@@ -51,6 +51,7 @@ public class ItemManager {
 		LanguageRegistry.addName(new ItemStack(buckets, 1, 10), "Bucket of " + BucketPotion.names[10]);
 		LanguageRegistry.addName(new ItemStack(buckets, 1, 11), "Bucket of " + BucketPotion.names[11]);
 		LanguageRegistry.addName(new ItemStack(buckets, 1, 12), "Bucket of " + BucketPotion.names[12]);
+		LanguageRegistry.addName(new ItemStack(buckets, 1, 13), "Liquid Nitroglycerine");
 
 		// ================================ Chalice ========================== //
 		LanguageRegistry.addName(new ItemStack(chalice, 1, 0), "Chalice");

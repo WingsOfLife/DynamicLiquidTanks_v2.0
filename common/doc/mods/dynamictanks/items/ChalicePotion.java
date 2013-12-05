@@ -17,9 +17,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.Event;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import doc.mods.dynamictanks.DynamicLiquidTanksCore;
-import doc.mods.dynamictanks.Fluids.ClensingTileEntity;
 import doc.mods.dynamictanks.Fluids.FluidManager;
-import doc.mods.dynamictanks.Fluids.PotionTileEntity;
+import doc.mods.dynamictanks.Fluids.tileentity.ClensingTileEntity;
+import doc.mods.dynamictanks.Fluids.tileentity.PotionTileEntity;
 import doc.mods.dynamictanks.common.BucketHandler;
 import doc.mods.dynamictanks.helpers.CPotionHelper;
 

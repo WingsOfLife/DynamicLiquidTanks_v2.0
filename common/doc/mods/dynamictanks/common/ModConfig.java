@@ -26,6 +26,7 @@ public class ModConfig
 	}
 	
 	public static class FluidIDs {
+		public static int tnt = 3198;
 		public static int potion = 3199;
 		public static int regen = 3200;
 		public static int swift = 3201;

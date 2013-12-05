@@ -12,6 +12,7 @@ import net.minecraftforge.fluids.Fluid;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import doc.mods.dynamictanks.DynamicLiquidTanksCore;
+import doc.mods.dynamictanks.Fluids.tileentity.ClensingTileEntity;
 
 public class FluidClensing extends BlockFluidClassic implements ITileEntityProvider {
 

@@ -56,7 +56,7 @@ public class BlockManager {
 		LanguageRegistry.addName(BlockTankController, "Tank Controller");
 		LanguageRegistry.addName(BlockTank, "Tank");
 		LanguageRegistry.addName(BlockUpgrade, "Upgrade Module");
-		LanguageRegistry.addName(BlockDuct, "Duct");
+		LanguageRegistry.addName(BlockDuct, "Duct W.I.P");
 		LanguageRegistry.addName(BlockHD, "Mystic Mud");
 		LanguageRegistry.addName(BlockHW, "Mystic Wood");
 		LanguageRegistry.addName(BlockHL, "Mystic Leaf");
