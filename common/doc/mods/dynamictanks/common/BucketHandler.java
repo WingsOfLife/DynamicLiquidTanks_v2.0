@@ -17,53 +17,72 @@ import doc.mods.dynamictanks.Fluids.tileentity.ClensingTileEntity;
 import doc.mods.dynamictanks.Fluids.tileentity.PotionTileEntity;
 import doc.mods.dynamictanks.items.ItemManager;
 
-public class BucketHandler {
+public class BucketHandler
+{
+    public static BucketHandler INSTANCE = new BucketHandler();
+    public Map<Block, ItemStack> buckets = new HashMap<Block, ItemStack>();
+    public Map<Block, ItemStack> chalice = new HashMap<Block, ItemStack>();
 
-	public static BucketHandler INSTANCE = new BucketHandler();
-	public Map<Block, ItemStack> buckets = new HashMap<Block, ItemStack>();
-	public Map<Block, ItemStack> chalice = new HashMap<Block, ItemStack>();
+    private BucketHandler() {}
 
-	private BucketHandler() {}
+    @ForgeSubscribe
+    public void onBucketFill(FillBucketEvent event)
+    {
+        ItemStack result = fillCustomBucket(event.world, event.target, event.entityPlayer);
 
-	@ForgeSubscribe
-	public void onBucketFill(FillBucketEvent event) {
+        if (result == null)
+        {
+            return;
+        }
 
-		ItemStack result = fillCustomBucket(event.world, event.target, event.entityPlayer);
+        event.result = result;
+        event.setResult(Result.ALLOW);
+    }
 
-		if (result == null)
-			return;
+    private ItemStack fillCustomBucket(World world, MovingObjectPosition pos, EntityPlayer player)
+    {
+        int blockID = world.getBlockId(pos.blockX, pos.blockY, pos.blockZ);
+        TileEntity potionTile = world.getBlockTileEntity(pos.blockX, pos.blockY, pos.blockZ);
+        ItemStack bucket;
 
-		event.result = result;
-		event.setResult(Result.ALLOW);
-	}
+        if (player.inventory.mainInventory[player.inventory.currentItem].itemID == ItemManager.chalice.itemID)
+        {
+            bucket = chalice.get(Block.blocksList[blockID]);
+        }
+        else
+        {
+            bucket = buckets.get(Block.blocksList[blockID]);
+        }
 
-	private ItemStack fillCustomBucket(World world, MovingObjectPosition pos, EntityPlayer player) {
+        if (bucket != null && world.getBlockMetadata(pos.blockX, pos.blockY, pos.blockZ) == 0)
+        {
+            world.setBlock(pos.blockX, pos.blockY, pos.blockZ, 0);
 
-		int blockID = world.getBlockId(pos.blockX, pos.blockY, pos.blockZ);
-		TileEntity potionTile = world.getBlockTileEntity(pos.blockX, pos.blockY, pos.blockZ);
-		ItemStack bucket;
-		if (player.inventory.mainInventory[player.inventory.currentItem].itemID == ItemManager.chalice.itemID)
-			bucket = chalice.get(Block.blocksList[blockID]);
-		else
-			bucket = buckets.get(Block.blocksList[blockID]);
+            if (potionTile instanceof PotionTileEntity)
+            {
+                if (bucket.stackTagCompound == null)
+                {
+                    bucket.setTagCompound(new NBTTagCompound());
+                }
 
-		if (bucket != null && world.getBlockMetadata(pos.blockX, pos.blockY, pos.blockZ) == 0) {
-			world.setBlock(pos.blockX, pos.blockY, pos.blockZ, 0);
-			if (potionTile instanceof PotionTileEntity) {
-				if (bucket.stackTagCompound == null) {
-					bucket.setTagCompound(new NBTTagCompound());
-				}
-				bucket.stackTagCompound.setFloat("lengthExisted", ((PotionTileEntity) potionTile).getExistance());
-			}
-			if (potionTile instanceof ClensingTileEntity) {
-				if (bucket.stackTagCompound == null) {
-					bucket.setTagCompound(new NBTTagCompound());
-				}
-				bucket.stackTagCompound.setFloat("damageHealed", ((ClensingTileEntity) potionTile).getHealed());
-			}
-			return bucket;
-		} else
-			return null;
+                bucket.stackTagCompound.setFloat("lengthExisted", ((PotionTileEntity) potionTile).getExistance());
+            }
 
-	}
+            if (potionTile instanceof ClensingTileEntity)
+            {
+                if (bucket.stackTagCompound == null)
+                {
+                    bucket.setTagCompound(new NBTTagCompound());
+                }
+
+                bucket.stackTagCompound.setFloat("damageHealed", ((ClensingTileEntity) potionTile).getHealed());
+            }
+
+            return bucket;
+        }
+        else
+        {
+            return null;
+        }
+    }
 }

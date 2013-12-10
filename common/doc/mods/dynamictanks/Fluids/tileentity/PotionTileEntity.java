@@ -12,74 +12,82 @@ import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.BlockFluidBase;
 
-public class PotionTileEntity extends TileEntity {
+public class PotionTileEntity extends TileEntity
+{
+    private final float ticksPerSec = CPotionHelper.ticksPerSec;
+    private final float maxExistance = CPotionHelper.maxExistance;
 
-	private final float ticksPerSec = CPotionHelper.ticksPerSec;
-	private final float maxExistance = CPotionHelper.maxExistance;
+    protected float ticksExisted = 0;
 
-	protected float ticksExisted = 0;
-	
+    public PotionTileEntity() {}
 
-	public PotionTileEntity() {}
+    public PotionTileEntity(int existance)
+    {
+        ticksExisted = existance;
+    }
 
-	public PotionTileEntity(int existance) {
-		ticksExisted = existance;
-	}
+    public int getPotency()
+    {
+        return (int)(100 - ((ticksExisted / maxExistance) * 100));
+    }
 
-	public int getPotency() {
-		return (int) (100 - ((ticksExisted / maxExistance) * 100));
-	}
-	
-	public void setExistance(float newExistance) {
-		ticksExisted = newExistance;
-	}
-	
-	public float getExistance() {
-		return ticksExisted;
-	}
-	
-	public void removeRndStability() {
-		ticksExisted += (new Random().nextInt(25) + new Random().nextInt(50) + 20) * ticksPerSec;
-	}
-	
-	@Override
-	public void updateEntity() {
-		ticksExisted++;
+    public void setExistance(float newExistance)
+    {
+        ticksExisted = newExistance;
+    }
 
-		if (ticksExisted >= maxExistance) {
-			int blockId = worldObj.getBlockId(xCoord, yCoord, zCoord);
-			worldObj.setBlock(xCoord, yCoord, zCoord, PotionInverse.getInverse(blockId));
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-		}
-	}
+    public float getExistance()
+    {
+        return ticksExisted;
+    }
 
-	/*
-	 * Syncing Methods
-	 */
+    public void removeRndStability()
+    {
+        ticksExisted += (new Random().nextInt(25) + new Random().nextInt(50) + 20) * ticksPerSec;
+    }
 
-	@Override
-	public void readFromNBT(NBTTagCompound tagCompound) {
-		super.readFromNBT(tagCompound);
+    @Override
+    public void updateEntity()
+    {
+        ticksExisted++;
 
-		ticksExisted = tagCompound.getFloat("alive");
-	}
+        if (ticksExisted >= maxExistance)
+        {
+            int blockId = worldObj.getBlockId(xCoord, yCoord, zCoord);
+            worldObj.setBlock(xCoord, yCoord, zCoord, PotionInverse.getInverse(blockId));
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        }
+    }
 
-	@Override
-	public void writeToNBT(NBTTagCompound tagCompound) {
-		super.writeToNBT(tagCompound);
+    /*
+     * Syncing Methods
+     */
 
-		tagCompound.setFloat("alive", ticksExisted);
-	}
+    @Override
+    public void readFromNBT(NBTTagCompound tagCompound)
+    {
+        super.readFromNBT(tagCompound);
+        ticksExisted = tagCompound.getFloat("alive");
+    }
 
-	@Override
-	public Packet getDescriptionPacket () {
-		NBTTagCompound tag = new NBTTagCompound();
-		writeToNBT(tag);
-		return new Packet132TileEntityData(xCoord, yCoord, zCoord, 1, tag);
-	}
+    @Override
+    public void writeToNBT(NBTTagCompound tagCompound)
+    {
+        super.writeToNBT(tagCompound);
+        tagCompound.setFloat("alive", ticksExisted);
+    }
 
-	@Override
-	public void onDataPacket (INetworkManager net, Packet132TileEntityData packet) {
-		readFromNBT(packet.data);
-	}
+    @Override
+    public Packet getDescriptionPacket()
+    {
+        NBTTagCompound tag = new NBTTagCompound();
+        writeToNBT(tag);
+        return new Packet132TileEntityData(xCoord, yCoord, zCoord, 1, tag);
+    }
+
+    @Override
+    public void onDataPacket(INetworkManager net, Packet132TileEntityData packet)
+    {
+        readFromNBT(packet.data);
+    }
 }

@@ -30,310 +30,435 @@ import doc.mods.dynamictanks.helpers.PotionEffectHelper;
 import doc.mods.dynamictanks.tileentity.ControllerTileEntity;
 import doc.mods.dynamictanks.tileentity.TankTileEntity;
 
-public class BlockTankController extends BlockContainer {
+public class BlockTankController extends BlockContainer
+{
+    @SideOnly(Side.CLIENT)
+    private Icon faceIcon;
 
-	@SideOnly(Side.CLIENT)
-	private Icon faceIcon;
+    public BlockTankController(int par1)
+    {
+        super(par1, Material.rock);
+        setHardness(2.0F);
+        setUnlocalizedName("dynamictanks.block.controller");
+        setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);
+    }
 
-	public BlockTankController(int par1) {
-		super(par1, Material.rock);
-		setHardness(2.0F);
-		setUnlocalizedName("dynamictanks.block.controller");
-		setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);
-	}
+    /*
+     * Icons
+     */
 
-	/* 
-	 * Icons
-	 */
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerIcons(IconRegister iconReg)
+    {
+        blockIcon = iconReg.registerIcon("dynamictanks:" + "Controller_Sides");
+        faceIcon = iconReg.registerIcon("dynamictanks:" + "ControllerFront");
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister iconReg) {
-		blockIcon = iconReg.registerIcon("dynamictanks:" + "Controller_Sides");
-		faceIcon = iconReg.registerIcon("dynamictanks:" + "ControllerFront");
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public Icon getIcon(int side, int meta)
+    {
+        if (meta == 0 && side == 4)
+        {
+            return faceIcon;
+        }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public Icon getIcon(int side, int meta) {
-		if (meta == 0 && side == 4)
-			return faceIcon;
-		if(side == 0 || side == 1) 
-			return blockIcon;
-		else if(side != meta)
-			return blockIcon;
-		else 
-			return faceIcon;
+        if (side == 0 || side == 1)
+        {
+            return blockIcon;
+        }
+        else if (side != meta)
+        {
+            return blockIcon;
+        }
+        else
+        {
+            return faceIcon;
+        }
+    }
 
-	}
+    @Override
+    public void onBlockAdded(World world, int x, int y, int z)
+    {
+        super.onBlockAdded(world, x, y, z);
+        setDefaultDirection(world, x, y, z);
+    }
 
-	@Override
-	public void onBlockAdded(World world, int x, int y, int z) {
-		super.onBlockAdded(world, x, y, z);
-		setDefaultDirection(world, x, y, z);
-	}
+    @Override
+    public void breakBlock(World par1World, int x, int y, int z, int par5, int par6)
+    {
+        //Drop Item
+        ControllerTileEntity controller = (ControllerTileEntity) par1World.getBlockTileEntity(x, y, z);
 
-	@Override
-	public void breakBlock(World par1World, int x, int y, int z, int par5, int par6) {	
-		//Drop Item
-		ControllerTileEntity controller = (ControllerTileEntity) par1World.getBlockTileEntity(x, y, z);
-		if (controller != null && FluidHelper.hasLiquid(controller)) 
-			ItemHelper.removeBlockByPlayer(par1World, x, y, z);
-		else 
-			ItemHelper.dropItem(BlockManager.BlockTankController.blockID, 0, par1World, x, y, z);
-		//clear neighbors
-		if (controller != null && !controller.getNeighbors().isEmpty()) {
-			for (int[] arr : controller.getNeighbors()) {
-				TileEntity tile = par1World.getBlockTileEntity(arr[0], arr[1], arr[2]);
-				if (tile != null && tile instanceof TankTileEntity) 
-					((TankTileEntity) tile).setControllerPos(new int[] { -1, -1, -1 });
-			}
-		}
-		//break
-		super.breakBlock(par1World, x, y, z, par5, par6);;
-	}
+        if (controller != null && FluidHelper.hasLiquid(controller))
+        {
+            ItemHelper.removeBlockByPlayer(par1World, x, y, z);
+        }
+        else
+        {
+            ItemHelper.dropItem(BlockManager.BlockTankController.blockID, 0, par1World, x, y, z);
+        }
 
-	@Override
-	public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune) {
-		ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
-		ret.clear();
-		return ret;
-	}
+        //clear neighbors
+        if (controller != null && !controller.getNeighbors().isEmpty())
+        {
+            for (int[] arr : controller.getNeighbors())
+            {
+                TileEntity tile = par1World.getBlockTileEntity(arr[0], arr[1], arr[2]);
 
-	private void setDefaultDirection(World world, int x, int y, int z) {
-		if(!world.isRemote) {
-			int zNeg = world.getBlockId(x, y, z - 1);
-			int zPos = world.getBlockId(x, y, z + 1);
-			int xNeg = world.getBlockId(x - 1, y, z);
-			int xPos = world.getBlockId(x + 1, y, z);
-			byte meta = 3;
+                if (tile != null && tile instanceof TankTileEntity)
+                    ((TankTileEntity) tile).setControllerPos(new int[] { -1, -1, -1 });
+            }
+        }
 
-			if(Block.opaqueCubeLookup[xNeg] && !Block.opaqueCubeLookup[xPos]) meta = 5;
-			if(Block.opaqueCubeLookup[xPos] && !Block.opaqueCubeLookup[xNeg]) meta = 4;
-			if(Block.opaqueCubeLookup[zNeg] && !Block.opaqueCubeLookup[zPos]) meta = 3;
-			if(Block.opaqueCubeLookup[zPos] && !Block.opaqueCubeLookup[zNeg]) meta = 2;
+        //break
+        super.breakBlock(par1World, x, y, z, par5, par6);;
+    }
 
-			world.setBlockMetadataWithNotify(x, y, z, meta, 2);
-		}
-	}
+    @Override
+    public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune)
+    {
+        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
+        ret.clear();
+        return ret;
+    }
 
-	@Override
-	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack itemstack) {
-		int rotation = MathHelper.floor_double((double)(entity.rotationYaw * 4F / 360F) + 0.5D) & 3;
-		//set rotation
-		if(rotation == 0)
-			world.setBlockMetadataWithNotify(x, y, z, 2, 2);
+    private void setDefaultDirection(World world, int x, int y, int z)
+    {
+        if (!world.isRemote)
+        {
+            int zNeg = world.getBlockId(x, y, z - 1);
+            int zPos = world.getBlockId(x, y, z + 1);
+            int xNeg = world.getBlockId(x - 1, y, z);
+            int xPos = world.getBlockId(x + 1, y, z);
+            byte meta = 3;
 
-		if(rotation == 1)
-			world.setBlockMetadataWithNotify(x, y, z, 5, 2);
+            if (Block.opaqueCubeLookup[xNeg] && !Block.opaqueCubeLookup[xPos])
+            {
+                meta = 5;
+            }
 
-		if(rotation == 2)
-			world.setBlockMetadataWithNotify(x, y, z, 3, 2);
+            if (Block.opaqueCubeLookup[xPos] && !Block.opaqueCubeLookup[xNeg])
+            {
+                meta = 4;
+            }
 
-		if(rotation == 3)
-			world.setBlockMetadataWithNotify(x, y, z, 4, 2);
-		//read NBT
-		if (itemstack.stackTagCompound == null) 
-			return;
+            if (Block.opaqueCubeLookup[zNeg] && !Block.opaqueCubeLookup[zPos])
+            {
+                meta = 3;
+            }
 
-		ControllerTileEntity setInfo = (ControllerTileEntity) world.getBlockTileEntity(x, y, z);
-		setInfo.readFromNBT(itemstack.stackTagCompound);
-	}
+            if (Block.opaqueCubeLookup[zPos] && !Block.opaqueCubeLookup[zNeg])
+            {
+                meta = 2;
+            }
 
-	/*
-	 * Misc
-	 */
-	@Override
-	public TileEntity createNewTileEntity(World world) {
-		return new ControllerTileEntity();
-	}
+            world.setBlockMetadataWithNotify(x, y, z, meta, 2);
+        }
+    }
 
-	public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, int par5) {
-		int i1 = par1World.getBlockMetadata(par2, par3, par4);
+    @Override
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack itemstack)
+    {
+        int rotation = MathHelper.floor_double((double)(entity.rotationYaw * 4F / 360F) + 0.5D) & 3;
 
-		boolean flag = par1World.isBlockIndirectlyGettingPowered(par2, par3, par4) || par1World.isBlockIndirectlyGettingPowered(par2, par3 + 1, par4);
-		boolean flag1 = (i1 & 8) != 0;
+        //set rotation
+        if (rotation == 0)
+        {
+            world.setBlockMetadataWithNotify(x, y, z, 2, 2);
+        }
 
-		ControllerTileEntity currentTile = (ControllerTileEntity) par1World.getBlockTileEntity(par2, par3, par4);
+        if (rotation == 1)
+        {
+            world.setBlockMetadataWithNotify(x, y, z, 5, 2);
+        }
 
-		if (flag && !flag1)        {
-			currentTile.nextLiquidIndex();
-			par1World.setBlockMetadataWithNotify(par2, par3, par4, i1 | 8, 4);
-		}
-		else if (!flag && flag1)
-			par1World.setBlockMetadataWithNotify(par2, par3, par4, i1 & -9, 4);
-	}
+        if (rotation == 2)
+        {
+            world.setBlockMetadataWithNotify(x, y, z, 3, 2);
+        }
 
-	@Override
-	public void onBlockClicked(World par1World, int x, int y, int z, EntityPlayer par5EntityPlayer) {
-		ItemStack heldItem = par5EntityPlayer.inventory.getCurrentItem();
-		ControllerTileEntity controller = (ControllerTileEntity) par1World.getBlockTileEntity(x, y, z);
+        if (rotation == 3)
+        {
+            world.setBlockMetadataWithNotify(x, y, z, 4, 2);
+        }
 
-		/* Potion Collision */
-		FluidStack currentLiquid = controller.getAllLiquids().get(controller.getLiquidIndex()).getFluid();
-		if (heldItem == null && currentLiquid != null && currentLiquid.isFluidEqual(new FluidStack(FluidManager.potionFluid, FluidContainerRegistry.BUCKET_VOLUME))) {
-			if (par5EntityPlayer != null && controller.getPotion() != -1 && 
-					(currentLiquid.amount - (FluidContainerRegistry.BUCKET_VOLUME / 10)) >= 0) {
-				PotionEffectHelper.applyPotionEffects((EntityPlayer) par5EntityPlayer, controller.getPotion(), 10, false);
-				controller.drain(ForgeDirection.UNKNOWN, FluidContainerRegistry.BUCKET_VOLUME / 10, true);
-				if (currentLiquid.amount == 0)
-					controller.setPotion(-1);
-			}
-		}
+        //read NBT
+        if (itemstack.stackTagCompound == null)
+        {
+            return;
+        }
 
-		/* Dye Or Camo */
-		if (par5EntityPlayer.isSneaking()) {
-			if (heldItem != null && heldItem.itemID == Item.dyePowder.itemID)
-				controller.setDyeColor(heldItem.getItemDamage());
-			else if (heldItem != null && Block.blocksList[heldItem.itemID] != null)
-				controller.setCamo(heldItem.itemID, heldItem.getItemDamage());
-			else if (heldItem == null) {
-				controller.setCamo(-1, 0);
-				controller.setDyeColor(-1);
-			}
-			par1World.markBlockForUpdate(x, y, z);
-		}
-	}
+        ControllerTileEntity setInfo = (ControllerTileEntity) world.getBlockTileEntity(x, y, z);
+        setInfo.readFromNBT(itemstack.stackTagCompound);
+    }
 
-	@Override
-	public boolean onBlockActivated (World world, int x, int y, int z, EntityPlayer player, int side, float clickX, float clickY, float clickZ) {
-		ItemStack heldItem = player.inventory.getCurrentItem();
-		ControllerTileEntity conTE = (ControllerTileEntity) world.getBlockTileEntity(x, y, z);
+    /*
+     * Misc
+     */
+    @Override
+    public TileEntity createNewTileEntity(World world)
+    {
+        return new ControllerTileEntity();
+    }
 
-		if (heldItem != null && heldItem.itemID == Item.potion.itemID) {
-			FluidStack potion = new FluidStack(FluidManager.potionFluid, FluidContainerRegistry.BUCKET_VOLUME);
+    public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, int par5)
+    {
+        int i1 = par1World.getBlockMetadata(par2, par3, par4);
+        boolean flag = par1World.isBlockIndirectlyGettingPowered(par2, par3, par4) || par1World.isBlockIndirectlyGettingPowered(par2, par3 + 1, par4);
+        boolean flag1 = (i1 & 8) != 0;
+        ControllerTileEntity currentTile = (ControllerTileEntity) par1World.getBlockTileEntity(par2, par3, par4);
 
-			int amount = conTE.fill(ForgeDirection.UNKNOWN, potion, false);
-			if (amount == potion.amount && (conTE.getPotion() == -1 || conTE.getPotion() == heldItem.getItemDamage())) {
-				conTE.fill(ForgeDirection.UNKNOWN, potion, true);
-				ItemHelper.removeSingleItem(heldItem);
-				player.inventory.addItemStackToInventory(new ItemStack(Item.glassBottle, 1));
-				conTE.setPotion(heldItem.getItemDamage());
-				return true;
-			}
-		} 
-		else if (heldItem != null && heldItem.itemID == Item.glassBottle.itemID && conTE.getPotion() != -1 && conTE.getAllLiquids().get(conTE.getLiquidIndex()).getFluid().isFluidEqual(new FluidStack(FluidManager.potionFluid, FluidContainerRegistry.BUCKET_VOLUME))) {
-			FluidStack fillLiquid = conTE.getAllLiquids().get(conTE.getLiquidIndex()).getFluid();
-			if (conTE.getAllLiquids().get(conTE.getLiquidIndex()).getFluidAmount() < 1000)
-				return false;
-			conTE.drain(ForgeDirection.UNKNOWN, FluidContainerRegistry.BUCKET_VOLUME, true);
-			ItemHelper.removeSingleItem(heldItem);
-			player.inventory.addItemStackToInventory(new ItemStack(Item.potion, 1, conTE.getPotion()));
-			if (conTE.getAllLiquids().get(conTE.getLiquidIndex()).getFluidAmount() == 0)
-				conTE.setPotion(-1);
-		}
-		else if (heldItem != null && FluidContainerRegistry.isContainer(heldItem)) {
-			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(player.getCurrentEquippedItem());
-			if (liquid != null)
-			{
-				int amount = conTE.fill(ForgeDirection.UNKNOWN, liquid, false);
-				if (amount == liquid.amount)
-				{
-					conTE.fill(ForgeDirection.UNKNOWN, liquid, true);
-					if (!player.capabilities.isCreativeMode)
-						player.inventory.setInventorySlotContents(player.inventory.currentItem, consumeItem(heldItem));
-					return true;
-				}
-				else
-					return true;
-			}
-			else if (FluidContainerRegistry.isBucket(heldItem) && conTE != null) {
-				if (conTE.getLiquidIndex() > conTE.getAllLiquids().size())
-					conTE.setLiquidIndex(conTE.getAllLiquids().size()); 
+        if (flag && !flag1)
+        {
+            currentTile.nextLiquidIndex();
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, i1 | 8, 4);
+        }
+        else if (!flag && flag1)
+        {
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, i1 & -9, 4);
+        }
+    }
 
-				FluidStack fillLiquid = conTE.getAllLiquids().get(conTE.getLiquidIndex()).getFluid();
-				ItemStack fillStack = FluidContainerRegistry.fillFluidContainer(fillLiquid, heldItem);
-				if (fillStack != null)
-				{
-					conTE.drain(ForgeDirection.UNKNOWN, FluidContainerRegistry.getFluidForFilledItem(fillStack).amount, true);
-					if (!player.capabilities.isCreativeMode)
-					{
-						if (heldItem.stackSize == 1)
-						{
-							player.inventory.setInventorySlotContents(player.inventory.currentItem, fillStack);
-						}
-						else
-						{
-							player.inventory.setInventorySlotContents(player.inventory.currentItem, consumeItem(heldItem));
+    @Override
+    public void onBlockClicked(World par1World, int x, int y, int z, EntityPlayer par5EntityPlayer)
+    {
+        ItemStack heldItem = par5EntityPlayer.inventory.getCurrentItem();
+        ControllerTileEntity controller = (ControllerTileEntity) par1World.getBlockTileEntity(x, y, z);
+        /* Potion Collision */
+        FluidStack currentLiquid = controller.getAllLiquids().get(controller.getLiquidIndex()).getFluid();
 
-							if (!player.inventory.addItemStackToInventory(fillStack))
-							{
-								player.dropPlayerItem(fillStack);
-							}
-						}
-					}
-					return true;
-				}
-				else
-				{
-					return true;
-				}
-			}
-		}
+        if (heldItem == null && currentLiquid != null && currentLiquid.isFluidEqual(new FluidStack(FluidManager.potionFluid, FluidContainerRegistry.BUCKET_VOLUME)))
+        {
+            if (par5EntityPlayer != null && controller.getPotion() != -1 &&
+                    (currentLiquid.amount - (FluidContainerRegistry.BUCKET_VOLUME / 10)) >= 0)
+            {
+                PotionEffectHelper.applyPotionEffects((EntityPlayer) par5EntityPlayer, controller.getPotion(), 10, false);
+                controller.drain(ForgeDirection.UNKNOWN, FluidContainerRegistry.BUCKET_VOLUME / 10, true);
 
-		if (!FluidContainerRegistry.isContainer(heldItem)) {
-			player.openGui(DynamicLiquidTanksCore.instance, 0, world, x, y, z);
-			return true;
-		}
-		return false;
-	}
+                if (currentLiquid.amount == 0)
+                {
+                    controller.setPotion(-1);
+                }
+            }
+        }
 
-	public static ItemStack consumeItem (ItemStack stack)
-	{
-		if (stack.stackSize == 1) {
-			if (stack.getItem().hasContainerItem())
-				return stack.getItem().getContainerItemStack(stack);
-			else
-				return null;
-		}
-		else {
-			stack.splitStack(1);
-			return stack;
-		}
-	}
+        /* Dye Or Camo */
+        if (par5EntityPlayer.isSneaking())
+        {
+            if (heldItem != null && heldItem.itemID == Item.dyePowder.itemID)
+            {
+                controller.setDyeColor(heldItem.getItemDamage());
+            }
+            else if (heldItem != null && Block.blocksList[heldItem.itemID] != null)
+            {
+                controller.setCamo(heldItem.itemID, heldItem.getItemDamage());
+            }
+            else if (heldItem == null)
+            {
+                controller.setCamo(-1, 0);
+                controller.setDyeColor(-1);
+            }
 
-	/*
-	 * Camo
-	 */
+            par1World.markBlockForUpdate(x, y, z);
+        }
+    }
 
-	@Override
-	@SideOnly(value = Side.CLIENT)
-	public Icon getBlockTexture(IBlockAccess world, int x, int y, int z, int dir)
-	{
-		TileEntity getTextures = world.getBlockTileEntity(x, y, z);
-		int meta = world.getBlockMetadata(x, y, z);
-		if (((ControllerTileEntity) getTextures).getCamo() != -1) {
-			try {
-				return ConnectedTexturesHelper.blockIcon(((ControllerTileEntity) getTextures).getCamo(), dir, ((ControllerTileEntity) getTextures).getCamoMeta());
-			} catch (Exception e) {
-				return setDefaultIcon(dir, meta);
-			}
-		}
-		return setDefaultIcon(dir, meta);
-	}
+    @Override
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float clickX, float clickY, float clickZ)
+    {
+        ItemStack heldItem = player.inventory.getCurrentItem();
+        ControllerTileEntity conTE = (ControllerTileEntity) world.getBlockTileEntity(x, y, z);
 
-	@Override
-	@SideOnly(value = Side.CLIENT)
-	public final int colorMultiplier(IBlockAccess world, int x, int y, int z) {
-		TileEntity getTextures = world.getBlockTileEntity(x, y, z);
-		ControllerTileEntity casted = ((ControllerTileEntity) getTextures);
-		if (casted.getDyeColor() != -1) {
-			return ItemDye.dyeColors[casted.getDyeColor()];
-		} else {
-			try {
-				return Block.blocksList[casted.getCamo()].colorMultiplier(world, x, y, z);
-			} catch (Throwable t) {
-				return super.colorMultiplier(world, x, y, z);
-			}
-		}
-	}
+        if (heldItem != null && heldItem.itemID == Item.potion.itemID)
+        {
+            FluidStack potion = new FluidStack(FluidManager.potionFluid, FluidContainerRegistry.BUCKET_VOLUME);
+            int amount = conTE.fill(ForgeDirection.UNKNOWN, potion, false);
 
-	public Icon setDefaultIcon(int dir, int meta) {
-		if(dir == 0 || dir == 1) 
-			return blockIcon;
-		else if(dir != meta)
-			return blockIcon;
-		else 
-			return faceIcon;
-	}
+            if (amount == potion.amount && (conTE.getPotion() == -1 || conTE.getPotion() == heldItem.getItemDamage()))
+            {
+                conTE.fill(ForgeDirection.UNKNOWN, potion, true);
+                ItemHelper.removeSingleItem(heldItem);
+                player.inventory.addItemStackToInventory(new ItemStack(Item.glassBottle, 1));
+                conTE.setPotion(heldItem.getItemDamage());
+                return true;
+            }
+        }
+        else if (heldItem != null && heldItem.itemID == Item.glassBottle.itemID && conTE.getPotion() != -1 && conTE.getAllLiquids().get(conTE.getLiquidIndex()).getFluid().isFluidEqual(new FluidStack(FluidManager.potionFluid, FluidContainerRegistry.BUCKET_VOLUME)))
+        {
+            FluidStack fillLiquid = conTE.getAllLiquids().get(conTE.getLiquidIndex()).getFluid();
+
+            if (conTE.getAllLiquids().get(conTE.getLiquidIndex()).getFluidAmount() < 1000)
+            {
+                return false;
+            }
+
+            conTE.drain(ForgeDirection.UNKNOWN, FluidContainerRegistry.BUCKET_VOLUME, true);
+            ItemHelper.removeSingleItem(heldItem);
+            player.inventory.addItemStackToInventory(new ItemStack(Item.potion, 1, conTE.getPotion()));
+
+            if (conTE.getAllLiquids().get(conTE.getLiquidIndex()).getFluidAmount() == 0)
+            {
+                conTE.setPotion(-1);
+            }
+        }
+        else if (heldItem != null && FluidContainerRegistry.isContainer(heldItem))
+        {
+            FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(player.getCurrentEquippedItem());
+
+            if (liquid != null)
+            {
+                int amount = conTE.fill(ForgeDirection.UNKNOWN, liquid, false);
+
+                if (amount == liquid.amount)
+                {
+                    conTE.fill(ForgeDirection.UNKNOWN, liquid, true);
+
+                    if (!player.capabilities.isCreativeMode)
+                    {
+                        player.inventory.setInventorySlotContents(player.inventory.currentItem, consumeItem(heldItem));
+                    }
+
+                    return true;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            else if (FluidContainerRegistry.isBucket(heldItem) && conTE != null)
+            {
+                if (conTE.getLiquidIndex() > conTE.getAllLiquids().size())
+                {
+                    conTE.setLiquidIndex(conTE.getAllLiquids().size());
+                }
+
+                FluidStack fillLiquid = conTE.getAllLiquids().get(conTE.getLiquidIndex()).getFluid();
+                ItemStack fillStack = FluidContainerRegistry.fillFluidContainer(fillLiquid, heldItem);
+
+                if (fillStack != null)
+                {
+                    conTE.drain(ForgeDirection.UNKNOWN, FluidContainerRegistry.getFluidForFilledItem(fillStack).amount, true);
+
+                    if (!player.capabilities.isCreativeMode)
+                    {
+                        if (heldItem.stackSize == 1)
+                        {
+                            player.inventory.setInventorySlotContents(player.inventory.currentItem, fillStack);
+                        }
+                        else
+                        {
+                            player.inventory.setInventorySlotContents(player.inventory.currentItem, consumeItem(heldItem));
+
+                            if (!player.inventory.addItemStackToInventory(fillStack))
+                            {
+                                player.dropPlayerItem(fillStack);
+                            }
+                        }
+                    }
+
+                    return true;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
+
+        if (!FluidContainerRegistry.isContainer(heldItem))
+        {
+            player.openGui(DynamicLiquidTanksCore.instance, 0, world, x, y, z);
+            return true;
+        }
+
+        return false;
+    }
+
+    public static ItemStack consumeItem(ItemStack stack)
+    {
+        if (stack.stackSize == 1)
+        {
+            if (stack.getItem().hasContainerItem())
+            {
+                return stack.getItem().getContainerItemStack(stack);
+            }
+            else
+            {
+                return null;
+            }
+        }
+        else
+        {
+            stack.splitStack(1);
+            return stack;
+        }
+    }
+
+    /*
+     * Camo
+     */
+
+    @Override
+    @SideOnly(value = Side.CLIENT)
+    public Icon getBlockTexture(IBlockAccess world, int x, int y, int z, int dir)
+    {
+        TileEntity getTextures = world.getBlockTileEntity(x, y, z);
+        int meta = world.getBlockMetadata(x, y, z);
+
+        if (((ControllerTileEntity) getTextures).getCamo() != -1)
+        {
+            try
+            {
+                return ConnectedTexturesHelper.blockIcon(((ControllerTileEntity) getTextures).getCamo(), dir, ((ControllerTileEntity) getTextures).getCamoMeta());
+            }
+            catch (Exception e)
+            {
+                return setDefaultIcon(dir, meta);
+            }
+        }
+
+        return setDefaultIcon(dir, meta);
+    }
+
+    @Override
+    @SideOnly(value = Side.CLIENT)
+    public final int colorMultiplier(IBlockAccess world, int x, int y, int z)
+    {
+        TileEntity getTextures = world.getBlockTileEntity(x, y, z);
+        ControllerTileEntity casted = ((ControllerTileEntity) getTextures);
+
+        if (casted.getDyeColor() != -1)
+        {
+            return ItemDye.dyeColors[casted.getDyeColor()];
+        }
+        else
+        {
+            try
+            {
+                return Block.blocksList[casted.getCamo()].colorMultiplier(world, x, y, z);
+            }
+            catch (Throwable t)
+            {
+                return super.colorMultiplier(world, x, y, z);
+            }
+        }
+    }
+
+    public Icon setDefaultIcon(int dir, int meta)
+    {
+        if (dir == 0 || dir == 1)
+        {
+            return blockIcon;
+        }
+        else if (dir != meta)
+        {
+            return blockIcon;
+        }
+        else
+        {
+            return faceIcon;
+        }
+    }
 }

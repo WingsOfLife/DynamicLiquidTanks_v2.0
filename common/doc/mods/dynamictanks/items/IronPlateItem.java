@@ -12,26 +12,29 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 
-public class IronPlateItem extends Item {
-
-	public IronPlateItem (int itemId) {
-		super(itemId);
-		setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);	
-	}
-
-	@Override
-	public String getUnlocalizedName(ItemStack stack) {
-		return ("dynamictanks.items.ironMass");
-	}
-	
-	@Override
-    public void registerIcons(IconRegister register) {
-            itemIcon = register.registerIcon("dynamictanks:ironPlate");
+public class IronPlateItem extends Item
+{
+    public IronPlateItem(int itemId)
+    {
+        super(itemId);
+        setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);
     }
-	
-	@Override
-    public Icon getIconFromDamage(int i) {
-            return itemIcon;
+
+    @Override
+    public String getUnlocalizedName(ItemStack stack)
+    {
+        return ("dynamictanks.items.ironMass");
     }
-	
+
+    @Override
+    public void registerIcons(IconRegister register)
+    {
+        itemIcon = register.registerIcon("dynamictanks:ironPlate");
+    }
+
+    @Override
+    public Icon getIconFromDamage(int i)
+    {
+        return itemIcon;
+    }
 }

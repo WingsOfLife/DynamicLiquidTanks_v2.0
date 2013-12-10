@@ -15,49 +15,58 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 
-public class liquidDiamondItem extends Item {
+public class liquidDiamondItem extends Item
+{
+    private int ticksExisted = 0;
 
-	private int ticksExisted = 0;
+    public liquidDiamondItem(int itemId)
+    {
+        super(itemId);
+        setMaxDamage(7);
+        setMaxStackSize(1);
+        setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);
+    }
 
-	public liquidDiamondItem (int itemId) {
-		super(itemId);
-		setMaxDamage(7);
-		setMaxStackSize(1);
-		setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);	
-	}
+    @Override
+    public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean bool)
+    {
+        list.add("Life: " + (stack.getMaxDamage() - stack.getItemDamage()) + " seconds");
+    }
 
-	@Override
-	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean bool) {
-		list.add("Life: " + (stack.getMaxDamage() - stack.getItemDamage()) + " seconds");
-	}
+    @Override
+    public String getUnlocalizedName(ItemStack stack)
+    {
+        return ("dynamictanks.items.softenedDiamond");
+    }
 
-	@Override
-	public String getUnlocalizedName(ItemStack stack) {
-		return ("dynamictanks.items.softenedDiamond");
-	}
+    @Override
+    public void registerIcons(IconRegister register)
+    {
+        itemIcon = register.registerIcon("dynamictanks:liquidDiamond");
+    }
 
-	@Override
-	public void registerIcons(IconRegister register) {
-		itemIcon = register.registerIcon("dynamictanks:liquidDiamond");
-	}
+    @Override
+    public Icon getIconFromDamage(int i)
+    {
+        return itemIcon;
+    }
 
-	@Override
-	public Icon getIconFromDamage(int i) {
-		return itemIcon;
-	}
+    @Override
+    public void onUpdate(ItemStack par1ItemStack, World par2World, Entity par3Entity, int par4, boolean par5)
+    {
+        ticksExisted++;
 
-	@Override
-	public void onUpdate(ItemStack par1ItemStack, World par2World, Entity par3Entity, int par4, boolean par5) {
-		ticksExisted++;
-		
-		if (ticksExisted % 30 == 0) {
-			par1ItemStack.damageItem(1, (EntityLivingBase) par3Entity);
-			if ((par1ItemStack.getMaxDamage() - par1ItemStack.getItemDamage()) == 0) {
-				((EntityPlayer) par3Entity).inventory.consumeInventoryItem(par1ItemStack.itemID);
-				((EntityPlayer) par3Entity).inventory.addItemStackToInventory(new ItemStack(Item.diamond));
-			}
-			ticksExisted = 0;
-		}
-	}
-	
+        if (ticksExisted % 30 == 0)
+        {
+            par1ItemStack.damageItem(1, (EntityLivingBase) par3Entity);
+
+            if ((par1ItemStack.getMaxDamage() - par1ItemStack.getItemDamage()) == 0)
+            {
+                ((EntityPlayer) par3Entity).inventory.consumeInventoryItem(par1ItemStack.itemID);
+                ((EntityPlayer) par3Entity).inventory.addItemStackToInventory(new ItemStack(Item.diamond));
+            }
+
+            ticksExisted = 0;
+        }
+    }
 }

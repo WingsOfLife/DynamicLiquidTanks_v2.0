@@ -175,8 +175,9 @@ public class CustomBiomeDecorator extends BiomeDecorator
     /** True if decorator should generate surface lava & water */
     public boolean generateLakes;
 
-    public CustomBiomeDecorator(BiomeGenBase par1BiomeGenBase) {
-    	super(null);
+    public CustomBiomeDecorator(BiomeGenBase par1BiomeGenBase)
+    {
+        super(null);
         this.sandGen = new WorldGenSand(7, Block.sand.blockID);
         this.gravelAsSandGen = new WorldGenSand(6, Block.gravel.blockID);
         this.dirtGen = new WorldGenMinable(Block.dirt.blockID, 32);
@@ -232,13 +233,12 @@ public class CustomBiomeDecorator extends BiomeDecorator
     protected void decorate()
     {
         MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Pre(currentWorld, randomGenerator, chunk_X, chunk_Z));
-        
-       this.generateOres();
+        this.generateOres();
         int i;
         int j;
         int k;
-
         boolean doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, SAND);
+
         for (i = 0; doGen && i < this.sandPerChunk2; ++i)
         {
             j = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
@@ -247,6 +247,7 @@ public class CustomBiomeDecorator extends BiomeDecorator
         }
 
         doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, CLAY);
+
         for (i = 0; doGen && i < this.clayPerChunk; ++i)
         {
             j = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
@@ -255,6 +256,7 @@ public class CustomBiomeDecorator extends BiomeDecorator
         }
 
         doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, SAND_PASS2);
+
         for (i = 0; doGen && i < this.sandPerChunk; ++i)
         {
             j = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
@@ -270,8 +272,8 @@ public class CustomBiomeDecorator extends BiomeDecorator
         }
 
         int l;
-
         doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, TREE);
+
         for (j = 0; doGen && j < i; ++j)
         {
             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
@@ -282,6 +284,7 @@ public class CustomBiomeDecorator extends BiomeDecorator
         }
 
         doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, BIG_SHROOM);
+
         for (j = 0; doGen && j < this.bigMushroomsPerChunk; ++j)
         {
             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
@@ -290,8 +293,8 @@ public class CustomBiomeDecorator extends BiomeDecorator
         }
 
         int i1;
-
         doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, FLOWERS);
+
         for (j = 0; doGen && j < this.flowersPerChunk; ++j)
         {
             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
@@ -309,6 +312,7 @@ public class CustomBiomeDecorator extends BiomeDecorator
         }
 
         doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, GRASS);
+
         for (j = 0; doGen && j < this.grassPerChunk; ++j)
         {
             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
@@ -319,6 +323,7 @@ public class CustomBiomeDecorator extends BiomeDecorator
         }
 
         doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, DEAD_BUSH);
+
         for (j = 0; doGen && j < this.deadBushPerChunk; ++j)
         {
             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
@@ -328,6 +333,7 @@ public class CustomBiomeDecorator extends BiomeDecorator
         }
 
         doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, LILYPAD);
+
         for (j = 0; doGen && j < this.waterlilyPerChunk; ++j)
         {
             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
@@ -342,6 +348,7 @@ public class CustomBiomeDecorator extends BiomeDecorator
         }
 
         doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, SHROOM);
+
         for (j = 0; doGen && j < this.mushroomsPerChunk; ++j)
         {
             if (this.randomGenerator.nextInt(4) == 0)
@@ -378,6 +385,7 @@ public class CustomBiomeDecorator extends BiomeDecorator
         }
 
         doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, REED);
+
         for (j = 0; doGen && j < this.reedsPerChunk; ++j)
         {
             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
@@ -395,6 +403,7 @@ public class CustomBiomeDecorator extends BiomeDecorator
         }
 
         doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, PUMPKIN);
+
         if (doGen && this.randomGenerator.nextInt(32) == 0)
         {
             j = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
@@ -404,6 +413,7 @@ public class CustomBiomeDecorator extends BiomeDecorator
         }
 
         doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, CACTUS);
+
         for (j = 0; doGen && j < this.cactiPerChunk; ++j)
         {
             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
@@ -413,6 +423,7 @@ public class CustomBiomeDecorator extends BiomeDecorator
         }
 
         doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, LAKE);
+
         if (doGen && this.generateLakes)
         {
             for (j = 0; j < 50; ++j)
@@ -469,22 +480,47 @@ public class CustomBiomeDecorator extends BiomeDecorator
     protected void generateOres()
     {
         MinecraftForge.ORE_GEN_BUS.post(new OreGenEvent.Pre(currentWorld, randomGenerator, chunk_X, chunk_Z));
+
         if (TerrainGen.generateOre(currentWorld, randomGenerator, dirtGen, chunk_X, chunk_Z, DIRT))
-        this.genStandardOre1(20, this.dirtGen, 0, 128);
+        {
+            this.genStandardOre1(20, this.dirtGen, 0, 128);
+        }
+
         if (TerrainGen.generateOre(currentWorld, randomGenerator, gravelGen, chunk_X, chunk_Z, GRAVEL))
-        this.genStandardOre1(10, this.gravelGen, 0, 128);
+        {
+            this.genStandardOre1(10, this.gravelGen, 0, 128);
+        }
+
         if (TerrainGen.generateOre(currentWorld, randomGenerator, coalGen, chunk_X, chunk_Z, COAL))
-        this.genStandardOre1(20, this.coalGen, 0, 128);
+        {
+            this.genStandardOre1(20, this.coalGen, 0, 128);
+        }
+
         if (TerrainGen.generateOre(currentWorld, randomGenerator, ironGen, chunk_X, chunk_Z, IRON))
-        this.genStandardOre1(20, this.ironGen, 0, 64);
+        {
+            this.genStandardOre1(20, this.ironGen, 0, 64);
+        }
+
         if (TerrainGen.generateOre(currentWorld, randomGenerator, goldGen, chunk_X, chunk_Z, GOLD))
-        this.genStandardOre1(2, this.goldGen, 0, 32);
+        {
+            this.genStandardOre1(2, this.goldGen, 0, 32);
+        }
+
         if (TerrainGen.generateOre(currentWorld, randomGenerator, redstoneGen, chunk_X, chunk_Z, REDSTONE))
-        this.genStandardOre1(8, this.redstoneGen, 0, 16);
+        {
+            this.genStandardOre1(8, this.redstoneGen, 0, 16);
+        }
+
         if (TerrainGen.generateOre(currentWorld, randomGenerator, diamondGen, chunk_X, chunk_Z, DIAMOND))
-        this.genStandardOre1(1, this.diamondGen, 0, 16);
+        {
+            this.genStandardOre1(1, this.diamondGen, 0, 16);
+        }
+
         if (TerrainGen.generateOre(currentWorld, randomGenerator, lapisGen, chunk_X, chunk_Z, LAPIS))
-        this.genStandardOre2(1, this.lapisGen, 16, 16);
+        {
+            this.genStandardOre2(1, this.lapisGen, 16, 16);
+        }
+
         MinecraftForge.ORE_GEN_BUS.post(new OreGenEvent.Post(currentWorld, randomGenerator, chunk_X, chunk_Z));
     }
 }

@@ -16,34 +16,39 @@ import org.lwjgl.input.Keyboard;
 
 import doc.mods.dynamictanks.DynamicLiquidTanksCore;
 
-public class HammerItem extends Item {
+public class HammerItem extends Item
+{
+    private int ticksExisted = 0;
 
-	private int ticksExisted = 0;
+    public HammerItem(int itemId)
+    {
+        super(itemId);
+        setMaxDamage(16);
+        setMaxStackSize(1);
+        setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);
+    }
 
-	public HammerItem (int itemId) {
-		super(itemId);
-		setMaxDamage(16);
-		setMaxStackSize(1);
-		setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);	
-	}
+    @Override
+    public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean bool)
+    {
+        list.add("Uses: " + (stack.getMaxDamage() - stack.getItemDamage()));
+    }
 
-	@Override
-	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean bool) {
-		list.add("Uses: " + (stack.getMaxDamage() - stack.getItemDamage()));
-	}
+    @Override
+    public String getUnlocalizedName(ItemStack stack)
+    {
+        return ("dynamictanks.items.hammer");
+    }
 
-	@Override
-	public String getUnlocalizedName(ItemStack stack) {
-		return ("dynamictanks.items.hammer");
-	}
+    @Override
+    public void registerIcons(IconRegister register)
+    {
+        itemIcon = register.registerIcon("dynamictanks:hammer");
+    }
 
-	@Override
-	public void registerIcons(IconRegister register) {
-		itemIcon = register.registerIcon("dynamictanks:hammer");
-	}
-
-	@Override
-	public Icon getIconFromDamage(int i) {
-		return itemIcon;
-	}
+    @Override
+    public Icon getIconFromDamage(int i)
+    {
+        return itemIcon;
+    }
 }

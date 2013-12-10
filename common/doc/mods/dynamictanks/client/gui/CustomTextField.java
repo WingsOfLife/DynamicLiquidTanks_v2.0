@@ -324,16 +324,20 @@ public class CustomTextField extends Gui
                     this.setCursorPositionEnd();
                     this.setSelectionPos(0);
                     return true;
+
                 case 3:
                     GuiScreen.setClipboardString(this.getSelectedtext());
                     return true;
+
                 case 22:
                     this.writeText(GuiScreen.getClipboardString());
                     return true;
+
                 case 24:
                     GuiScreen.setClipboardString(this.getSelectedtext());
                     this.writeText("");
                     return true;
+
                 default:
                     switch (par2)
                     {
@@ -348,6 +352,7 @@ public class CustomTextField extends Gui
                             }
 
                             return true;
+
                         case 199:
                             if (GuiScreen.isShiftKeyDown())
                             {
@@ -359,6 +364,7 @@ public class CustomTextField extends Gui
                             }
 
                             return true;
+
                         case 203:
                             if (GuiScreen.isShiftKeyDown())
                             {
@@ -381,6 +387,7 @@ public class CustomTextField extends Gui
                             }
 
                             return true;
+
                         case 205:
                             if (GuiScreen.isShiftKeyDown())
                             {
@@ -403,6 +410,7 @@ public class CustomTextField extends Gui
                             }
 
                             return true;
+
                         case 207:
                             if (GuiScreen.isShiftKeyDown())
                             {
@@ -414,6 +422,7 @@ public class CustomTextField extends Gui
                             }
 
                             return true;
+
                         case 211:
                             if (GuiScreen.isCtrlKeyDown())
                             {
@@ -425,6 +434,7 @@ public class CustomTextField extends Gui
                             }
 
                             return true;
+
                         default:
                             if (ChatAllowedCharacters.isAllowedCharacter(par1))
                             {
@@ -755,4 +765,3 @@ public class CustomTextField extends Gui
         this.visible = par1;
     }
 }
-

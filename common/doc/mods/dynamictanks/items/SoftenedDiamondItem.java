@@ -10,28 +10,30 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 
-public class SoftenedDiamondItem extends Item {
+public class SoftenedDiamondItem extends Item
+{
+    public SoftenedDiamondItem(int itemId)
+    {
+        super(itemId);
+        setMaxDamage(5);
+        setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);
+    }
 
-	public SoftenedDiamondItem (int itemId) {
-		super(itemId);
-		setMaxDamage(5);
-		setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);	
-	}
+    @Override
+    public String getUnlocalizedName(ItemStack stack)
+    {
+        return ("dynamictanks.items.softDiamond");
+    }
 
-	@Override
-	public String getUnlocalizedName(ItemStack stack) {
-		return ("dynamictanks.items.softDiamond");
-	}
+    @Override
+    public void registerIcons(IconRegister register)
+    {
+        itemIcon = register.registerIcon("dynamictanks:diamond");
+    }
 
-	@Override
-	public void registerIcons(IconRegister register) {
-		itemIcon = register.registerIcon("dynamictanks:diamond");
-	}
-
-	@Override
-	public Icon getIconFromDamage(int i) {
-		return itemIcon;
-	}
-
-	
+    @Override
+    public Icon getIconFromDamage(int i)
+    {
+        return itemIcon;
+    }
 }

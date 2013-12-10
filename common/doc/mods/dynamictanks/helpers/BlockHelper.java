@@ -12,48 +12,57 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
-public class BlockHelper {
+public class BlockHelper
+{
+    public static void dropItems(World world, int x, int y, int z)
+    {
+        Random rand = new Random();
+        TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
 
-	public static void dropItems(World world, int x, int y, int z){
-		Random rand = new Random();
+        if (!(tileEntity instanceof IInventory))
+        {
+            return;
+        }
 
-		TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
-		if (!(tileEntity instanceof IInventory)) {
-			return;
-		}
-		IInventory inventory = (IInventory) tileEntity;
+        IInventory inventory = (IInventory) tileEntity;
 
-		for (int i = 0; i < inventory.getSizeInventory(); i++) {
-			ItemStack item = inventory.getStackInSlot(i);
+        for (int i = 0; i < inventory.getSizeInventory(); i++)
+        {
+            ItemStack item = inventory.getStackInSlot(i);
 
-			if (item != null && item.stackSize > 0) {
-				float rx = rand.nextFloat() * 0.8F + 0.1F;
-				float ry = rand.nextFloat() * 0.8F + 0.1F;
-				float rz = rand.nextFloat() * 0.8F + 0.1F;
+            if (item != null && item.stackSize > 0)
+            {
+                float rx = rand.nextFloat() * 0.8F + 0.1F;
+                float ry = rand.nextFloat() * 0.8F + 0.1F;
+                float rz = rand.nextFloat() * 0.8F + 0.1F;
+                EntityItem entityItem = new EntityItem(world,
+                                                       x + rx, y + ry, z + rz,
+                                                       new ItemStack(item.itemID, item.stackSize, item.getItemDamage()));
 
-				EntityItem entityItem = new EntityItem(world,
-						x + rx, y + ry, z + rz,
-						new ItemStack(item.itemID, item.stackSize, item.getItemDamage()));
+                if (item.hasTagCompound())
+                {
+                    entityItem.getEntityItem().setTagCompound((NBTTagCompound) item.getTagCompound().copy());
+                }
 
-				if (item.hasTagCompound()) {
-					entityItem.getEntityItem().setTagCompound((NBTTagCompound) item.getTagCompound().copy());
-				}
+                float factor = 0.05F;
+                entityItem.motionX = rand.nextGaussian() * factor;
+                entityItem.motionY = rand.nextGaussian() * factor + 0.2F;
+                entityItem.motionZ = rand.nextGaussian() * factor;
+                world.spawnEntityInWorld(entityItem);
+                item.stackSize = 0;
+            }
+        }
+    }
 
-				float factor = 0.05F;
-				entityItem.motionX = rand.nextGaussian() * factor;
-				entityItem.motionY = rand.nextGaussian() * factor + 0.2F;
-				entityItem.motionZ = rand.nextGaussian() * factor;
-				world.spawnEntityInWorld(entityItem);
-				item.stackSize = 0;
-			}
-		}
-	}
-	
-	public static boolean shouldSideRender(IBlockAccess world, int x, int y, int z, int side, Block block) {
-		ForgeDirection dir = ForgeDirection.getOrientation(side).getOpposite();
-		 if(world.getBlockId(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ) == block.blockID)
-			 return true;
-		 return false;
-	}
+    public static boolean shouldSideRender(IBlockAccess world, int x, int y, int z, int side, Block block)
+    {
+        ForgeDirection dir = ForgeDirection.getOrientation(side).getOpposite();
 
+        if (world.getBlockId(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ) == block.blockID)
+        {
+            return true;
+        }
+
+        return false;
+    }
 }

@@ -9,9 +9,9 @@ import net.minecraft.util.Direction;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
 
-public class CustomTreeGenerator extends WorldGenerator {
-
-	/** The minimum height of a generated tree. */
+public class CustomTreeGenerator extends WorldGenerator
+{
+    /** The minimum height of a generated tree. */
     private final int minTreeHeight;
 
     /** True if this tree should grow Vines. */
@@ -70,14 +70,13 @@ public class CustomTreeGenerator extends WorldGenerator {
                         if (var8 >= 0 && var8 < 256)
                         {
                             var12 = par1World.getBlockId(var10, var8, var11);
-
                             Block block = Block.blocksList[var12];
 
                             if (var12 != 0 &&
-                               !block.isLeaves(par1World, var10, var8, var11) &&
-                                var12 != Block.grass.blockID &&
-                                var12 != Block.dirt.blockID &&
-                               !block.isWood(par1World, var10, var8, var11))
+                                    !block.isLeaves(par1World, var10, var8, var11) &&
+                                    var12 != Block.grass.blockID &&
+                                    var12 != Block.dirt.blockID &&
+                                    !block.isWood(par1World, var10, var8, var11))
                             {
                                 var7 = false;
                             }
@@ -119,11 +118,10 @@ public class CustomTreeGenerator extends WorldGenerator {
                             for (int var16 = par5 - var13; var16 <= par5 + var13; ++var16)
                             {
                                 int var17 = var16 - par5;
-
                                 Block block = Block.blocksList[par1World.getBlockId(var14, var11, var16)];
 
                                 if ((Math.abs(var15) != var13 || Math.abs(var17) != var13 || par2Random.nextInt(2) != 0 && var12 != 0) &&
-                                    (block == null || block.canBeReplacedByLeaves(par1World, var14, var11, var16)))
+                                        (block == null || block.canBeReplacedByLeaves(par1World, var14, var11, var16)))
                                 {
                                     this.setBlockAndMetadata(par1World, var14, var11, var16, FluidManager.blockType.get(par2Random.nextInt(FluidManager.blockType.size() - 1)).blockID, this.metaLeaves);
                                 }
@@ -134,7 +132,6 @@ public class CustomTreeGenerator extends WorldGenerator {
                     for (var11 = 0; var11 < var6; ++var11)
                     {
                         var12 = par1World.getBlockId(par3, par4 + var11, par5);
-
                         Block block = Block.blocksList[var12];
 
                         if (var12 == 0 || block == null || block.isLeaves(par1World, par3, par4 + var11, par5))
@@ -178,6 +175,7 @@ public class CustomTreeGenerator extends WorldGenerator {
                                 for (var15 = par5 - var13; var15 <= par5 + var13; ++var15)
                                 {
                                     Block block = Block.blocksList[par1World.getBlockId(var14, var11, var15)];
+
                                     if (block != null && block.isLeaves(par1World, var14, var11, var15))
                                     {
                                         if (par2Random.nextInt(4) == 0 && par1World.getBlockId(var14 - 1, var11, var15) == 0)
@@ -255,5 +253,4 @@ public class CustomTreeGenerator extends WorldGenerator {
             --var6;
         }
     }
-	
 }

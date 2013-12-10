@@ -22,289 +22,377 @@ import com.google.common.base.Optional;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockHauntedLeaves extends BlockLeavesBase implements IShearable {
-	public enum BlockType {
-		CREEPY(0);
+public class BlockHauntedLeaves extends BlockLeavesBase implements IShearable
+{
+    public enum BlockType
+    {
+        CREEPY(0);
 
-		private final int      metadata;
-		private ItemStack      sapling            = new ItemStack(BlockManager.BlockHS);
-		private static boolean loadedCustomBlocks = false;
+        private final int      metadata;
+        private ItemStack      sapling            = new ItemStack(BlockManager.BlockHS);
+        private static boolean loadedCustomBlocks = false;
 
+        static BlockType fromMetadata(int metadata)
+        {
+            metadata = unmarkedMetadata(metadata);
 
+            for (final BlockType type : BlockType.values())
+            {
+                if (type.metadata() == metadata)
+                {
+                    return type;
+                }
+            }
 
-		static BlockType fromMetadata(int metadata) {
-			metadata = unmarkedMetadata(metadata);
+            return null;
+        }
 
-			for (final BlockType type : BlockType.values()){
-				if (type.metadata() == metadata) return type;
-			}
+        private static void loadCustomBlocks()
+        {
+            loadedCustomBlocks = true;
+        }
 
-			return null;
-		}
+        BlockType(int metadata)
+        {
+            this.metadata = metadata;
+        }
 
+        int getSaplingID()
+        {
+            if (!loadedCustomBlocks)
+            {
+                loadCustomBlocks();
+            }
 
-		private static void loadCustomBlocks() {
-			loadedCustomBlocks = true;
-		}
+            return sapling.itemID;
+        }
 
-		BlockType(int metadata) {
-			this.metadata = metadata;
-		}
+        int getSaplingMetadata()
+        {
+            if (!loadedCustomBlocks)
+            {
+                loadCustomBlocks();
+            }
 
-		int getSaplingID() {
-			if (!loadedCustomBlocks) loadCustomBlocks();
-			return sapling.itemID;
-		}
+            return sapling.getItemDamage();
+        }
 
-		int getSaplingMetadata() {
-			if (!loadedCustomBlocks) loadCustomBlocks();
-			return sapling.getItemDamage();
-		}
+        public int metadata()
+        {
+            return metadata;
+        }
+    }
 
-		public int metadata() {
-			return metadata;
-		}
-	}
+    private Icon textures = null;//{null, null, null, null, null, null, null, null, null, null, null, null};
 
-	private Icon textures = null;//{null, null, null, null, null, null, null, null, null, null, null, null};
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerIcons(IconRegister iconRegister)
+    {
+        textures = iconRegister.registerIcon("dynamictanks:HauntedLeaves");
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister iconRegister){
-		textures = iconRegister.registerIcon("dynamictanks:HauntedLeaves");
-	}
+    private static final int METADATA_BITMASK       = 0x3;
+    private static final int METADATA_USERPLACEDBIT = 0x4;
+    private static final int METADATA_DECAYBIT      = 0x8;
+    private static final int METADATA_CLEARDECAYBIT = -METADATA_DECAYBIT - 1;
 
-	private static final int METADATA_BITMASK       = 0x3;
-	private static final int METADATA_USERPLACEDBIT = 0x4;
-	private static final int METADATA_DECAYBIT      = 0x8;
-	private static final int METADATA_CLEARDECAYBIT = -METADATA_DECAYBIT - 1;
+    private static int clearDecayOnMetadata(int metadata)
+    {
+        return metadata & METADATA_CLEARDECAYBIT;
+    }
 
-	private static int clearDecayOnMetadata(int metadata) {
-		return metadata & METADATA_CLEARDECAYBIT;
-	}
+    private static boolean isDecaying(int metadata)
+    {
+        return (metadata & METADATA_DECAYBIT) != 0;
+    }
 
-	private static boolean isDecaying(int metadata) {
-		return (metadata & METADATA_DECAYBIT) != 0;
-	}
+    private static boolean isUserPlaced(int metadata)
+    {
+        return (metadata & METADATA_USERPLACEDBIT) != 0;
+    }
 
-	private static boolean isUserPlaced(int metadata) {
-		return (metadata & METADATA_USERPLACEDBIT) != 0;
-	}
+    private static int setDecayOnMetadata(int metadata)
+    {
+        return metadata | METADATA_DECAYBIT;
+    }
 
-	private static int setDecayOnMetadata(int metadata) {
-		return metadata | METADATA_DECAYBIT;
-	}
+    private static int unmarkedMetadata(int metadata)
+    {
+        return metadata & METADATA_BITMASK;
+    }
 
-	private static int unmarkedMetadata(int metadata) {
-		return metadata & METADATA_BITMASK;
-	}
+    int[] adjacentTreeBlocks;
 
-	int[] adjacentTreeBlocks;
+    public BlockHauntedLeaves(int id, int index, Material material, boolean useFastGraphics)
+    {
+        super(id, material, useFastGraphics);
+        setTickRandomly(true);
+        setHardness(0.3f);
+        setStepSound(soundGrassFootstep);
+        setLightOpacity(1);
+    }
 
-	public BlockHauntedLeaves(int id, int index, Material material, boolean useFastGraphics) {
-		super(id, material, useFastGraphics);
+    @Override
+    public void beginLeavesDecay(World world, int x, int y, int z)
+    {
+        world.setBlockMetadataWithNotify(x, y, z, setDecayOnMetadata(world.getBlockMetadata(x, y, z)), 3);
+    }
 
-		setTickRandomly(true);
-		setHardness(0.3f);
-		setStepSound(soundGrassFootstep);
-		setLightOpacity(1);
-	}
+    @Override
+    public void breakBlock(World world, int x, int y, int z, int blockID, int metadata)
+    {
+        final int leafDecayRadius = 1;
+        final int chuckCheckRadius = leafDecayRadius + 1;
 
-	@Override
-	public void beginLeavesDecay(World world, int x, int y, int z) {
-		world.setBlockMetadataWithNotify(x, y, z, setDecayOnMetadata(world.getBlockMetadata(x, y, z)), 3);
-	}
+        if (!world.checkChunksExist(x - chuckCheckRadius, y - chuckCheckRadius, z - chuckCheckRadius, x + chuckCheckRadius, y + chuckCheckRadius, z + chuckCheckRadius))
+        {
+            return;
+        }
 
-	@Override
-	public void breakBlock(World world, int x, int y, int z, int blockID, int metadata) {
-		final int leafDecayRadius = 1;
-		final int chuckCheckRadius = leafDecayRadius + 1;
+        for (int x1 = -leafDecayRadius; x1 <= leafDecayRadius; ++x1)
+        {
+            for (int y1 = -leafDecayRadius; y1 <= leafDecayRadius; ++y1)
+            {
+                for (int z1 = -leafDecayRadius; z1 <= leafDecayRadius; ++z1)
+                {
+                    final int id = world.getBlockId(x + x1, y + y1, z + z1);
 
-		if (!world.checkChunksExist(x - chuckCheckRadius, y - chuckCheckRadius, z - chuckCheckRadius, x + chuckCheckRadius, y + chuckCheckRadius, z + chuckCheckRadius)) return;
+                    if (Block.blocksList[id] != null)
+                    {
+                        Block.blocksList[id].beginLeavesDecay(world, x + x1, y + y1, z + z1);
+                    }
+                }
+            }
+        }
+    }
 
-		for (int x1 = -leafDecayRadius; x1 <= leafDecayRadius; ++x1) {
-			for (int y1 = -leafDecayRadius; y1 <= leafDecayRadius; ++y1) {
-				for (int z1 = -leafDecayRadius; z1 <= leafDecayRadius; ++z1) {
-					final int id = world.getBlockId(x + x1, y + y1, z + z1);
+    @Override
+    public int damageDropped(int metadata)
+    {
+        final Optional<BlockType> type = Optional.fromNullable(BlockType.fromMetadata(metadata));
+        return type.isPresent() ? type.get().getSaplingMetadata() : 0;
+    }
 
-					if (Block.blocksList[id] != null){
-						Block.blocksList[id].beginLeavesDecay(world, x + x1, y + y1, z + z1);
-					}
-				}
-			}
-		}
-	}
+    private void doSaplingDrop(World world, int x, int y, int z, int metadata, int par7)
+    {
+        dropBlockAsItem_do(world, x, y, z, new ItemStack(BlockManager.BlockHS, 1, 0));
+    }
 
-	@Override
-	public int damageDropped(int metadata) {
-		final Optional<BlockType> type = Optional.fromNullable(BlockType.fromMetadata(metadata));
-		return type.isPresent() ? type.get().getSaplingMetadata() : 0;
-	}
+    @Override
+    public void dropBlockAsItemWithChance(World world, int x, int y, int z, int metadata, float chance, int par7)
+    {
+        if (world.isRemote)
+        {
+            return;
+        }
 
-	private void doSaplingDrop(World world, int x, int y, int z, int metadata, int par7) {
-		dropBlockAsItem_do(world, x, y, z, new ItemStack(BlockManager.BlockHS, 1, 0));
-	}
+        if (world.rand.nextInt(20) == 0)
+        {
+            doSaplingDrop(world, x, y, z, metadata, par7);
+        }
 
-	@Override
-	public void dropBlockAsItemWithChance(World world, int x, int y, int z, int metadata, float chance, int par7) {
-		if (world.isRemote) return;
+        if (world.rand.nextInt(200) == 0)
+        {
+            dropBlockAsItem_do(world, x, y, z, new ItemStack(Item.appleRed, 1, 0));
+        }
+    }
 
-		if (world.rand.nextInt(20) == 0){
-			doSaplingDrop(world, x, y, z, metadata, par7);
-		}
+    @Override
+    public Icon getIcon(int side, int metadata)
+    {
+        return textures;//[unmarkedMetadata(metadata) * 2 + (!isOpaqueCube() ? 0 : 1)];
+    }
 
-		if (world.rand.nextInt(200) == 0){
-			dropBlockAsItem_do(world, x, y, z, new ItemStack(Item.appleRed, 1, 0));
-		}
-	}
+    // Return your Better Leaves icon
+    public Icon getIconBetterLeaves(int metadata, float randomIndex)
+    {
+        return textures;//[8 + unmarkedMetadata(metadata)];
+    }
 
-	@Override
-	public Icon getIcon(int side, int metadata) {
-		return textures;//[unmarkedMetadata(metadata) * 2 + (!isOpaqueCube() ? 0 : 1)];
-	}
+    public Icon getIconFallingLeaves(int metadata)
+    {
+        return textures;//[(unmarkedMetadata(metadata) * 2) + 1];
+    }
 
-	// Return your Better Leaves icon
-	public Icon getIconBetterLeaves(int metadata, float randomIndex) {
-		return textures;//[8 + unmarkedMetadata(metadata)];
-	}
+    public float getSpawnChanceFallingLeaves(int metadata)
+    {
+        return 0.1F;
+    }
 
-	public Icon getIconFallingLeaves(int metadata) {
-		return textures;//[(unmarkedMetadata(metadata) * 2) + 1];
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void getSubBlocks(int id, CreativeTabs tab, List itemList)
+    {
+        for (final BlockType blockType : BlockType.values())
+        {
+            itemList.add(new ItemStack(this, 1, blockType.metadata()));
+        }
+    }
 
-	public float getSpawnChanceFallingLeaves(int metadata) {
-		return 0.1F;
-	}
+    @Override
+    public int idDropped(int metadata, Random rand, int par3)
+    {
+        return BlockManager.BlockHS.blockID;
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(int id, CreativeTabs tab, List itemList) {
-		for (final BlockType blockType : BlockType.values()) {
-			itemList.add(new ItemStack(this, 1, blockType.metadata()));
-		}
-	}
+    @Override
+    public boolean isLeaves(World world, int x, int y, int z)
+    {
+        return true;
+    }
 
-	@Override
-	public int idDropped(int metadata, Random rand, int par3) {
-		return BlockManager.BlockHS.blockID;
-	}
+    @Override
+    public boolean isOpaqueCube()
+    {
+        return Block.leaves.isOpaqueCube();
+    }
 
-	@Override
-	public boolean isLeaves(World world, int x, int y, int z) {
-		return true;
-	}
+    @Override
+    public boolean isShearable(ItemStack item, World world, int x, int y, int z)
+    {
+        return true;
+    }
 
-	@Override
-	public boolean isOpaqueCube() {
-		return Block.leaves.isOpaqueCube();
-	}
+    @Override
+    public void onEntityWalking(World world, int x, int y, int z, Entity entity)
+    {
+        beginLeavesDecay(world, x, y, z);
+    }
 
-	@Override
-	public boolean isShearable(ItemStack item, World world, int x, int y, int z) {
-		return true;
-	}
+    @Override
+    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int x, int y, int z, int fortune)
+    {
+        final ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
+        ret.add(new ItemStack(this, 1, unmarkedMetadata(world.getBlockMetadata(x, y, z))));
+        return ret;
+    }
 
-	@Override
-	public void onEntityWalking(World world, int x, int y, int z, Entity entity) {
-		beginLeavesDecay(world, x, y, z);
-	}
+    @Override
+    public int quantityDropped(Random rand)
+    {
+        return rand.nextInt(20) == 0 ? 1 : 0;
+    }
 
-	@Override
-	public ArrayList<ItemStack> onSheared(ItemStack item, World world, int x, int y, int z, int fortune) {
-		final ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
-		ret.add(new ItemStack(this, 1, unmarkedMetadata(world.getBlockMetadata(x, y, z))));
-		return ret;
-	}
+    private void removeLeaves(World world, int x, final int y, final int z)
+    {
+        dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
+        world.setBlockToAir(x, y, z);
+    }
 
-	@Override
-	public int quantityDropped(Random rand) {
-		return rand.nextInt(20) == 0 ? 1 : 0;
-	}
+    @Override
+    public boolean shouldSideBeRendered(IBlockAccess par1iBlockAccess, int par2, int par3, int par4, int par5)
+    {
+        graphicsLevel = !Block.leaves.isOpaqueCube(); // fix leaf render
+        // bug
+        return super.shouldSideBeRendered(par1iBlockAccess, par2, par3, par4, par5);
+    }
 
-	private void removeLeaves(World world, int x, final int y, final int z) {
-		dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
-		world.setBlockToAir(x, y, z);
-	}
+    @Override
+    public void updateTick(World world, int x, int y, int z, Random rand)
+    {
+        if (world.isRemote)
+        {
+            return;
+        }
 
-	@Override
-	public boolean shouldSideBeRendered(IBlockAccess par1iBlockAccess, int par2, int par3, int par4, int par5) {
-		graphicsLevel = !Block.leaves.isOpaqueCube(); // fix leaf render
-		// bug
-		return super.shouldSideBeRendered(par1iBlockAccess, par2, par3, par4, par5);
-	}
+        final int metadata = world.getBlockMetadata(x, y, z);
 
-	@Override
-	public void updateTick(World world, int x, int y, int z, Random rand) {
-		if (world.isRemote) return;
+        if (isUserPlaced(metadata) || !isDecaying(metadata))
+        {
+            return;
+        }
 
-		final int metadata = world.getBlockMetadata(x, y, z);
+        final int rangeWood = 4;
+        final int rangeCheckChunk = rangeWood + 1;
+        final byte var9 = 32;
+        final int var10 = var9 * var9;
+        final int var11 = var9 / 2;
 
-		if (isUserPlaced(metadata) || !isDecaying(metadata)) return;
+        if (adjacentTreeBlocks == null)
+        {
+            adjacentTreeBlocks = new int[var9 * var9 * var9];
+        }
 
-		final int rangeWood = 4;
-		final int rangeCheckChunk = rangeWood + 1;
-		final byte var9 = 32;
-		final int var10 = var9 * var9;
-		final int var11 = var9 / 2;
+        if (world.checkChunksExist(x - rangeCheckChunk, y - rangeCheckChunk, z - rangeCheckChunk, x + rangeCheckChunk, y + rangeCheckChunk, z + rangeCheckChunk))
+        {
+            for (int var12 = -rangeWood; var12 <= rangeWood; ++var12)
+            {
+                for (int var13 = -rangeWood; var13 <= rangeWood; ++var13)
+                {
+                    for (int var14 = -rangeWood; var14 <= rangeWood; ++var14)
+                    {
+                        final int id = world.getBlockId(x + var12, y + var13, z + var14);
 
-		if (adjacentTreeBlocks == null) adjacentTreeBlocks = new int[var9 * var9 * var9];
+                        if (Block.blocksList[id] != null && Block.blocksList[id].isWood(world, x + var12, y + var13, z + var14))
+                        {
+                            adjacentTreeBlocks[(var12 + var11) * var10 + (var13 + var11) * var9 + var14 + var11] = 0;
+                        }
+                        else if (Block.blocksList[id] != null && Block.blocksList[id].isLeaves(world, x + var12, y + var13, z + var14))
+                        {
+                            adjacentTreeBlocks[(var12 + var11) * var10 + (var13 + var11) * var9 + var14 + var11] = -2;
+                        }
+                        else
+                        {
+                            adjacentTreeBlocks[(var12 + var11) * var10 + (var13 + var11) * var9 + var14 + var11] = -1;
+                        }
+                    }
+                }
+            }
 
-		if (world.checkChunksExist(x - rangeCheckChunk, y - rangeCheckChunk, z - rangeCheckChunk, x + rangeCheckChunk, y + rangeCheckChunk, z + rangeCheckChunk)) {
-			for (int var12 = -rangeWood; var12 <= rangeWood; ++var12) {
-				for (int var13 = -rangeWood; var13 <= rangeWood; ++var13) {
-					for (int var14 = -rangeWood; var14 <= rangeWood; ++var14) {
-						final int id = world.getBlockId(x + var12, y + var13, z + var14);
+            for (int var12 = 1; var12 <= 4; ++var12)
+            {
+                for (int var13 = -rangeWood; var13 <= rangeWood; ++var13)
+                {
+                    for (int var14 = -rangeWood; var14 <= rangeWood; ++var14)
+                    {
+                        for (int var15 = -rangeWood; var15 <= rangeWood; ++var15)
+                        {
+                            if (adjacentTreeBlocks[(var13 + var11) * var10 + (var14 + var11) * var9 + var15 + var11] == var12 - 1)
+                            {
+                                if (adjacentTreeBlocks[(var13 + var11 - 1) * var10 + (var14 + var11) * var9 + var15 + var11] == -2)
+                                {
+                                    adjacentTreeBlocks[(var13 + var11 - 1) * var10 + (var14 + var11) * var9 + var15 + var11] = var12;
+                                }
 
-						if (Block.blocksList[id] != null && Block.blocksList[id].isWood(world, x + var12, y + var13, z + var14)) {
-							adjacentTreeBlocks[(var12 + var11) * var10 + (var13 + var11) * var9 + var14 + var11] = 0;
-						} else if (Block.blocksList[id] != null && Block.blocksList[id].isLeaves(world, x + var12, y + var13, z+ var14)) {
-							adjacentTreeBlocks[(var12 + var11) * var10 + (var13 + var11) * var9 + var14 + var11] = -2;
-						} else {
-							adjacentTreeBlocks[(var12 + var11) * var10 + (var13 + var11) * var9 + var14 + var11] = -1;
-						}
-					}
-				}
-			}
+                                if (adjacentTreeBlocks[(var13 + var11 + 1) * var10 + (var14 + var11) * var9 + var15 + var11] == -2)
+                                {
+                                    adjacentTreeBlocks[(var13 + var11 + 1) * var10 + (var14 + var11) * var9 + var15 + var11] = var12;
+                                }
 
-			for (int var12 = 1; var12 <= 4; ++var12) {
-				for (int var13 = -rangeWood; var13 <= rangeWood; ++var13) {
-					for (int var14 = -rangeWood; var14 <= rangeWood; ++var14) {
-						for (int var15 = -rangeWood; var15 <= rangeWood; ++var15) {
-							if (adjacentTreeBlocks[(var13 + var11) * var10 + (var14 + var11) * var9 + var15 + var11] == var12 - 1) {
-								if (adjacentTreeBlocks[(var13 + var11 - 1) * var10 + (var14 + var11) * var9 + var15 + var11] == -2) {
-									adjacentTreeBlocks[(var13 + var11 - 1) * var10 + (var14 + var11) * var9 + var15 + var11] = var12;
-								}
+                                if (adjacentTreeBlocks[(var13 + var11) * var10 + (var14 + var11 - 1) * var9 + var15 + var11] == -2)
+                                {
+                                    adjacentTreeBlocks[(var13 + var11) * var10 + (var14 + var11 - 1) * var9 + var15 + var11] = var12;
+                                }
 
-								if (adjacentTreeBlocks[(var13 + var11 + 1) * var10 + (var14 + var11) * var9 + var15 + var11] == -2) {
-									adjacentTreeBlocks[(var13 + var11 + 1) * var10 + (var14 + var11) * var9 + var15 + var11] = var12;
-								}
+                                if (adjacentTreeBlocks[(var13 + var11) * var10 + (var14 + var11 + 1) * var9 + var15 + var11] == -2)
+                                {
+                                    adjacentTreeBlocks[(var13 + var11) * var10 + (var14 + var11 + 1) * var9 + var15 + var11] = var12;
+                                }
 
-								if (adjacentTreeBlocks[(var13 + var11) * var10 + (var14 + var11 - 1) * var9 + var15 + var11] == -2) {
-									adjacentTreeBlocks[(var13 + var11) * var10 + (var14 + var11 - 1) * var9 + var15 + var11] = var12;
-								}
+                                if (adjacentTreeBlocks[(var13 + var11) * var10 + (var14 + var11) * var9 + var15 + var11 - 1] == -2)
+                                {
+                                    adjacentTreeBlocks[(var13 + var11) * var10 + (var14 + var11) * var9 + var15 + var11 - 1] = var12;
+                                }
 
-								if (adjacentTreeBlocks[(var13 + var11) * var10 + (var14 + var11 + 1) * var9 + var15 + var11] == -2) {
-									adjacentTreeBlocks[(var13 + var11) * var10 + (var14 + var11 + 1) * var9 + var15 + var11] = var12;
-								}
+                                if (adjacentTreeBlocks[(var13 + var11) * var10 + (var14 + var11) * var9 + var15 + var11 + 1] == -2)
+                                {
+                                    adjacentTreeBlocks[(var13 + var11) * var10 + (var14 + var11) * var9 + var15 + var11 + 1] = var12;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-								if (adjacentTreeBlocks[(var13 + var11) * var10 + (var14 + var11) * var9 + var15 + var11 - 1] == -2) {
-									adjacentTreeBlocks[(var13 + var11) * var10 + (var14 + var11) * var9 + var15 + var11 - 1] = var12;
-								}
-
-								if (adjacentTreeBlocks[(var13 + var11) * var10 + (var14 + var11) * var9 + var15 + var11 + 1] == -2) {
-									adjacentTreeBlocks[(var13 + var11) * var10 + (var14 + var11) * var9 + var15 + var11 + 1] = var12;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-		if (adjacentTreeBlocks[var11 * var10 + var11 * var9 + var11] >= 0) {
-			world.setBlockMetadataWithNotify(x, y, z, clearDecayOnMetadata(metadata), 3);
-		} else {
-			removeLeaves(world, x, y, z);
-		}
-	}
+        if (adjacentTreeBlocks[var11 * var10 + var11 * var9 + var11] >= 0)
+        {
+            world.setBlockMetadataWithNotify(x, y, z, clearDecayOnMetadata(metadata), 3);
+        }
+        else
+        {
+            removeLeaves(world, x, y, z);
+        }
+    }
 }

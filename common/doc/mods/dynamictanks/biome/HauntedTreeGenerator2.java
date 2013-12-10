@@ -26,15 +26,19 @@ public class HauntedTreeGenerator2 extends WorldGenerator
         this.seekHeight = !notify;
     }
 
-    public boolean generate (World world, Random random, int xPos, int yPos, int zPos)
+    public boolean generate(World world, Random random, int xPos, int yPos, int zPos)
     {
         int height = random.nextInt(this.treeHeightRange) + this.minTreeHeight;
         boolean flag = true;
+
         if (seekHeight)
         {
             yPos = findGround(world, xPos, yPos, zPos);
+
             if (yPos == -1)
+            {
                 return false;
+            }
         }
 
         if (yPos >= 1 && yPos + height + 1 <= 256)
@@ -45,7 +49,9 @@ public class HauntedTreeGenerator2 extends WorldGenerator
             if (isSoil)
             {
                 if (!checkClear(world, xPos, yPos, zPos, height))
+                {
                     return false;
+                }
 
                 //soil.onPlantGrow(world, xPos, yPos - 1, zPos, xPos, yPos, zPos);
                 placeCanopy(world, random, xPos, yPos, zPos, height);
@@ -53,19 +59,24 @@ public class HauntedTreeGenerator2 extends WorldGenerator
                 return true;
             }
         }
+
         return false;
     }
 
-    boolean checkClear (World world, int x, int y, int z, int treeHeight)
+    boolean checkClear(World world, int x, int y, int z, int treeHeight)
     {
         for (int yPos = 0; yPos < treeHeight + 1; yPos++)
         {
             int range = 1;
 
             if (yPos == 0)
+            {
                 range = 0;
+            }
             else if (yPos >= treeHeight - 1)
+            {
                 range = 2;
+            }
 
             for (int xPos = range; xPos <= range; xPos++)
             {
@@ -73,32 +84,41 @@ public class HauntedTreeGenerator2 extends WorldGenerator
                 {
                     int blockID = world.getBlockId(x + xPos, y + yPos, z + zPos);
                     Block block = Block.blocksList[blockID];
+
                     if (block != null && !block.isLeaves(world, x + xPos, y + yPos, z + zPos))
+                    {
                         return false;
+                    }
                 }
             }
         }
+
         return true;
     }
 
-    int findGround (World world, int x, int y, int z)
+    int findGround(World world, int x, int y, int z)
     {
         int ret = -1;
         int height = y;
+
         do
         {
             int heightID = world.getBlockId(x, height, z);
+
             if ((heightID == Block.dirt.blockID || heightID == Block.grass.blockID || heightID == BlockManager.BlockHD.blockID) && !Block.opaqueCubeLookup[world.getBlockId(x, height + 1, z)])
             {
                 ret = height + 1;
                 break;
             }
+
             height--;
-        } while (height > 64);
+        }
+        while (height > 64);
+
         return ret;
     }
 
-    void placeCanopy (World world, Random random, int xPos, int yPos, int zPos, int height)
+    void placeCanopy(World world, Random random, int xPos, int yPos, int zPos, int height)
     {
         for (int y = yPos - 3 + height; y <= yPos + height; ++y)
         {
@@ -127,12 +147,11 @@ public class HauntedTreeGenerator2 extends WorldGenerator
         }
     }
 
-    void placeTrunk (World world, int xPos, int yPos, int zPos, int height)
+    void placeTrunk(World world, int xPos, int yPos, int zPos, int height)
     {
         for (int localHeight = 0; localHeight < height; ++localHeight)
         {
             int blockID = world.getBlockId(xPos, yPos + localHeight, zPos);
-
             Block block = Block.blocksList[blockID];
 
             if (blockID == 0 || block == null || block.isLeaves(world, xPos, yPos + localHeight, zPos))
@@ -141,5 +160,4 @@ public class HauntedTreeGenerator2 extends WorldGenerator
             }
         }
     }
-
 }

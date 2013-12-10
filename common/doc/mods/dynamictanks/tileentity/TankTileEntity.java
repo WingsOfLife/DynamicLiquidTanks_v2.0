@@ -4,7 +4,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
-import net.minecraft.world.World;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -14,225 +14,288 @@ import doc.mods.dynamictanks.block.BlockManager;
 import doc.mods.dynamictanks.client.render.RendererHelper;
 import doc.mods.dynamictanks.packets.PacketHandler;
 
-public class TankTileEntity extends CountableTileEntity implements IFluidHandler {
+public class TankTileEntity extends CountableTileEntity implements IFluidHandler
+{
+    /*
+     * Controller Sync Vars
+     */
+    protected int[] ControllerCoords = { -1, -1, -1 }; // coords of tank's
+    // controllers
 
-	/*
-	 * Controller Sync Vars
-	 */
-	protected int[] ControllerCoords = { -1, -1, -1 }; // coords of tank's
-	// controllers
+    /*
+     * Self Vars
+     */
 
-	/*
-	 * Self Vars
-	 */
+    protected int[] camoMeta = { -1, 0 };
+    protected int dyeIndex = -1;
 
-	protected int[] camoMeta = { -1, 0 };	
-	protected int dyeIndex = -1;
+    public TankTileEntity() {}
 
-	public TankTileEntity() {}
+    public TankTileEntity(int maxTickCount)
+    {
+        this.maxTickCount = maxTickCount;
+    }
 
-	public TankTileEntity(int maxTickCount) {
-		this.maxTickCount = maxTickCount;
-	}
+    /*
+     * Self Methods
+     */
 
-	/*
-	 * Self Methods
-	 */
+    public boolean hasCamo()
+    {
+        return camoMeta[0] != -1;
+    }
 
-	public boolean hasCamo() {
-		return camoMeta[0] != -1;
-	}
+    public int[] getCamo()
+    {
+        return camoMeta;
+    }
 
-	public int[] getCamo() {
-		return camoMeta;
-	}
+    public int[] getControllerCoords()
+    {
+        return ControllerCoords;
+    }
 
-	public int[] getControllerCoords() {
-		return ControllerCoords;
-	}
+    public int getDye()
+    {
+        return dyeIndex;
+    }
 
-	public int getDye() {
-		return dyeIndex;
-	}
+    public boolean hasController()
+    {
+        return ControllerCoords != null && ControllerCoords[0] != -1;
+    }
 
-	public boolean hasController() {
-		return ControllerCoords != null && ControllerCoords[0] != -1;
-	}
+    public void setControllerPos(int[] locs)
+    {
+        if (!hasController())
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                ControllerCoords[i] = locs[i];
+            }
+        }
+    }
 
-	public void setControllerPos(int[] locs) {
-		if (!hasController()) {
-			for (int i = 0; i < 3; i++)
-				ControllerCoords[i] = locs[i];				
-		}
-	}
+    public int getLayer()
+    {
+        return hasController() ? (yCoord - RendererHelper.smallestIndex(getControllerTE().getNeighbors())) + 1 : -1;
+    }
 
-	public int getLayer() {
-		return hasController() ? (yCoord - RendererHelper.smallestIndex(getControllerTE().getNeighbors())) + 1 : -1;
-	}
+    public float amntToRender()
+    {
+        if (!hasController() || getControllerTE().getAllLiquids().isEmpty())
+        {
+            return -1;
+        }
 
-	public float amntToRender() {
-		if (!hasController() || getControllerTE().getAllLiquids().isEmpty()) 
-			return -1;
+        float amnt = getControllerTE().getAllLiquids().get(getControllerTE().getLiquidIndex()).getFluidAmount();
+        float cap = getControllerTE().getPerLayer();
 
-		float amnt = getControllerTE().getAllLiquids().get(getControllerTE().getLiquidIndex()).getFluidAmount();
-		float cap = getControllerTE().getPerLayer();
+        if (amnt > (cap * getLayer()))
+        {
+            return worldObj.getBlockId(xCoord, yCoord + 1, zCoord) != 0 ? 1.00f : 0.999f;
+        }
 
-		if (amnt > (cap * getLayer()))
-			return worldObj.getBlockId(xCoord, yCoord + 1, zCoord) != 0 ? 1.00f : 0.999f;
+        if (amnt < (cap * getLayer()))
+        {
+            float leftOver = (cap * getLayer()) - amnt;
+            return 1.0f - leftOver / cap;
+        }
 
-		if (amnt < (cap * getLayer())) {
-			float leftOver = (cap * getLayer()) - amnt;
-			return 1.0f - leftOver / cap;
-		}
+        return worldObj.getBlockId(xCoord, yCoord + 1, zCoord) != 0 ? 1.00f : 0.999f;
+    }
 
-		return worldObj.getBlockId(xCoord, yCoord + 1, zCoord) != 0 ? 1.00f : 0.999f;
-	}
+    public void setCamo(int blockID)
+    {
+        camoMeta[0] = blockID;
+    }
 
-	public void setCamo(int blockID) {
-		camoMeta[0] = blockID;
-	}
+    public void setCamo(int blockID, int meta)
+    {
+        camoMeta[0] = blockID;
+        camoMeta[1] = meta;
+    }
 
-	public void setCamo(int blockID, int meta) {
-		camoMeta[0] = blockID;
-		camoMeta[1] = meta;
-	}
+    public void setDye(int meta)
+    {
+        dyeIndex = meta;
+    }
 
-	public void setDye(int meta) {
-		dyeIndex = meta;
-	}
+    public boolean searchForController()
+    {
+        TileEntity whoAmI = null;
+        TankTileEntity tankTE = null;
+        ControllerTileEntity controllerTE = null;
+        int currentX = xCoord;
+        int currentY = yCoord;
+        int currentZ = zCoord;
+        int BlockID = 0;
+        int[] loc = new int[3];
 
-	public boolean searchForController() {
-		TankTileEntity tankTE = null;
-		ControllerTileEntity controllerTE = null;
+        for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS)
+        {
+            loc[0] = currentX - dir.offsetX;
+            loc[1] = currentY - dir.offsetY;
+            loc[2] = currentZ - dir.offsetZ;
+            whoAmI = worldObj.getBlockTileEntity(loc[0], loc[1], loc[2]);
+            BlockID = worldObj.getBlockId(loc[0], loc[1], loc[2]);
 
-		int currentX = xCoord;
-		int currentY = yCoord;
-		int currentZ = zCoord;
-		int BlockID = 0;
-		int[] loc = new int[3];
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			loc[0] = currentX - dir.offsetX;
-			loc[1] = currentY - dir.offsetY;
-			loc[2] = currentZ - dir.offsetZ;
-			BlockID = worldObj.getBlockId(loc[0], loc[1], loc[2]);
-			if (BlockID == BlockManager.BlockTankController.blockID) {
-				controllerTE = (ControllerTileEntity) worldObj.getBlockTileEntity(loc[0], loc[1], loc[2]);				
-				controllerTE.addNeighbor(new int[] { currentX, currentY, currentZ });
-				if (worldObj.isRemote)
-					PacketHandler.sendPacketWithInt(PacketHandler.PacketIDs.syncNeighbors, loc[0], loc[1], loc[2], currentX, currentY, currentZ, xCoord, yCoord, zCoord);
-				setControllerPos(loc);
-				return true;
-			} else if (BlockID == BlockManager.BlockTank.blockID && !hasController()) {
-				tankTE = (TankTileEntity) worldObj.getBlockTileEntity(loc[0], loc[1], loc[2]);
-				if (tankTE.hasController()) {
-					controllerTE = (ControllerTileEntity) worldObj.getBlockTileEntity(tankTE.getControllerCoords()[0], tankTE.getControllerCoords()[1], tankTE.getControllerCoords()[2]);
-					if (controllerTE != null) {
-						if (worldObj.isRemote)
-							PacketHandler.sendPacketWithInt(PacketHandler.PacketIDs.syncNeighbors, tankTE.getControllerCoords()[0], tankTE.getControllerCoords()[1], tankTE.getControllerCoords()[2], currentX, currentY, currentZ, xCoord, yCoord, zCoord);
-						setControllerPos(tankTE.ControllerCoords);
-						controllerTE.addNeighbor(new int[] { currentX, currentY, currentZ });
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
+            if (BlockID == BlockManager.BlockTankController.blockID && whoAmI instanceof ControllerTileEntity)
+            {
+                controllerTE = (ControllerTileEntity) worldObj.getBlockTileEntity(loc[0], loc[1], loc[2]);
+                controllerTE.addNeighbor(new int[] { currentX, currentY, currentZ });
 
-	public ControllerTileEntity getControllerTE() {
-		return hasController() ? (ControllerTileEntity) worldObj.getBlockTileEntity(ControllerCoords[0], ControllerCoords[1], ControllerCoords[2]) : null;
-	}
+                if (worldObj.isRemote)
+                {
+                    PacketHandler.sendPacketWithInt(PacketHandler.PacketIDs.syncNeighbors, loc[0], loc[1], loc[2], currentX, currentY, currentZ, xCoord, yCoord, zCoord);
+                }
 
-	/*
-	 * TileEntity Methods
-	 */
-	@Override
-	public void updateEntity() {	
-		if (worldObj.isRemote) { // client side
-			doCount();
+                setControllerPos(loc);
+                return true;
+            }
+            else if (BlockID == BlockManager.BlockTank.blockID && !hasController() && whoAmI instanceof TankTileEntity)
+            {
+                tankTE = (TankTileEntity) worldObj.getBlockTileEntity(loc[0], loc[1], loc[2]);
 
-			if (countMet()) { // perform events every maxTickCount
-				if (!hasController()) { //check if already has controller
-					searchForController();
-				}
-			}
-		}
-		
-		if (!worldObj.isRemote) { // server side
-			doCount();
+                if (tankTE.hasController())
+                {
+                    controllerTE = (ControllerTileEntity) worldObj.getBlockTileEntity(tankTE.getControllerCoords()[0], tankTE.getControllerCoords()[1], tankTE.getControllerCoords()[2]);
 
-			if (countMet()) { // perform events every maxTickCount
-				if (!hasController()) { //check if already has controller
-					searchForController();
-				}
-			}
-		}
-	}
+                    if (controllerTE != null)
+                    {
+                        if (worldObj.isRemote)
+                        {
+                            PacketHandler.sendPacketWithInt(PacketHandler.PacketIDs.syncNeighbors, tankTE.getControllerCoords()[0], tankTE.getControllerCoords()[1], tankTE.getControllerCoords()[2], currentX, currentY, currentZ, xCoord, yCoord, zCoord);
+                        }
 
-	/*
-	 * Syncing Methods
-	 */
+                        setControllerPos(tankTE.ControllerCoords);
+                        controllerTE.addNeighbor(new int[] { currentX, currentY, currentZ });
+                        return true;
+                    }
+                }
+            }
+        }
 
-	@Override
-	public void readFromNBT(NBTTagCompound tagCompound) {
-		super.readFromNBT(tagCompound);
-		ControllerCoords = tagCompound.getIntArray("controllerLoc");
-		camoMeta = tagCompound.getIntArray("camo");
-		dyeIndex = tagCompound.getInteger("dye");
-	}
+        return false;
+    }
 
-	@Override
-	public void writeToNBT(NBTTagCompound tagCompound) {
-		super.writeToNBT(tagCompound);
-		tagCompound.setIntArray("controllerLoc", ControllerCoords);
-		tagCompound.setIntArray("camo", camoMeta);
-		tagCompound.setInteger("dye", dyeIndex);
-	}
+    public ControllerTileEntity getControllerTE()
+    {
+        if (hasController())
+            if (worldObj.getBlockTileEntity(ControllerCoords[0], ControllerCoords[1], ControllerCoords[2]) instanceof ControllerTileEntity)
+            {
+                return (ControllerTileEntity) worldObj.getBlockTileEntity(ControllerCoords[0], ControllerCoords[1], ControllerCoords[2]);
+            }
 
-	@Override
-	public Packet getDescriptionPacket () {
-		NBTTagCompound tag = new NBTTagCompound();
-		writeToNBT(tag);
-		return new Packet132TileEntityData(xCoord, yCoord, zCoord, 1, tag);
-	}
+        return null;
+    }
 
-	@Override
-	public void onDataPacket (INetworkManager net, Packet132TileEntityData packet) {
-		readFromNBT(packet.data);
-	}
+    /*
+     * TileEntity Methods
+     */
+    @Override
+    public void updateEntity()
+    {
+        if (worldObj.isRemote)   // client side
+        {
+            doCount();
 
-	/*
-	 * IFluidHandler
-	 */
+            if (countMet())   // perform events every maxTickCount
+            {
+                if (!hasController())   //check if already has controller
+                {
+                    searchForController();
+                }
+            }
+        }
 
-	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-		return getControllerTE() != null ? getControllerTE().fill(from, resource, doFill) : null;
-	}
+        if (!worldObj.isRemote)   // server side
+        {
+            doCount();
 
-	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-		return getControllerTE() != null ? getControllerTE().drain(from, resource, doDrain) : null;
-	}
+            if (countMet())   // perform events every maxTickCount
+            {
+                if (!hasController())   //check if already has controller
+                {
+                    searchForController();
+                }
+            }
+        }
+    }
 
-	@Override
-	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-		return getControllerTE() != null ? getControllerTE().drain(from, maxDrain, doDrain) : null;
-	}
+    /*
+     * Syncing Methods
+     */
 
-	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
-		return true;
-	}
+    @Override
+    public void readFromNBT(NBTTagCompound tagCompound)
+    {
+        super.readFromNBT(tagCompound);
+        ControllerCoords = tagCompound.getIntArray("controllerLoc");
+        camoMeta = tagCompound.getIntArray("camo");
+        dyeIndex = tagCompound.getInteger("dye");
+    }
 
-	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid) {
-		return true;
-	}
+    @Override
+    public void writeToNBT(NBTTagCompound tagCompound)
+    {
+        super.writeToNBT(tagCompound);
+        tagCompound.setIntArray("controllerLoc", ControllerCoords);
+        tagCompound.setIntArray("camo", camoMeta);
+        tagCompound.setInteger("dye", dyeIndex);
+    }
 
-	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
-		return null;
-	}
+    @Override
+    public Packet getDescriptionPacket()
+    {
+        NBTTagCompound tag = new NBTTagCompound();
+        writeToNBT(tag);
+        return new Packet132TileEntityData(xCoord, yCoord, zCoord, 1, tag);
+    }
 
+    @Override
+    public void onDataPacket(INetworkManager net, Packet132TileEntityData packet)
+    {
+        readFromNBT(packet.data);
+    }
+
+    /*
+     * IFluidHandler
+     */
+
+    @Override
+    public int fill(ForgeDirection from, FluidStack resource, boolean doFill)
+    {
+        return getControllerTE() != null ? getControllerTE().fill(from, resource, doFill) : null;
+    }
+
+    @Override
+    public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain)
+    {
+        return getControllerTE() != null ? getControllerTE().drain(from, resource, doDrain) : null;
+    }
+
+    @Override
+    public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain)
+    {
+        return getControllerTE() != null ? getControllerTE().drain(from, maxDrain, doDrain) : null;
+    }
+
+    @Override
+    public boolean canFill(ForgeDirection from, Fluid fluid)
+    {
+        return true;
+    }
+
+    @Override
+    public boolean canDrain(ForgeDirection from, Fluid fluid)
+    {
+        return true;
+    }
+
+    @Override
+    public FluidTankInfo[] getTankInfo(ForgeDirection from)
+    {
+        return null;
+    }
 }

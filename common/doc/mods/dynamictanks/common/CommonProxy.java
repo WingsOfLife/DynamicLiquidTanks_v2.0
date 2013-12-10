@@ -8,6 +8,8 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import doc.mods.dynamictanks.Fluids.tileentity.ClensingTileEntity;
 import doc.mods.dynamictanks.Fluids.tileentity.PotionTileEntity;
 import doc.mods.dynamictanks.Fluids.tileentity.TNTTileEntity;
+import doc.mods.dynamictanks.UP.FPCTileEntity_Basic;
+import doc.mods.dynamictanks.UP.FPCTileEntity_RF;
 import doc.mods.dynamictanks.client.gui.ContainerController;
 import doc.mods.dynamictanks.client.gui.GuiController;
 import doc.mods.dynamictanks.tileentity.ControllerTileEntity;
@@ -15,52 +17,66 @@ import doc.mods.dynamictanks.tileentity.DuctTileEntity;
 import doc.mods.dynamictanks.tileentity.TankTileEntity;
 import doc.mods.dynamictanks.tileentity.UpgradeTileEntity;
 
-public class CommonProxy implements IGuiHandler {
-	
-	public void setCustomRenders() {}
-	
-	public void registerTileEntities()
-	{
-		GameRegistry.registerTileEntity(ControllerTileEntity.class, "dynamictanks.tile.controllerTile");
-		GameRegistry.registerTileEntity(TankTileEntity.class, "dynamictanks.tile.tankTile");
-		GameRegistry.registerTileEntity(UpgradeTileEntity.class, "dynamictanks.tile.upgradeTile");
-		GameRegistry.registerTileEntity(DuctTileEntity.class, "dynamictanks.tile.ductTile");
-		GameRegistry.registerTileEntity(PotionTileEntity.class, "dynamictanks.tile.potionTile");
-		GameRegistry.registerTileEntity(ClensingTileEntity.class, "dynamictanks.tile.cleansingTile");
-		GameRegistry.registerTileEntity(TNTTileEntity.class, "dynamictanks.tile.tntTile");
-	}
+public class CommonProxy implements IGuiHandler
+{
+    public void setCustomRenders() {}
 
-	@Override
-	public Object getServerGuiElement(int guiID, EntityPlayer player, World world, int x, int y, int z)
-	{
-		TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
-		
-		if (tileEntity instanceof UpgradeTileEntity)
-			return null;
-		
-		if (tileEntity instanceof ControllerTileEntity)
-			return new ContainerController(player.inventory, (ControllerTileEntity) tileEntity);
-		
-		if (tileEntity instanceof TankTileEntity)
-			return new ContainerController(player.inventory, ((TankTileEntity) tileEntity).getControllerTE());
-		
-		return null;
-	}
+    public void registerTileEntities()
+    {
+        GameRegistry.registerTileEntity(ControllerTileEntity.class, "dynamictanks.tile.controllerTile");
+        GameRegistry.registerTileEntity(TankTileEntity.class, "dynamictanks.tile.tankTile");
+        GameRegistry.registerTileEntity(UpgradeTileEntity.class, "dynamictanks.tile.upgradeTile");
+        GameRegistry.registerTileEntity(DuctTileEntity.class, "dynamictanks.tile.ductTile");
+        GameRegistry.registerTileEntity(PotionTileEntity.class, "dynamictanks.tile.potionTile");
+        GameRegistry.registerTileEntity(ClensingTileEntity.class, "dynamictanks.tile.cleansingTile");
+        GameRegistry.registerTileEntity(TNTTileEntity.class, "dynamictanks.tile.tntTile");
+        GameRegistry.registerTileEntity(FPCTileEntity_Basic.class, "dynamictanks.tile.fpcTile");
+        GameRegistry.registerTileEntity(FPCTileEntity_RF.class, "dynamictanks.tile.fpcTile_RF");
+    }
 
-	@Override
-	public Object getClientGuiElement(int guiID, EntityPlayer player, World world, int x, int y, int z)
-	{
-		TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
-		
-		if (tileEntity instanceof UpgradeTileEntity)
-			return null;
-		
-		if (tileEntity instanceof ControllerTileEntity)
-			return new GuiController(player.inventory, (ControllerTileEntity) tileEntity);
-		
-		if (tileEntity instanceof TankTileEntity)
-			return new GuiController(player.inventory, ((TankTileEntity) tileEntity).getControllerTE());
-		
-		return null;
-	}
+    @Override
+    public Object getServerGuiElement(int guiID, EntityPlayer player, World world, int x, int y, int z)
+    {
+        TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
+
+        if (tileEntity instanceof UpgradeTileEntity)
+        {
+            return null;
+        }
+
+        if (tileEntity instanceof ControllerTileEntity)
+        {
+            return new ContainerController(player.inventory, (ControllerTileEntity) tileEntity);
+        }
+
+        if (tileEntity instanceof TankTileEntity)
+        {
+            return new ContainerController(player.inventory, ((TankTileEntity) tileEntity).getControllerTE());
+        }
+
+        return null;
+    }
+
+    @Override
+    public Object getClientGuiElement(int guiID, EntityPlayer player, World world, int x, int y, int z)
+    {
+        TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
+
+        if (tileEntity instanceof UpgradeTileEntity)
+        {
+            return null;
+        }
+
+        if (tileEntity instanceof ControllerTileEntity)
+        {
+            return new GuiController(player.inventory, (ControllerTileEntity) tileEntity);
+        }
+
+        if (tileEntity instanceof TankTileEntity)
+        {
+            return new GuiController(player.inventory, ((TankTileEntity) tileEntity).getControllerTE());
+        }
+
+        return null;
+    }
 }

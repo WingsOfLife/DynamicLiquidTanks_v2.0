@@ -8,17 +8,23 @@ import net.minecraft.client.renderer.Tessellator;
 
 import org.lwjgl.opengl.GL11;
 
-public class RendererHelper {
+public class RendererHelper
+{
+    public static int smallestIndex(LinkedList<int[]> arr)
+    {
+        int currentSmallest = 257;
 
-	public static int smallestIndex(LinkedList<int[]> arr) {
-		int currentSmallest = 257;
-		for (int i = 0; i < arr.size(); i++)
-			if (arr.get(i)[1] < currentSmallest)
-				currentSmallest = arr.get(i)[1];
-		return currentSmallest;
-	}
-	
-	public static void renderStandardInvBlock(RenderBlocks renderblocks, Block block, int meta) {
+        for (int i = 0; i < arr.size(); i++)
+            if (arr.get(i)[1] < currentSmallest)
+            {
+                currentSmallest = arr.get(i)[1];
+            }
+
+        return currentSmallest;
+    }
+
+    public static void renderStandardInvBlock(RenderBlocks renderblocks, Block block, int meta)
+    {
         Tessellator tessellator = Tessellator.instance;
         GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
         tessellator.startDrawingQuads();
@@ -46,5 +52,4 @@ public class RendererHelper {
         renderblocks.renderFaceXPos(block, 0.0D, 0.0D, 0.0D, block.getIcon(5, meta));
         tessellator.draw();
     }
-	
 }
