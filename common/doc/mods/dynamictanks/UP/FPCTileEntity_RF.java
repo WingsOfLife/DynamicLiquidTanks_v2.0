@@ -19,10 +19,15 @@ import doc.mods.dynamictanks.common.ModConfig;
 
 public class FPCTileEntity_RF extends FPCTileEntity_Basic implements IEnergyHandler, IFluidHandler {
 
-	protected EnergyStorage storage = new EnergyStorage(20000, ModConfig.omniPowerSettings.RFPerTick, 100);
-
+	protected StoreRFEnergy storage = new StoreRFEnergy(20000, ModConfig.omniPowerSettings.RFPerTick, 100);
+	
 	public FPCTileEntity_RF() {}
-
+	
+	@Override
+	public void updateEntity() {
+		storage.setEnergy(fluidPower.getFluidAmount() * ModConfig.omniPowerSettings.RFPerMiliB);
+	}
+	
 	@Override
 	public void readFromNBT(NBTTagCompound nbt)
 	{
@@ -59,8 +64,8 @@ public class FPCTileEntity_RF extends FPCTileEntity_Basic implements IEnergyHand
 	public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate)
 	{
 		if (fluidPower.getFluid() != null) 
-			drain(from, fluidPower.getFluidAmount(), true);
-		fill(from, new FluidStack(FluidManager.potionFluid, (storage.getEnergyStored() / ModConfig.omniPowerSettings.RFPerMiliB)), true);
+			super.drain(from, fluidPower.getFluidAmount(), true);
+		super.fill(from, new FluidStack(FluidManager.potionFluid, (storage.getEnergyStored() / ModConfig.omniPowerSettings.RFPerMiliB)), true);
 		return storage.receiveEnergy(maxReceive, simulate);
 	}
 
@@ -68,8 +73,8 @@ public class FPCTileEntity_RF extends FPCTileEntity_Basic implements IEnergyHand
 	public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate)
 	{
 		if (fluidPower.getFluid() != null) 
-			drain(from, fluidPower.getFluidAmount(), true);
-		fill(from, new FluidStack(FluidManager.potionFluid, (storage.getEnergyStored() / ModConfig.omniPowerSettings.RFPerMiliB)), true);
+			super.drain(from, fluidPower.getFluidAmount(), true);
+		super.fill(from, new FluidStack(FluidManager.potionFluid, (storage.getEnergyStored() / ModConfig.omniPowerSettings.RFPerMiliB)), true);
 		return storage.extractEnergy(maxExtract, simulate);
 	}
 

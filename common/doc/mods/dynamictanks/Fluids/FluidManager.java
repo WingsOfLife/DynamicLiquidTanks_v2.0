@@ -27,6 +27,7 @@ public class FluidManager
     public static Block potionBlock = null;
 
     public static FluidTNT tntBlock = null;
+    public static Block omniBlock = null;
 
     public static FluidPotion regenBlock = null;
     public static FluidPotion swiftBlock = null;
@@ -45,6 +46,7 @@ public class FluidManager
     public static Fluid potionFluid = null;
 
     public static Fluid tntFluid = null;
+    public static Fluid omniFluid = null;
 
     public static Fluid regenFluid = null;
     public static Fluid swiftFluid = null;
@@ -191,6 +193,14 @@ public class FluidManager
         FluidContainerRegistry.registerFluidContainer(new FluidContainerData(new FluidStack(tntFluid, 1000),
                 new ItemStack(ItemManager.buckets, 1, 13), new ItemStack(Item.bucketEmpty)));
         blockType.add(tntBlock);
+        omniFluid = new Fluid("omni").setBlockID(ModConfig.FluidIDs.omniPow).setViscosity(3500).setLuminosity(7);
+        FluidRegistry.registerFluid(omniFluid);
+        omniBlock = new FluidOmniPower(ModConfig.FluidIDs.omniPow, omniFluid, Material.water);
+        GameRegistry.registerBlock(omniBlock, "dynamictanks.fluids.omniFluid");
+        LanguageRegistry.addName(omniBlock, "Omni Power Fluid");
+        FluidContainerRegistry.registerFluidContainer(new FluidContainerData(new FluidStack(omniFluid, 1000),
+                new ItemStack(ItemManager.buckets, 1, 14), new ItemStack(Item.bucketEmpty)));
+        blockType.add(omniBlock);
     }
 
     public static void registerCraftingRecipes()

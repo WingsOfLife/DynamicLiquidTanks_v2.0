@@ -64,6 +64,12 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
     {
         return ControllerCoords != null && ControllerCoords[0] != -1;
     }
+    
+    public void invalidate() {
+    	ControllerCoords[0] = -1;
+    	ControllerCoords[1] = -1;
+    	ControllerCoords[2] = -1;
+    }
 
     public void setControllerPos(int[] locs)
     {
@@ -121,6 +127,15 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
         dyeIndex = meta;
     }
 
+    public boolean invalidateController() {
+    	TileEntity checkIn = worldObj.getBlockTileEntity(ControllerCoords[0], ControllerCoords[1], ControllerCoords[2]);
+    	if (!(checkIn instanceof ControllerTileEntity)) {
+    		invalidate();
+    		return false;
+    	}
+    	return true;
+    }
+    
     public boolean searchForController()
     {
         TileEntity whoAmI = null;
@@ -205,6 +220,7 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
                 if (!hasController())   //check if already has controller
                 {
                     searchForController();
+                    invalidateController();
                 }
             }
         }
@@ -218,6 +234,7 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
                 if (!hasController())   //check if already has controller
                 {
                     searchForController();
+                    invalidateController();
                 }
             }
         }
@@ -266,7 +283,7 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
     @Override
     public int fill(ForgeDirection from, FluidStack resource, boolean doFill)
     {
-        return getControllerTE() != null ? getControllerTE().fill(from, resource, doFill) : null;
+        return getControllerTE() != null ? getControllerTE().fill(from, resource, doFill) : 0;
     }
 
     @Override
@@ -284,7 +301,7 @@ public class TankTileEntity extends CountableTileEntity implements IFluidHandler
     @Override
     public boolean canFill(ForgeDirection from, Fluid fluid)
     {
-        return true;
+        return getControllerTE() != null ? true : false;
     }
 
     @Override

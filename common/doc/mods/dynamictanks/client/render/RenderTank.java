@@ -80,16 +80,16 @@ public class RenderTank implements ISimpleBlockRenderingHandler
                     if (amnt > 0)
                     {
                         renderer.setRenderBounds(
-                            tank.worldObj.getBlockId(x - 1, y, z) == 0 ? 0.001
+                            (tank.worldObj.getBlockId(x - 1, y, z) == 0 || !tank.worldObj.isBlockFullCube(x - 1, y, z)) ? 0.001
                             : 0.00,
-                            tank.worldObj.getBlockId(x, y - 1, z) == 0 ? 0.001
+                            (tank.worldObj.getBlockId(x, y - 1, z) == 0 || !tank.worldObj.isBlockFullCube(x, y - 1, z)) ? 0.001
                             : 0.00,
-                            tank.worldObj.getBlockId(x, y, z - 1) == 0 ? 0.001
+                            (tank.worldObj.getBlockId(x, y, z - 1) == 0 || !tank.worldObj.isBlockFullCube(x, y, z - 1)) ? 0.001
                             : 0.00,
-                            tank.worldObj.getBlockId(x + 1, y, z) == 0 ? 0.999
+                            (tank.worldObj.getBlockId(x + 1, y, z) == 0 || !tank.worldObj.isBlockFullCube(x + 1, y, z)) ? 0.999
                             : 1.0,
                             amnt <= 0 ? 0.0f : amnt,
-                            tank.worldObj.getBlockId(x, y, z + 1) == 0 ? 0.999
+                            (tank.worldObj.getBlockId(x, y, z + 1) == 0 || !tank.worldObj.isBlockFullCube(x, y, z + 1)) ? 0.999
                             : 1.0);
                         Fluid fluid = liquid.getFluid();
 

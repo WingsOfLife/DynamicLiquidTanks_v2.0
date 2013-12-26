@@ -135,9 +135,10 @@ public class DynamicLiquidTanksCore
 
         proxy.registerTileEntities();
         proxy.setCustomRenders();
-        LanguageRegistry.instance().addStringLocalization("multifurnace.container.multifurnace", "Multi-Furnace");
+        //LanguageRegistry.instance().addStringLocalization("multifurnace.container.multifurnace", "Multi-Furnace");
         NetworkRegistry.instance().registerGuiHandler(this, proxy);
-        FluidManager.registerBuckets();
+        if (ModConfig.miscBoolean.enableLiquids == true)
+        	FluidManager.registerBuckets();
         MinecraftForge.EVENT_BUS.register(new TextureHandler());
         PotionRecipe.addRecipe(PotionRecipe.Types.Healing, PotionRecipe.collisionType.Entity, false, 0, 0);
     }

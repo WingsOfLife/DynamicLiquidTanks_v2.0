@@ -9,6 +9,7 @@ import doc.mods.dynamictanks.Fluids.tileentity.ClensingTileEntity;
 import doc.mods.dynamictanks.Fluids.tileentity.PotionTileEntity;
 import doc.mods.dynamictanks.Fluids.tileentity.TNTTileEntity;
 import doc.mods.dynamictanks.UP.FPCTileEntity_Basic;
+import doc.mods.dynamictanks.UP.FPCTileEntity_MJ;
 import doc.mods.dynamictanks.UP.FPCTileEntity_RF;
 import doc.mods.dynamictanks.client.gui.ContainerController;
 import doc.mods.dynamictanks.client.gui.GuiController;
@@ -32,6 +33,7 @@ public class CommonProxy implements IGuiHandler
         GameRegistry.registerTileEntity(TNTTileEntity.class, "dynamictanks.tile.tntTile");
         GameRegistry.registerTileEntity(FPCTileEntity_Basic.class, "dynamictanks.tile.fpcTile");
         GameRegistry.registerTileEntity(FPCTileEntity_RF.class, "dynamictanks.tile.fpcTile_RF");
+        GameRegistry.registerTileEntity(FPCTileEntity_MJ.class, "dynamictanks.tile.fpcTile_MJ");
     }
 
     @Override

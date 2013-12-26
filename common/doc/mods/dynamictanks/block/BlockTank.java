@@ -120,7 +120,10 @@ public class BlockTank extends BlockContainer
         }
 
         ControllerTileEntity conTE = (ControllerTileEntity) tank.getControllerTE();
-
+        
+        if (conTE == null)
+        	return false;
+        
         if (heldItem != null && heldItem.itemID == Item.potion.itemID)
         {
             FluidStack potion = new FluidStack(FluidManager.potionFluid, FluidContainerRegistry.BUCKET_VOLUME);
@@ -393,17 +396,7 @@ public class BlockTank extends BlockContainer
     @Override
     public boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side)
     {
-        int blockID = world.getBlockId(x, y, z);
-        TileEntity tank = world.getBlockTileEntity(x, y, z);
-
-        if (tank instanceof TankTileEntity)
-            if (((TankTileEntity) tank).hasCamo())
-            {
-                return true;
-            }
-
-        return blockID == this.blockID ? false : super.shouldSideBeRendered(world, x, y, z, side);
-        //return ConnectedTexturesHelper.shouldSideRender(world, x, y, z, side, this);
+        return super.shouldSideBeRendered(world, x, y, z, side);
     }
 
     public boolean shouldSideRender(IBlockAccess world, int x, int y, int z, int side)

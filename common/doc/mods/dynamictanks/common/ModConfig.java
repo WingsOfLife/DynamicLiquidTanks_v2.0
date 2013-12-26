@@ -5,7 +5,8 @@ public class ModConfig
     public static class BlockIDs
     {
         public static int blockHauntedDirt = 249;
-        public static int blockFPC = 3188;
+        public static int blockFPCMJ = 3187;
+        public static int blockFPCRF = 3188;
         public static int blockDangerousFlower = 3189;
         public static int blockHauntedSappling = 3190;
         public static int blockHauntedPlanks = 3191;
@@ -45,6 +46,7 @@ public class ModConfig
         public static int water = 3210;
         public static int invis = 3211;
         public static int clense = 3212;
+        public static int omniPow = 3213;
     }
 
     public static class BiomeIDs
@@ -59,7 +61,10 @@ public class ModConfig
     }
     
     public static class omniPowerSettings {
-    	public static int RFPerTick = 1;
+    	public static int RFPerTick = 10;
     	public static int RFPerMiliB = 10;
+    	
+    	public static int MJPerTick = 1;
+    	public static int MJPerMiliB = 1;
     }
 }

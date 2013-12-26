@@ -108,7 +108,7 @@ public class BlockTankController extends BlockContainer
                 TileEntity tile = par1World.getBlockTileEntity(arr[0], arr[1], arr[2]);
 
                 if (tile != null && tile instanceof TankTileEntity)
-                    ((TankTileEntity) tile).setControllerPos(new int[] { -1, -1, -1 });
+                    ((TankTileEntity) tile).invalidate();//setControllerPos(new int[] { -1, -1, -1 });
             }
         }
 

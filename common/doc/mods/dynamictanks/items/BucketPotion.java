@@ -17,6 +17,7 @@ import doc.mods.dynamictanks.DynamicLiquidTanksCore;
 import doc.mods.dynamictanks.Fluids.FluidManager;
 import doc.mods.dynamictanks.Fluids.tileentity.ClensingTileEntity;
 import doc.mods.dynamictanks.Fluids.tileentity.PotionTileEntity;
+import doc.mods.dynamictanks.block.BlockManager;
 import doc.mods.dynamictanks.helpers.CPotionHelper;
 
 public class BucketPotion extends ItemBucket
@@ -27,7 +28,7 @@ public class BucketPotion extends ItemBucket
         "Poison", "Instant Health", "Night Vision",
         "Weakness", "Strength", "Slowness",
         "Harming", "Water Breathing", "Invisibility",
-        "Cleansing", "TNT"
+        "Cleansing", "TNT", "Omni-Power"
     };
 
     private final float ticksPerSec = CPotionHelper.ticksPerSec;
@@ -217,7 +218,7 @@ public class BucketPotion extends ItemBucket
     @Override
     public void getSubItems(int id, CreativeTabs tab, List list)
     {
-        for (int i = 0; i < 14; i++)
+        for (int i = 0; i < 15; i++)
         {
             list.add(new ItemStack(id, 1, i));
         }

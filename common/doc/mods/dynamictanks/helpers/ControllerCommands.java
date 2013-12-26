@@ -154,7 +154,7 @@ public class ControllerCommands
         }
         else if (cmd.equals("setIndex"))
         {
-            if (index.length < 2)
+            if (index.length < 2 || index[0] > controller.getAllLiquids().size() - 1)
             {
                 return "false";
             }

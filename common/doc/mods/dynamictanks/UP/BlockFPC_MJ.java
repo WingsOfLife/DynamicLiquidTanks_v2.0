@@ -1,5 +1,7 @@
 package doc.mods.dynamictanks.UP;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
@@ -9,18 +11,15 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import doc.mods.dynamictanks.DynamicLiquidTanksCore;
 import doc.mods.dynamictanks.client.ClientProxy;
 
-public class BlockFPC_RF extends BlockContainer {
+public class BlockFPC_MJ extends BlockContainer {
 
-	public BlockFPC_RF(int blockID)
+	public BlockFPC_MJ(int blockID)
 	{
 		super(blockID, Material.iron);
-		setUnlocalizedName("dynamictanks.blocks.blockFluidPowerCondenserRF");
+		setUnlocalizedName("dynamictanks.blocks.blockFluidPowerCondenserMJ");
 		setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);
 		setBlockBounds(0f, 0f, 0f, 1f, .75f, 1f);
 		setHardness(1.5f);
@@ -29,16 +28,15 @@ public class BlockFPC_RF extends BlockContainer {
 	@Override
 	public TileEntity createNewTileEntity(World world)
 	{
-		return new FPCTileEntity_RF();
+		return new FPCTileEntity_MJ();
 	}
 
 	@Override
 	public void onBlockClicked(World par1World, int x, int y, int z, EntityPlayer par5EntityPlayer)
 	{
 		if (par1World.isRemote) {
-			FPCTileEntity_RF fpcTile = (FPCTileEntity_RF) par1World.getBlockTileEntity(x, y, z);
+			FPCTileEntity_MJ fpcTile = (FPCTileEntity_MJ) par1World.getBlockTileEntity(x, y, z);
 			par5EntityPlayer.addChatMessage("Fluid: " + fpcTile.fluidPower.getFluidAmount() + " mB");
-			par5EntityPlayer.addChatMessage("Power: " + fpcTile.storage.getEnergyStored() + " RF");
 		}
 	}
 	
@@ -152,4 +150,5 @@ public class BlockFPC_RF extends BlockContainer {
         ClientProxy.renderPass = pass;
         return true;
     }
+
 }

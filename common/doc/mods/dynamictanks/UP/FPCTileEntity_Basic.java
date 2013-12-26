@@ -11,6 +11,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import doc.mods.dynamictanks.Fluids.FluidManager;
 import doc.mods.dynamictanks.tileentity.CountableTileEntity;
 
 public class FPCTileEntity_Basic extends CountableTileEntity implements IFluidHandler
@@ -19,20 +20,32 @@ public class FPCTileEntity_Basic extends CountableTileEntity implements IFluidHa
 
 	protected FluidTank fluidPower = new FluidTank(MAX_CAP);
 
-	public FPCTileEntity_Basic() {}
+	public FPCTileEntity_Basic() {
+		tickCount = 10000;
+	}
 
+	@Override
+	public void updateEntity() {
+		doCount();
+	}
+	
+	public FluidTank getFP() {
+		return fluidPower;
+	}
+	
 	/*
 	 * IFluidHandler
 	 */
 
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill)
-	{
+	{		
 		if (resource == null)
-		{
 			return 0;
-		}
 
+		if (resource.fluidID != FluidManager.omniFluid.getID())
+			return 0;
+		
 		resource = resource.copy();
 		int totalUsed = 0;
 		FluidTank tankToFill = null;

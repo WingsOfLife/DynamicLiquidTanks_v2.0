@@ -222,7 +222,7 @@ public class DuctTileEntity extends CountableTileEntity
 
     public int blockInDirection(ForgeDirection dir)
     {
-        int blockId = worldObj.getBlockId(xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ);
+        /*int blockId = worldObj.getBlockId(xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ);
         TileEntity tile = worldObj.getBlockTileEntity(xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ);
 
         if (blockId == BlockManager.BlockDuct.blockID)
@@ -233,7 +233,7 @@ public class DuctTileEntity extends CountableTileEntity
         if (tile != null && tile instanceof IFluidHandler)
         {
             return TRUE;
-        }
+        }*/
 
         return FALSE;
     }

@@ -4,10 +4,10 @@ import net.minecraft.tileentity.TileEntity;
 
 public class CountableTileEntity extends TileEntity
 {
-    protected int tickCount = 0;
+    public int tickCount = 0;
     protected int maxTickCount = 100; //number of seconds in ticks (secs * 20)
 
-    protected int tickCountSec = 0;
+    public int tickCountSec = 0;
     protected int maxTickCountSec = 100; //number of seconds in ticks (secs * 20)
 
     public CountableTileEntity()

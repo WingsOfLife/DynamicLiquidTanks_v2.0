@@ -14,6 +14,7 @@ public class TextureHandler
     {
         if (event.map.textureType == 0 && ModConfig.miscBoolean.enableLiquids)
         {
+        	FluidManager.omniFluid.setIcons(FluidManager.omniBlock.getBlockTextureFromSide(0), FluidManager.omniBlock.getBlockTextureFromSide(1));
             FluidManager.clenseFluid.setIcons(FluidManager.clenseBlock.getBlockTextureFromSide(0), FluidManager.clenseBlock.getBlockTextureFromSide(1));
             FluidManager.potionFluid.setIcons(FluidManager.potionBlock.getBlockTextureFromSide(0), FluidManager.potionBlock.getBlockTextureFromSide(1));
             FluidManager.tntFluid.setIcons(FluidManager.tntBlock.getBlockTextureFromSide(0), FluidManager.tntBlock.getBlockTextureFromSide(1));
