@@ -1,7 +1,10 @@
 package doc.mods.dynamictanks.UP;
 
+import java.util.List;
+
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -152,4 +155,20 @@ public class BlockFPC_RF extends BlockContainer {
         ClientProxy.renderPass = pass;
         return true;
     }
+    
+    /*
+     * Metadata
+     */
+    @Override
+	public int damageDropped (int metadata) {
+		return metadata;
+	}
+	
+	@SideOnly(Side.CLIENT)
+	@Override
+	public void getSubBlocks(int par1, CreativeTabs tab, List subItems) {
+		for (int ix = 0; ix < 2; ix++) {
+			subItems.add(new ItemStack(this, 1, ix));
+		}
+	}
 }

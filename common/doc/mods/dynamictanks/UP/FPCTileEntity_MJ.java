@@ -34,7 +34,7 @@ public class FPCTileEntity_MJ extends FPCTileEntity_Basic implements IPowerRecep
 
 		if (!worldObj.isRemote) {
 			energyStored = (int) storage.getEnergyStored();
-			worldObj.addBlockEvent(xCoord, yCoord, zCoord, BlockManager.BlockFPC_MJ.blockID, 0, energyStored);
+			//worldObj.addBlockEvent(xCoord, yCoord, zCoord, BlockManager.BlockFPC_MJ.blockID, 0, energyStored);
 		}
 		storage.setEnergy(fluidPower.getFluidAmount() * ModConfig.omniPowerSettings.MJPerMiliB);
 	}
@@ -50,58 +50,58 @@ public class FPCTileEntity_MJ extends FPCTileEntity_Basic implements IPowerRecep
 	 * Sync
 	 */
 
-	 @Override
-	 public void readFromNBT(NBTTagCompound nbt)
-	 {
-		 super.readFromNBT(nbt);
-		 storage.readFromNBT(nbt);
-		 storage.configure(1, 1, 1, 2000);
+	@Override
+	public void readFromNBT(NBTTagCompound nbt)
+	{
+		super.readFromNBT(nbt);
+		storage.readFromNBT(nbt);
+		storage.configure(1, 1, 1, 2000);
 
-		 fluidPower.readFromNBT(nbt);
-	 }
+		fluidPower.readFromNBT(nbt);
+	}
 
-	 @Override
-	 public void writeToNBT(NBTTagCompound nbt)
-	 {
-		 super.writeToNBT(nbt);
-		 storage.writeToNBT(nbt);
-		 fluidPower.writeToNBT(nbt);
-	 }
+	@Override
+	public void writeToNBT(NBTTagCompound nbt)
+	{
+		super.writeToNBT(nbt);
+		storage.writeToNBT(nbt);
+		fluidPower.writeToNBT(nbt);
+	}
 
-	 @Override
-	 public Packet getDescriptionPacket()
-	 {
-		 NBTTagCompound tag = new NBTTagCompound();
-		 writeToNBT(tag);
-		 return new Packet132TileEntityData(xCoord, yCoord, zCoord, 1, tag);
-	 }
+	@Override
+	public Packet getDescriptionPacket()
+	{
+		NBTTagCompound tag = new NBTTagCompound();
+		writeToNBT(tag);
+		return new Packet132TileEntityData(xCoord, yCoord, zCoord, 1, tag);
+	}
 
-	 @Override
-	 public void onDataPacket(INetworkManager net, Packet132TileEntityData packet)
-	 {
-		 readFromNBT(packet.data);
-	 }
+	@Override
+	public void onDataPacket(INetworkManager net, Packet132TileEntityData packet)
+	{
+		readFromNBT(packet.data);
+	}
 
-	 /*
-	  * BC API
-	  */
+	/*
+	 * BC API
+	 */
 
-	 @Override
-	 public PowerReceiver getPowerReceiver(ForgeDirection side) {
-		 return storage.getPowerReceiver();
-	 }
+	@Override
+	public PowerReceiver getPowerReceiver(ForgeDirection side) {
+		return storage.getPowerReceiver();
+	}
 
-	 @Override
-	 public void doWork(PowerHandler workProvider) {}
+	@Override
+	public void doWork(PowerHandler workProvider) {}
 
-	 @Override
-	 public World getWorld() {
-		 return worldObj;
-	 }
+	@Override
+	public World getWorld() {
+		return worldObj;
+	}
 
-	 @Override
-	 public boolean canEmitPowerFrom(ForgeDirection side) {
-		 return true;
-	 }
+	@Override
+	public boolean canEmitPowerFrom(ForgeDirection side) {
+		return true;
+	}
 
 }

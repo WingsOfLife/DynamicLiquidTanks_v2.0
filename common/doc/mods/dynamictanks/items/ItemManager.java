@@ -20,6 +20,7 @@ public class ItemManager
 	public static Item softDiamond = null;
 	public static Item buckets = null;
 	public static Item chalice = null;
+	public static Item mixedPotion = null;
 
 	public static void registerItems()
 	{
@@ -28,6 +29,7 @@ public class ItemManager
 		ironPlateItem = new IronPlateItem(ModConfig.ItemIDs.ironPlateItem);
 		liquidDiamond = new liquidDiamondItem(ModConfig.ItemIDs.liquidDiamondItem);
 		softDiamond = new SoftenedDiamondItem(ModConfig.ItemIDs.softDiamondItem);
+		mixedPotion = new MixedPotionItem(ModConfig.ItemIDs.mixedPotion);
 		if (ModConfig.miscBoolean.enableLiquids == true) {
 			buckets = new BucketPotion(ModConfig.ItemIDs.bucketPotion);
 			chalice = new ChalicePotion(ModConfig.ItemIDs.chalciePotion);
@@ -40,6 +42,7 @@ public class ItemManager
 		LanguageRegistry.addName(new ItemStack(ironPlateItem), "Iron Mass");
 		LanguageRegistry.addName(new ItemStack(liquidDiamond), "Softened Diamond Mass");
 		LanguageRegistry.addName(new ItemStack(softDiamond), "Softened Diamond");
+		LanguageRegistry.addName(new ItemStack(mixedPotion), "Mixed Potion");
 		
 		if (ModConfig.miscBoolean.enableLiquids == false)
 			return;

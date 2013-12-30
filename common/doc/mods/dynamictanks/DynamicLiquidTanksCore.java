@@ -67,6 +67,8 @@ public class DynamicLiquidTanksCore
         ModConfig.BlockIDs.blockHauntedPlanks = configFile.getBlock("BlockMysticPlanks", ModConfig.BlockIDs.blockHauntedPlanks).getInt();
         ModConfig.BlockIDs.blockHauntedWood = configFile.getBlock("BlockMysticWood", ModConfig.BlockIDs.blockHauntedWood).getInt();
         ModConfig.BlockIDs.blockHauntedLeaf = configFile.getBlock("BlockMysticLeaf", ModConfig.BlockIDs.blockHauntedLeaf).getInt();
+        ModConfig.BlockIDs.blockFPCMJ = configFile.getBlock("FPCMJ", ModConfig.BlockIDs.blockFPCMJ).getInt();
+        ModConfig.BlockIDs.blockFPCRF = configFile.getBlock("FPCRF", ModConfig.BlockIDs.blockFPCRF).getInt();
         
         ModConfig.ItemIDs.hammerItem = configFile.getItem("Hammer", ModConfig.ItemIDs.hammerItem).getInt();
         ModConfig.ItemIDs.ironPlateItem = configFile.getItem("Iron Mass", ModConfig.ItemIDs.ironPlateItem).getInt();
@@ -91,12 +93,14 @@ public class DynamicLiquidTanksCore
         ModConfig.FluidIDs.harming = configFile.getBlock("harming", ModConfig.FluidIDs.harming).getInt();
         ModConfig.FluidIDs.water = configFile.getBlock("water", ModConfig.FluidIDs.water).getInt();
         ModConfig.FluidIDs.invis = configFile.getBlock("invis", ModConfig.FluidIDs.invis).getInt();
+        ModConfig.FluidIDs.omniPow = configFile.getBlock("Omni-Power", ModConfig.FluidIDs.omniPow).getInt();
         
         ModConfig.BiomeIDs.potionBiome = configFile.get("Biomes", "PotionBiome", ModConfig.BiomeIDs.potionBiome).getInt();
         
         ModConfig.miscBoolean.terrainGen = configFile.get(configFile.CATEGORY_GENERAL, "terrain gen", ModConfig.miscBoolean.terrainGen).getBoolean(true);
         ModConfig.miscBoolean.enableLiquids = configFile.get(configFile.CATEGORY_GENERAL, "enable fluids", ModConfig.miscBoolean.enableLiquids).getBoolean(true);
-
+        ModConfig.miscBoolean.easyRecipes = configFile.get(configFile.CATEGORY_GENERAL, "Easy Recipes", ModConfig.miscBoolean.easyRecipes).getBoolean(false);
+        
         ModConfig.omniPowerSettings.RFPerTick = configFile.get("Omni-Power Settings", "RF Per Tick", 1, "How much RF per tick the FPC should collect.").getInt();
         ModConfig.omniPowerSettings.RFPerMiliB = configFile.get("Omni-Power Settings", "RF Per mB of OmniPower", 10, "How much RF = 1 mB").getInt();
         
@@ -135,7 +139,7 @@ public class DynamicLiquidTanksCore
 
         proxy.registerTileEntities();
         proxy.setCustomRenders();
-        //LanguageRegistry.instance().addStringLocalization("multifurnace.container.multifurnace", "Multi-Furnace");
+        LanguageRegistry.instance().addStringLocalization("itemGroup.tabDynamicTanks", "Dynamic Liquid Tanks 2");
         NetworkRegistry.instance().registerGuiHandler(this, proxy);
         if (ModConfig.miscBoolean.enableLiquids == true)
         	FluidManager.registerBuckets();

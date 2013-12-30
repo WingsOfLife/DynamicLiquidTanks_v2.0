@@ -19,15 +19,16 @@ import doc.mods.dynamictanks.common.ModConfig;
 
 public class FPCTileEntity_RF extends FPCTileEntity_Basic implements IEnergyHandler, IFluidHandler {
 
-	protected StoreRFEnergy storage = new StoreRFEnergy(20000, ModConfig.omniPowerSettings.RFPerTick, 100);
-	
+	protected EnergyStorage storage = new EnergyStorage(20000, ModConfig.omniPowerSettings.RFPerTick, 100);
+
 	public FPCTileEntity_RF() {}
-	
+
 	@Override
 	public void updateEntity() {
-		storage.setEnergy(fluidPower.getFluidAmount() * ModConfig.omniPowerSettings.RFPerMiliB);
+		/*if (worldObj.getBlockMetadata(xCoord, yCoord, zCoord) == 1)
+			storage.setEnergy(fluidPower.getFluidAmount() * ModConfig.omniPowerSettings.RFPerMiliB);*/
 	}
-	
+
 	@Override
 	public void readFromNBT(NBTTagCompound nbt)
 	{
@@ -63,10 +64,13 @@ public class FPCTileEntity_RF extends FPCTileEntity_Basic implements IEnergyHand
 	@Override
 	public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate)
 	{
-		if (fluidPower.getFluid() != null) 
-			super.drain(from, fluidPower.getFluidAmount(), true);
-		super.fill(from, new FluidStack(FluidManager.potionFluid, (storage.getEnergyStored() / ModConfig.omniPowerSettings.RFPerMiliB)), true);
-		return storage.receiveEnergy(maxReceive, simulate);
+		if (worldObj.getBlockMetadata(xCoord, yCoord, zCoord) == 0) {
+			storage.receiveEnergy(maxReceive, simulate);
+			if (fluidPower.getFluid() == null)
+				fluidPower.fill(new FluidStack(FluidManager.omniFluid, 1), true);
+			fluidPower.getFluid().amount = storage.getEnergyStored() / ModConfig.omniPowerSettings.RFPerMiliB;
+		}
+		return storage.receiveEnergy(maxReceive, true);
 	}
 
 	@Override

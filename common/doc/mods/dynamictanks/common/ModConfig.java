@@ -5,6 +5,7 @@ public class ModConfig
     public static class BlockIDs
     {
         public static int blockHauntedDirt = 249;
+        public static int blockMixer = 3186;
         public static int blockFPCMJ = 3187;
         public static int blockFPCRF = 3188;
         public static int blockDangerousFlower = 3189;
@@ -27,6 +28,7 @@ public class ModConfig
         public static int softDiamondItem = 16716;
         public static int bucketPotion = 16717;
         public static int chalciePotion = 16718;
+        public static int mixedPotion = 16719;
     }
 
     public static class FluidIDs
@@ -58,6 +60,7 @@ public class ModConfig
     {
         public static boolean terrainGen = true;
         public static boolean enableLiquids = true;
+        public static boolean easyRecipes = false;
     }
     
     public static class omniPowerSettings {

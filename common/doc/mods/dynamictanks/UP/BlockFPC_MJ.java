@@ -1,9 +1,10 @@
 package doc.mods.dynamictanks.UP;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.List;
+
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -11,6 +12,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import doc.mods.dynamictanks.DynamicLiquidTanksCore;
 import doc.mods.dynamictanks.client.ClientProxy;
 
@@ -150,5 +153,21 @@ public class BlockFPC_MJ extends BlockContainer {
         ClientProxy.renderPass = pass;
         return true;
     }
+    
+    /*
+     * Metadata
+     */
+    @Override
+	public int damageDropped (int metadata) {
+		return metadata;
+	}
+	
+	@SideOnly(Side.CLIENT)
+	@Override
+	public void getSubBlocks(int par1, CreativeTabs tab, List subItems) {
+		for (int ix = 0; ix < 2; ix++) {
+			subItems.add(new ItemStack(this, 1, ix));
+		}
+	}
 
 }

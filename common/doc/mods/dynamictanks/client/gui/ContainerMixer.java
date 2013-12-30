@@ -5,27 +5,27 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import doc.mods.dynamictanks.tileentity.UpgradeTileEntity;
+import doc.mods.dynamictanks.tileentity.ControllerTileEntity;
+import doc.mods.dynamictanks.tileentity.PotionMixerTileEntity;
 
-public class ControllerContainer extends Container
-{
-    protected UpgradeTileEntity upgradeTile;
+public class ContainerMixer extends Container {
 
-    /*
-     * Unused
-     */
-    
-    public ControllerContainer(InventoryPlayer inventoryPlayer, UpgradeTileEntity upgradeTE)
+	protected PotionMixerTileEntity mixerTile;
+
+    public ContainerMixer(InventoryPlayer inventoryPlayer, PotionMixerTileEntity upgradeTE)
     {
-        upgradeTile = upgradeTE;
-        //addSlotsToContainer(inventoryPlayer);
+    	mixerTile = upgradeTE;
+        addSlotToContainer(new PotionSlot(upgradeTE, 0, 64, 14));
+        addSlotToContainer(new PotionSlot(upgradeTE, 1, 64, 44));
+        addSlotToContainer(new Slot(upgradeTE, 2, 96, 29));
+        //addSlotToContainer(new PotionSlot(upgradeTE, 3, 112, 29));
         bindPlayerInventory(inventoryPlayer);
     }
 
     @Override
     public boolean canInteractWith(EntityPlayer entityPlayer)
     {
-        return upgradeTile.isUseableByPlayer(entityPlayer);
+        return true; //controllerTile.isUseableByPlayer(entityPlayer);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class ControllerContainer extends Container
             ItemStack stackInSlot = slotObject.getStack();
             stack = stackInSlot.copy();
 
-            if (slot < upgradeTile.getUpgradeSlots())
+            if (slot < 0)
                 if (!this.mergeItemStack(stackInSlot, 0, 35, true))
                 {
                     return null;
@@ -73,40 +73,18 @@ public class ControllerContainer extends Container
      * Misc Methods
      */
 
-    protected void addSlotsToContainer(InventoryPlayer inventoryPlayer)
-    {
-        int slotCount = 0;
-
-        for (int i = 0; i < (upgradeTile.getUpgradeSlots() / 2); i++)
-        {
-            for (int j = 0; j < 1; j++)
-            {
-                if (j == 0)
-                {
-                    addSlotToContainer(new Slot(inventoryPlayer, slotCount, 8 + j * 18, 100 + i * 18));
-                }
-
-                if (j == 1)
-                {
-                    addSlotToContainer(new Slot(inventoryPlayer, slotCount, 8 + j * 18, 100 + i * 18));
-                }
-            }
-
-            slotCount++;
-        }
-    }
-
     protected void bindPlayerInventory(InventoryPlayer inventoryPlayer)
     {
         for (int i = 0; i < 3; i++)
             for (int k = 0; k < 9; k++)
             {
-                addSlotToContainer(new Slot(inventoryPlayer, k + i * 9 + 9, 8 + k * 18, 111 + i * 18));
+                addSlotToContainer(new Slot(inventoryPlayer, k + i * 9 + 9, 8 + k * 18, 78 + i * 18));
             }
 
         for (int j = 0; j < 9; j++)
         {
-            addSlotToContainer(new Slot(inventoryPlayer, j, 8 + j * 18, 169));
+            addSlotToContainer(new Slot(inventoryPlayer, j, 8 + j * 18, 136));
         }
     }
+	
 }

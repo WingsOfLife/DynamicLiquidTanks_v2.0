@@ -8,6 +8,7 @@ import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import doc.mods.dynamictanks.UP.FPCTileEntity_Basic;
 import doc.mods.dynamictanks.client.gui.GuiController;
+import doc.mods.dynamictanks.client.gui.GuiMixer;
 import doc.mods.dynamictanks.client.render.FPCRender;
 import doc.mods.dynamictanks.client.render.PotionBucketDamage;
 import doc.mods.dynamictanks.client.render.PotionChaliceDamage;
@@ -16,6 +17,7 @@ import doc.mods.dynamictanks.common.CommonProxy;
 import doc.mods.dynamictanks.common.ModConfig;
 import doc.mods.dynamictanks.items.ItemManager;
 import doc.mods.dynamictanks.tileentity.ControllerTileEntity;
+import doc.mods.dynamictanks.tileentity.PotionMixerTileEntity;
 import doc.mods.dynamictanks.tileentity.TankTileEntity;
 import doc.mods.dynamictanks.tileentity.UpgradeTileEntity;
 
@@ -62,6 +64,10 @@ public class ClientProxy extends CommonProxy
 			return new GuiController(player.inventory, ((TankTileEntity) tileEntity).getControllerTE());
 		}
 
+		if (tileEntity instanceof PotionMixerTileEntity) 
+        {
+        	return new GuiMixer(player.inventory, (PotionMixerTileEntity) tileEntity); 
+        }
 		return null;
 	}
 }

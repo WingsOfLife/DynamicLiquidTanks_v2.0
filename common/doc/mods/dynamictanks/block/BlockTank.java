@@ -396,7 +396,17 @@ public class BlockTank extends BlockContainer
     @Override
     public boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side)
     {
-        return super.shouldSideBeRendered(world, x, y, z, side);
+        int blockID = world.getBlockId(x, y, z);
+        TileEntity tank = world.getBlockTileEntity(x, y, z);
+
+        if (tank instanceof TankTileEntity)
+            if (((TankTileEntity) tank).hasCamo())
+            {
+                return true;
+            }
+
+        return blockID == this.blockID ? false : super.shouldSideBeRendered(world, x, y, z, side);
+        //return ConnectedTexturesHelper.shouldSideRender(world, x, y, z, side, this);
     }
 
     public boolean shouldSideRender(IBlockAccess world, int x, int y, int z, int side)
