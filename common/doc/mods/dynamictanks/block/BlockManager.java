@@ -36,6 +36,7 @@ public class BlockManager
 	//public static BlockFPC_RF BlockFPC_RF = null;
 	//public static BlockFPC_MJ BlockFPC_MJ = null;
 	public static BlockPotionMixer BlockMixer = null;
+	public static BlockPotionDisperser BlockDisperser = null;
 
 	public static void registerBlocks()
 	{
@@ -52,6 +53,7 @@ public class BlockManager
 		//BlockFPC_RF = new BlockFPC_RF(ModConfig.BlockIDs.blockFPCRF);
 		//BlockFPC_MJ = new BlockFPC_MJ(ModConfig.BlockIDs.blockFPCMJ);
 		BlockMixer = new BlockPotionMixer(ModConfig.BlockIDs.blockMixer);
+		BlockDisperser = new BlockPotionDisperser(ModConfig.BlockIDs.blockDisperser);
 
 		GameRegistry.registerBlock(BlockTankController, ControllerItem.class, "dynamictanks.blocks.blockController");
 		GameRegistry.registerBlock(BlockTank, "dynamictanks.blocks.blockTank");
@@ -66,6 +68,7 @@ public class BlockManager
 		//GameRegistry.registerBlock(BlockFPC_RF, ItemFPC_RF.class, "dynamictanks.blocks.blockFluidPowerCondenserRF");
 		//GameRegistry.registerBlock(BlockFPC_MJ, ItemFPC_MJ.class, "dynamictanks.blocks.blockFluidPowerCondenserMJ");
 		GameRegistry.registerBlock(BlockMixer, "dynamictanks.blocks.blockPotionMixer");
+		GameRegistry.registerBlock(BlockDisperser, "dynamictanks.blocks.blockPotionDisperser");	
 
 		LanguageRegistry.addName(BlockTankController, "Tank Controller");
 		LanguageRegistry.addName(BlockTank, "Tank");
@@ -80,6 +83,7 @@ public class BlockManager
 		//LanguageRegistry.addName(BlockFPC_RF, "F.P.C. (Redstone Flux)");
 		//LanguageRegistry.addName(BlockFPC_MJ, "F.P.C. (Minecraft Joules)");
 		LanguageRegistry.addName(BlockMixer, "Potion Mixer");
+		LanguageRegistry.addName(BlockDisperser, "Potion Disperser");
 
 		OreDictionary.registerOre("logWood", new ItemStack(BlockHW));
 		OreDictionary.registerOre("saplingTree", new ItemStack(BlockHS));

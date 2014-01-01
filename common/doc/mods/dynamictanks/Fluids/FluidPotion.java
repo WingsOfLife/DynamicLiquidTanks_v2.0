@@ -131,7 +131,7 @@ public class FluidPotion extends BlockFluidClassic implements ITileEntityProvide
     {
         for (int i = 0; i < 21; i++)
         {
-            ParticleEffects.spawnParticle("coloredSwirl", (double)((float)par2 + par5Random.nextFloat()), (double)((float)par3 + par5Random.nextFloat()), (double)((float)par4 + par5Random.nextFloat()), 0.0D, 0.0D, 0.0D);
+            ParticleEffects.spawnParticle("coloredSwirl", (double)((float)par2 + par5Random.nextFloat()), (double)((float)par3 + par5Random.nextFloat()), (double)((float)par4 + par5Random.nextFloat()), 0.0D, 0.0D, 0.0D, 0, 0, 0);
         }
     }
 

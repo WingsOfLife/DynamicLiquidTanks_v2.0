@@ -67,8 +67,10 @@ public class DynamicLiquidTanksCore
         ModConfig.BlockIDs.blockHauntedPlanks = configFile.getBlock("BlockMysticPlanks", ModConfig.BlockIDs.blockHauntedPlanks).getInt();
         ModConfig.BlockIDs.blockHauntedWood = configFile.getBlock("BlockMysticWood", ModConfig.BlockIDs.blockHauntedWood).getInt();
         ModConfig.BlockIDs.blockHauntedLeaf = configFile.getBlock("BlockMysticLeaf", ModConfig.BlockIDs.blockHauntedLeaf).getInt();
-        ModConfig.BlockIDs.blockFPCMJ = configFile.getBlock("FPCMJ", ModConfig.BlockIDs.blockFPCMJ).getInt();
-        ModConfig.BlockIDs.blockFPCRF = configFile.getBlock("FPCRF", ModConfig.BlockIDs.blockFPCRF).getInt();
+        //ModConfig.BlockIDs.blockFPCMJ = configFile.getBlock("FPCMJ", ModConfig.BlockIDs.blockFPCMJ).getInt();
+        //ModConfig.BlockIDs.blockFPCRF = configFile.getBlock("FPCRF", ModConfig.BlockIDs.blockFPCRF).getInt();
+        ModConfig.BlockIDs.blockDisperser = configFile.getBlock("PotionDisperser", ModConfig.BlockIDs.blockDisperser).getInt();
+        ModConfig.BlockIDs.blockMixer = configFile.getBlock("PotionMixer", ModConfig.BlockIDs.blockMixer).getInt();
         
         ModConfig.ItemIDs.hammerItem = configFile.getItem("Hammer", ModConfig.ItemIDs.hammerItem).getInt();
         ModConfig.ItemIDs.ironPlateItem = configFile.getItem("Iron Mass", ModConfig.ItemIDs.ironPlateItem).getInt();
@@ -77,6 +79,7 @@ public class DynamicLiquidTanksCore
         ModConfig.ItemIDs.upgradeItems = configFile.getItem("Upgrades", ModConfig.ItemIDs.upgradeItems).getInt();
         ModConfig.ItemIDs.bucketPotion = configFile.getItem("Buckets", ModConfig.ItemIDs.bucketPotion).getInt();
         ModConfig.ItemIDs.chalciePotion = configFile.getItem("Chalice", ModConfig.ItemIDs.chalciePotion).getInt();
+        ModConfig.ItemIDs.mixedPotion = configFile.getItem("MixedPotion", ModConfig.ItemIDs.mixedPotion).getInt();
         
         ModConfig.FluidIDs.potion = configFile.getBlock("potion", ModConfig.FluidIDs.potion).getInt();
         ModConfig.FluidIDs.clense = configFile.getBlock("clense", ModConfig.FluidIDs.clense).getInt();
@@ -101,8 +104,8 @@ public class DynamicLiquidTanksCore
         ModConfig.miscBoolean.enableLiquids = configFile.get(configFile.CATEGORY_GENERAL, "enable fluids", ModConfig.miscBoolean.enableLiquids).getBoolean(true);
         ModConfig.miscBoolean.easyRecipes = configFile.get(configFile.CATEGORY_GENERAL, "Easy Recipes", ModConfig.miscBoolean.easyRecipes).getBoolean(false);
         
-        ModConfig.omniPowerSettings.RFPerTick = configFile.get("Omni-Power Settings", "RF Per Tick", 1, "How much RF per tick the FPC should collect.").getInt();
-        ModConfig.omniPowerSettings.RFPerMiliB = configFile.get("Omni-Power Settings", "RF Per mB of OmniPower", 10, "How much RF = 1 mB").getInt();
+        //ModConfig.omniPowerSettings.RFPerTick = configFile.get("Omni-Power Settings", "RF Per Tick", 1, "How much RF per tick the FPC should collect.").getInt();
+        //ModConfig.omniPowerSettings.RFPerMiliB = configFile.get("Omni-Power Settings", "RF Per mB of OmniPower", 10, "How much RF = 1 mB").getInt();
         
         if (configFile.hasChanged())
         {

@@ -1,9 +1,7 @@
 package doc.mods.dynamictanks.tileentity;
 
-import org.apache.commons.lang3.ArrayUtils;
+import java.awt.Color;
 
-import doc.mods.dynamictanks.helpers.ItemHelper;
-import doc.mods.dynamictanks.items.ItemManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -14,6 +12,13 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
+import net.minecraft.potion.PotionHelper;
+
+import org.apache.commons.lang3.ArrayUtils;
+
+import doc.mods.dynamictanks.client.particle.ParticleEffects;
+import doc.mods.dynamictanks.helpers.ItemHelper;
+import doc.mods.dynamictanks.items.ItemManager;
 
 public class PotionMixerTileEntity extends CountableTileEntity implements IInventory, ISidedInventory {
 
@@ -27,6 +32,19 @@ public class PotionMixerTileEntity extends CountableTileEntity implements IInven
 
 	@Override
 	public void updateEntity() {
+		/*if (worldObj.isRemote) {
+			int color = PotionHelper.calcPotionLiquidColor(PotionHelper.getPotionEffects(8204, false));
+			String nextColor = ParticleEffects.int2Rgb(color);
+			Color toConvert = ParticleEffects.hex2Rgb(nextColor);
+			for (int i = 0; i < 35; i++) {
+				ParticleEffects.spawnParticle("coloredSmoke", (double)((float)xCoord + worldObj.rand.nextInt(5) + worldObj.rand.nextFloat()), (double)((float)yCoord + worldObj.rand.nextInt(2) - worldObj.rand.nextFloat()), (double)((float)zCoord + worldObj.rand.nextInt(5) + worldObj.rand.nextFloat()), 0.0D, 0.02D, 0.0D, toConvert.getRed(), toConvert.getGreen(), toConvert.getBlue());
+				ParticleEffects.spawnParticle("coloredSmoke", (double)((float)xCoord - worldObj.rand.nextInt(5) + worldObj.rand.nextFloat()), (double)((float)yCoord - worldObj.rand.nextInt(2) + worldObj.rand.nextFloat()), (double)((float)zCoord - worldObj.rand.nextInt(5) + worldObj.rand.nextFloat()), 0.0D, 0.02D, 0.0D, toConvert.getRed(), toConvert.getGreen(), toConvert.getBlue());
+				ParticleEffects.spawnParticle("coloredSmoke", (double)((float)xCoord + worldObj.rand.nextInt(5) + worldObj.rand.nextFloat()), (double)((float)yCoord - worldObj.rand.nextInt(2) + worldObj.rand.nextFloat()), (double)((float)zCoord - worldObj.rand.nextInt(5) + worldObj.rand.nextFloat()), 0.0D, 0.02D, 0.0D, toConvert.getRed(), toConvert.getGreen(), toConvert.getBlue());
+				ParticleEffects.spawnParticle("coloredSmoke", (double)((float)xCoord - worldObj.rand.nextInt(5) + worldObj.rand.nextFloat()), (double)((float)yCoord + worldObj.rand.nextInt(2) - worldObj.rand.nextFloat()), (double)((float)zCoord + worldObj.rand.nextInt(5) + worldObj.rand.nextFloat()), 0.0D, 0.02D, 0.0D, toConvert.getRed(), toConvert.getGreen(), toConvert.getBlue());
+			}
+			
+		}*/
+		
 		if (!worldObj.isRemote) {
 			if (getStackInSlot(2) != null && getStackInSlot(2).itemID == Item.netherStalkSeeds.itemID) {
 

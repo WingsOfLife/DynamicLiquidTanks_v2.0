@@ -12,11 +12,13 @@ import doc.mods.dynamictanks.client.gui.GuiMixer;
 import doc.mods.dynamictanks.client.render.FPCRender;
 import doc.mods.dynamictanks.client.render.PotionBucketDamage;
 import doc.mods.dynamictanks.client.render.PotionChaliceDamage;
+import doc.mods.dynamictanks.client.render.PotionMixerRender;
 import doc.mods.dynamictanks.client.render.RenderTank;
 import doc.mods.dynamictanks.common.CommonProxy;
 import doc.mods.dynamictanks.common.ModConfig;
 import doc.mods.dynamictanks.items.ItemManager;
 import doc.mods.dynamictanks.tileentity.ControllerTileEntity;
+import doc.mods.dynamictanks.tileentity.PotionDisperserTileEntity;
 import doc.mods.dynamictanks.tileentity.PotionMixerTileEntity;
 import doc.mods.dynamictanks.tileentity.TankTileEntity;
 import doc.mods.dynamictanks.tileentity.UpgradeTileEntity;
@@ -25,6 +27,7 @@ public class ClientProxy extends CommonProxy
 {
 	public static int tankRender;
 	public static int ductRender;
+	public static int potiRender;
 	public static int renderPass;
 
 	@Override
@@ -32,11 +35,14 @@ public class ClientProxy extends CommonProxy
 	{
 		tankRender = RenderingRegistry.getNextAvailableRenderId();
 		ductRender = RenderingRegistry.getNextAvailableRenderId();
+		potiRender = RenderingRegistry.getNextAvailableRenderId();
 
 		RenderingRegistry.registerBlockHandler(new RenderTank());
 		RenderingRegistry.registerBlockHandler(new FPCRender());
+		//RenderingRegistry.registerBlockHandler(new PotionMixerRender());
 
 		ClientRegistry.bindTileEntitySpecialRenderer(FPCTileEntity_Basic.class, new FPCRender());
+		//ClientRegistry.bindTileEntitySpecialRenderer(PotionDisperserTileEntity.class, new PotionMixerRender());
 
 		if (ModConfig.miscBoolean.enableLiquids == true) {
 			MinecraftForgeClient.registerItemRenderer(ItemManager.buckets.itemID, new PotionBucketDamage());

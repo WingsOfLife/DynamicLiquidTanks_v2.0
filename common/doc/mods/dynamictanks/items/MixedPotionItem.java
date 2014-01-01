@@ -3,6 +3,7 @@ package doc.mods.dynamictanks.items;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
@@ -74,7 +75,7 @@ public class MixedPotionItem extends Item {
 
 	public int effectCount(ItemStack itemStack) {
 		ArrayList<List> effectsList = new ArrayList<List>();
-		
+
 		if (itemStack.stackTagCompound != null) {
 			if (itemStack.stackTagCompound != null)
 				for (int effects : itemStack.stackTagCompound.getIntArray("PotionEffects"))
@@ -82,7 +83,7 @@ public class MixedPotionItem extends Item {
 		}
 		return effectsList.size();
 	}
-	
+
 	@Override
 	public int getMaxItemUseDuration(ItemStack par1ItemStack)
 	{
@@ -100,5 +101,11 @@ public class MixedPotionItem extends Item {
 	{
 		par3EntityPlayer.setItemInUse(par1ItemStack, this.getMaxItemUseDuration(par1ItemStack));
 		return par1ItemStack;
+	}
+
+	@Override
+	public void registerIcons(IconRegister register)
+	{
+		itemIcon = register.registerIcon("dynamictanks:potion");
 	}
 }

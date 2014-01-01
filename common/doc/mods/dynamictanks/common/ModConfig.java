@@ -5,6 +5,7 @@ public class ModConfig
     public static class BlockIDs
     {
         public static int blockHauntedDirt = 249;
+        public static int blockDisperser = 3185;
         public static int blockMixer = 3186;
         public static int blockFPCMJ = 3187;
         public static int blockFPCRF = 3188;
