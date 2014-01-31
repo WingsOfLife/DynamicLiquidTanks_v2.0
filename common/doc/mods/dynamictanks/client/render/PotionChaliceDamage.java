@@ -44,8 +44,8 @@ public class PotionChaliceDamage implements IItemRenderer
 
         if (itemStack.stackTagCompound != null && itemStack.stackTagCompound.hasKey("damage"))
         {
-            percent = (((itemStack.stackTagCompound.getFloat("damage") / CPotionHelper.maxExistance) * 15));
-            actualPercent = (100 - ((itemStack.stackTagCompound.getFloat("damage") / CPotionHelper.maxExistance) * 100));
+            percent = (((itemStack.stackTagCompound.getInteger("damage") / CPotionHelper.maxExistance) * 15));
+            actualPercent = (100 - ((itemStack.stackTagCompound.getInteger("damage") / CPotionHelper.maxExistance) * 100));
         }
 
         // ====================== Render item texture ======================

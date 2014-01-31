@@ -42,8 +42,8 @@ public class PotionBucketDamage implements IItemRenderer
 
         if (itemStack.stackTagCompound != null && itemStack.stackTagCompound.hasKey("lengthExisted"))
         {
-            percent = (((itemStack.stackTagCompound.getFloat("lengthExisted") / CPotionHelper.maxExistance) * 15));
-            actualPercent = (100 - ((itemStack.stackTagCompound.getFloat("lengthExisted") / CPotionHelper.maxExistance) * 100));
+            percent = (((itemStack.stackTagCompound.getInteger("lengthExisted") / CPotionHelper.maxExistance) * 15));
+            actualPercent = (((itemStack.stackTagCompound.getInteger("lengthExisted") / CPotionHelper.maxExistance) * 100));
         }
 
         // ====================== Render item texture ======================
@@ -57,17 +57,26 @@ public class PotionBucketDamage implements IItemRenderer
         {
             renderItem.renderIcon(0, 0, icon, 16, 16);
         }
+        else if (itemStack.getItemDamage() == 14)
+        {
+            renderItem.renderIcon(0, 0, icon, 16, 16);
+        }
         else
         {
             renderItem.renderIcon(1, 0, icon, 16, 16);
+        }
+
+        if (itemStack.getItemDamage() == 12)
+        {
+            return;
         }
 
         if (itemStack.getItemDamage() == 13)
         {
             return;
         }
-
-        if (itemStack.getItemDamage() == 12)
+        
+        if (itemStack.getItemDamage() == 14)
         {
             return;
         }

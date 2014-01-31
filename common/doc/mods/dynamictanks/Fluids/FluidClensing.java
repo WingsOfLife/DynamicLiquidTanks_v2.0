@@ -20,7 +20,6 @@ public class FluidClensing extends BlockFluidClassic implements ITileEntityProvi
     {
         super(id, fluid, material);
         setUnlocalizedName("dynamictanks.fluids.clensingWater");
-        setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);
     }
 
     @SideOnly(Side.CLIENT)

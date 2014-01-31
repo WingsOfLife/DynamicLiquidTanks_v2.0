@@ -223,7 +223,7 @@ public class FluidManager
         BucketHandler.INSTANCE.buckets.put(invisBlock, new ItemStack(ItemManager.buckets, 1, 11));
         BucketHandler.INSTANCE.buckets.put(clenseBlock, new ItemStack(ItemManager.buckets, 1, 12));
         BucketHandler.INSTANCE.buckets.put(tntBlock, new ItemStack(ItemManager.buckets, 1, 13));
-        BucketHandler.INSTANCE.chalice.put(regenBlock, new ItemStack(ItemManager.chalice, 1, 1));
+        /*BucketHandler.INSTANCE.chalice.put(regenBlock, new ItemStack(ItemManager.chalice, 1, 1));
         BucketHandler.INSTANCE.chalice.put(swiftBlock, new ItemStack(ItemManager.chalice, 1, 2));
         BucketHandler.INSTANCE.chalice.put(fireBlock, new ItemStack(ItemManager.chalice, 1, 3));
         BucketHandler.INSTANCE.chalice.put(poisonBlock, new ItemStack(ItemManager.chalice, 1, 4));
@@ -235,7 +235,7 @@ public class FluidManager
         BucketHandler.INSTANCE.chalice.put(harmingBlock, new ItemStack(ItemManager.chalice, 1, 10));
         BucketHandler.INSTANCE.chalice.put(waterBlock, new ItemStack(ItemManager.chalice, 1, 11));
         BucketHandler.INSTANCE.chalice.put(invisBlock, new ItemStack(ItemManager.chalice, 1, 12));
-        BucketHandler.INSTANCE.chalice.put(clenseBlock, new ItemStack(ItemManager.chalice, 1, 13));
+        BucketHandler.INSTANCE.chalice.put(clenseBlock, new ItemStack(ItemManager.chalice, 1, 13));*/
         MinecraftForge.EVENT_BUS.register(BucketHandler.INSTANCE);
     }
 }

@@ -45,7 +45,7 @@ public class BucketHandler
         TileEntity potionTile = world.getBlockTileEntity(pos.blockX, pos.blockY, pos.blockZ);
         ItemStack bucket;
 
-        if (player.inventory.mainInventory[player.inventory.currentItem].itemID == ItemManager.chalice.itemID)
+        if (player.inventory.mainInventory[player.inventory.currentItem].itemID == -1/*ItemManager.chalice.itemID*/)
         {
             bucket = chalice.get(Block.blocksList[blockID]);
         }
@@ -65,7 +65,7 @@ public class BucketHandler
                     bucket.setTagCompound(new NBTTagCompound());
                 }
 
-                bucket.stackTagCompound.setFloat("lengthExisted", ((PotionTileEntity) potionTile).getExistance());
+                bucket.stackTagCompound.setInteger("lengthExisted", (int) ((PotionTileEntity) potionTile).getExistance());
             }
 
             if (potionTile instanceof ClensingTileEntity)
@@ -75,7 +75,7 @@ public class BucketHandler
                     bucket.setTagCompound(new NBTTagCompound());
                 }
 
-                bucket.stackTagCompound.setFloat("damageHealed", ((ClensingTileEntity) potionTile).getHealed());
+                bucket.stackTagCompound.setInteger("damageHealed", (int) ((ClensingTileEntity) potionTile).getHealed());
             }
 
             return bucket;

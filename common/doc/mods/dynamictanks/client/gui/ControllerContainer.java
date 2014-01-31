@@ -14,7 +14,7 @@ public class ControllerContainer extends Container
     /*
      * Unused
      */
-    
+
     public ControllerContainer(InventoryPlayer inventoryPlayer, UpgradeTileEntity upgradeTE)
     {
         upgradeTile = upgradeTE;

@@ -8,9 +8,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import doc.mods.dynamictanks.Fluids.tileentity.ClensingTileEntity;
 import doc.mods.dynamictanks.Fluids.tileentity.PotionTileEntity;
 import doc.mods.dynamictanks.Fluids.tileentity.TNTTileEntity;
-import doc.mods.dynamictanks.UP.FPCTileEntity_Basic;
-import doc.mods.dynamictanks.UP.FPCTileEntity_MJ;
-import doc.mods.dynamictanks.UP.FPCTileEntity_RF;
+import doc.mods.dynamictanks.UP.GeneratorTileEntity;
 import doc.mods.dynamictanks.client.gui.ContainerController;
 import doc.mods.dynamictanks.client.gui.ContainerMixer;
 import doc.mods.dynamictanks.client.gui.GuiController;
@@ -35,9 +33,9 @@ public class CommonProxy implements IGuiHandler
         GameRegistry.registerTileEntity(PotionTileEntity.class, "dynamictanks.tile.potionTile");
         GameRegistry.registerTileEntity(ClensingTileEntity.class, "dynamictanks.tile.cleansingTile");
         GameRegistry.registerTileEntity(TNTTileEntity.class, "dynamictanks.tile.tntTile");
-        GameRegistry.registerTileEntity(FPCTileEntity_Basic.class, "dynamictanks.tile.fpcTile");
-        GameRegistry.registerTileEntity(FPCTileEntity_RF.class, "dynamictanks.tile.fpcTile_RF");
-        GameRegistry.registerTileEntity(FPCTileEntity_MJ.class, "dynamictanks.tile.fpcTile_MJ");
+        //GameRegistry.registerTileEntity(FPCTileEntity_Basic.class, "dynamictanks.tile.fpcTile");
+        //GameRegistry.registerTileEntity(FPCTileEntity_Consumer.class, "dynamictanks.tile.fpcTile_RF");
+        GameRegistry.registerTileEntity(GeneratorTileEntity.class, "dynamictanks.tile.generatorTile");
         GameRegistry.registerTileEntity(PotionMixerTileEntity.class, "dynamictanks.tile.potionMixerTile");
         GameRegistry.registerTileEntity(PotionDisperserTileEntity.class, "dynamictanks.tile.potionDisperserTile");
     }
@@ -61,10 +59,12 @@ public class CommonProxy implements IGuiHandler
         {
             return new ContainerController(player.inventory, ((TankTileEntity) tileEntity).getControllerTE());
         }
-        if (tileEntity instanceof PotionMixerTileEntity) 
+
+        if (tileEntity instanceof PotionMixerTileEntity)
         {
-        	return new ContainerMixer(player.inventory, (PotionMixerTileEntity) tileEntity); 
+            return new ContainerMixer(player.inventory, (PotionMixerTileEntity) tileEntity);
         }
+
         return null;
     }
 
@@ -87,10 +87,12 @@ public class CommonProxy implements IGuiHandler
         {
             return new GuiController(player.inventory, ((TankTileEntity) tileEntity).getControllerTE());
         }
-        if (tileEntity instanceof PotionMixerTileEntity) 
+
+        if (tileEntity instanceof PotionMixerTileEntity)
         {
-        	return new GuiMixer(player.inventory, (PotionMixerTileEntity) tileEntity); 
+            return new GuiMixer(player.inventory, (PotionMixerTileEntity) tileEntity);
         }
+
         return null;
     }
 }

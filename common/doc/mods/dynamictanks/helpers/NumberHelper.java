@@ -14,4 +14,8 @@ public class NumberHelper
 
         return new int[] { (int)(dividen / divisor), (int)(dividen % divisor) };
     }
+    
+    public static float round(int numDigits, float numToRound) {
+    	return (float) ((float) Math.round(numToRound * Math.pow(10, numDigits)) / Math.pow(10, numDigits));
+    }
 }

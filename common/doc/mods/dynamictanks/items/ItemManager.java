@@ -13,26 +13,28 @@ import doc.mods.dynamictanks.helpers.CPotionHelper;
 
 public class ItemManager
 {
-	public static Item upgradeItem = null;
-	public static Item hammerItem = null;
+	public static Item upgradeItem 	 = null;
+	public static Item hammerItem    = null;
 	public static Item ironPlateItem = null;
 	public static Item liquidDiamond = null;
-	public static Item softDiamond = null;
-	public static Item buckets = null;
-	public static Item chalice = null;
-	public static Item mixedPotion = null;
+	public static Item softDiamond   = null;
+	public static Item buckets       = null;
+	//public static Item chalice = null;
+	public static Item mixedPotion   = null;
 
 	public static void registerItems()
 	{
-		upgradeItem = new UpgradeItems(ModConfig.ItemIDs.upgradeItems);
-		hammerItem = new HammerItem(ModConfig.ItemIDs.hammerItem);
-		ironPlateItem = new IronPlateItem(ModConfig.ItemIDs.ironPlateItem);
-		liquidDiamond = new liquidDiamondItem(ModConfig.ItemIDs.liquidDiamondItem);
-		softDiamond = new SoftenedDiamondItem(ModConfig.ItemIDs.softDiamondItem);
-		mixedPotion = new MixedPotionItem(ModConfig.ItemIDs.mixedPotion);
-		if (ModConfig.miscBoolean.enableLiquids == true) {
+		upgradeItem     = new UpgradeItems(ModConfig.ItemIDs.upgradeItems);
+		hammerItem      = new HammerItem(ModConfig.ItemIDs.hammerItem);
+		ironPlateItem 	= new IronPlateItem(ModConfig.ItemIDs.ironPlateItem);
+		liquidDiamond 	= new liquidDiamondItem(ModConfig.ItemIDs.liquidDiamondItem);
+		softDiamond 	= new SoftenedDiamondItem(ModConfig.ItemIDs.softDiamondItem);
+		mixedPotion 	= new MixedPotionItem(ModConfig.ItemIDs.mixedPotion);
+
+		if (ModConfig.miscBoolean.enableLiquids == true)
+		{
 			buckets = new BucketPotion(ModConfig.ItemIDs.bucketPotion);
-			chalice = new ChalicePotion(ModConfig.ItemIDs.chalciePotion);
+			//chalice = new ChalicePotion(ModConfig.ItemIDs.chalciePotion);
 		}
 
 		for (int i = 0; i < UpgradeItems.names.length; i++)
@@ -43,9 +45,12 @@ public class ItemManager
 		LanguageRegistry.addName(new ItemStack(liquidDiamond), "Softened Diamond Mass");
 		LanguageRegistry.addName(new ItemStack(softDiamond), "Softened Diamond");
 		LanguageRegistry.addName(new ItemStack(mixedPotion), "Mixed Potion");
-		
+
 		if (ModConfig.miscBoolean.enableLiquids == false)
+		{
 			return;
+		}
+
 		// ================================ Bucket ========================== //
 		LanguageRegistry.addName(new ItemStack(buckets, 1, 0), "Bucket of " + BucketPotion.names[0]);
 		LanguageRegistry.addName(new ItemStack(buckets, 1, 1), "Bucket of " + BucketPotion.names[1]);
@@ -63,20 +68,20 @@ public class ItemManager
 		LanguageRegistry.addName(new ItemStack(buckets, 1, 13), "Liquid Nitroglycerine");
 		LanguageRegistry.addName(new ItemStack(buckets, 1, 14), "Omni-Power Fluid");
 		// ================================ Chalice ========================== //
-		LanguageRegistry.addName(new ItemStack(chalice, 1, 0), "Chalice");
-		LanguageRegistry.addName(new ItemStack(chalice, 1, 1), "Chalice of " + ChalicePotion.names[1]);
-		LanguageRegistry.addName(new ItemStack(chalice, 1, 2), "Chalice of " + ChalicePotion.names[2]);
-		LanguageRegistry.addName(new ItemStack(chalice, 1, 3), "Chalice of " + ChalicePotion.names[3]);
-		LanguageRegistry.addName(new ItemStack(chalice, 1, 4), "Chalice of " + ChalicePotion.names[4]);
-		LanguageRegistry.addName(new ItemStack(chalice, 1, 5), "Chalice of " + ChalicePotion.names[5]);
-		LanguageRegistry.addName(new ItemStack(chalice, 1, 6), "Chalice of " + ChalicePotion.names[6]);
-		LanguageRegistry.addName(new ItemStack(chalice, 1, 7), "Chalice of " + ChalicePotion.names[7]);
-		LanguageRegistry.addName(new ItemStack(chalice, 1, 8), "Chalice of " + ChalicePotion.names[8]);
-		LanguageRegistry.addName(new ItemStack(chalice, 1, 9), "Chalice of " + ChalicePotion.names[9]);
-		LanguageRegistry.addName(new ItemStack(chalice, 1, 10), "Chalice of " + ChalicePotion.names[10]);
-		LanguageRegistry.addName(new ItemStack(chalice, 1, 11), "Chalice of " + ChalicePotion.names[11]);
-		LanguageRegistry.addName(new ItemStack(chalice, 1, 12), "Chalice of " + ChalicePotion.names[12]);
-		LanguageRegistry.addName(new ItemStack(chalice, 1, 13), "Chalice of " + ChalicePotion.names[13]);
+		/*LanguageRegistry.addName(new ItemStack(chalice, 1, 0), "Chalice");
+        LanguageRegistry.addName(new ItemStack(chalice, 1, 1), "Chalice of " + ChalicePotion.names[1]);
+        LanguageRegistry.addName(new ItemStack(chalice, 1, 2), "Chalice of " + ChalicePotion.names[2]);
+        LanguageRegistry.addName(new ItemStack(chalice, 1, 3), "Chalice of " + ChalicePotion.names[3]);
+        LanguageRegistry.addName(new ItemStack(chalice, 1, 4), "Chalice of " + ChalicePotion.names[4]);
+        LanguageRegistry.addName(new ItemStack(chalice, 1, 5), "Chalice of " + ChalicePotion.names[5]);
+        LanguageRegistry.addName(new ItemStack(chalice, 1, 6), "Chalice of " + ChalicePotion.names[6]);
+        LanguageRegistry.addName(new ItemStack(chalice, 1, 7), "Chalice of " + ChalicePotion.names[7]);
+        LanguageRegistry.addName(new ItemStack(chalice, 1, 8), "Chalice of " + ChalicePotion.names[8]);
+        LanguageRegistry.addName(new ItemStack(chalice, 1, 9), "Chalice of " + ChalicePotion.names[9]);
+        LanguageRegistry.addName(new ItemStack(chalice, 1, 10), "Chalice of " + ChalicePotion.names[10]);
+        LanguageRegistry.addName(new ItemStack(chalice, 1, 11), "Chalice of " + ChalicePotion.names[11]);
+        LanguageRegistry.addName(new ItemStack(chalice, 1, 12), "Chalice of " + ChalicePotion.names[12]);
+        LanguageRegistry.addName(new ItemStack(chalice, 1, 13), "Chalice of " + ChalicePotion.names[13]);*/
 	}
 
 	public static void registerRecipes()
@@ -89,23 +94,25 @@ public class ItemManager
 			'S', Item.silk,
 			'T', Item.stick
 				});
-		GameRegistry.addShapedRecipe(new ItemStack(upgradeItem, 1, 0), new Object[]
-				{
-			"GSG", "RDR", "GSG",
-			'G', Block.glowStone,
-			'S', Block.daylightSensor,
-			'R', Block.blockRedstone,
-			'D', Item.diamond
-				});
-		GameRegistry.addShapedRecipe(new ItemStack(upgradeItem, 1, 1), new Object[]
-				{
-			"GSD", "RLR", "DSG",
-			'G', Block.glowStone,
-			'S', Block.daylightSensor,
-			'R', Block.blockRedstone,
-			'D', Item.diamond,
-			'L', new ItemStack(liquidDiamond, 1, Short.MAX_VALUE)
-				});
+		if (ModConfig.miscBoolean.disableUpgrades) {
+			GameRegistry.addShapedRecipe(new ItemStack(upgradeItem, 1, 0), new Object[]
+					{
+				"GSG", "RDR", "GSG",
+				'G', Block.glowStone,
+				'S', Block.daylightSensor,
+				'R', Block.blockRedstone,
+				'D', Item.diamond
+					});
+			GameRegistry.addShapedRecipe(new ItemStack(upgradeItem, 1, 1), new Object[]
+					{
+				"GSD", "RLR", "DSG",
+				'G', Block.glowStone,
+				'S', Block.daylightSensor,
+				'R', Block.blockRedstone,
+				'D', Item.diamond,
+				'L', new ItemStack(liquidDiamond, 1, Short.MAX_VALUE)
+					});
+		}
 		GameRegistry.addShapelessRecipe(new ItemStack(softDiamond),
 				new ItemStack(hammerItem, 1, 0), Item.diamond
 				);
@@ -113,16 +120,20 @@ public class ItemManager
 				Item.ingotIron, Item.ingotIron, Item.ingotIron, Item.ingotIron,
 				new ItemStack(hammerItem, 1, Short.MAX_VALUE)
 				);
+
 		if (ModConfig.miscBoolean.enableLiquids == false)
+		{
 			return;
+		}
+
 		GameRegistry.addShapelessRecipe(new ItemStack(buckets, 1, 13),
 				Block.tnt, Block.tnt, Item.bucketMilk, Item.redstone
 				);
-		GameRegistry.addShapedRecipe(new ItemStack(chalice, 1), new Object[]
-				{
-			"ICI", " I ", "III",
-			'I', Item.ingotGold,
-			'C', new ItemStack(buckets, 1, 12)
-				});
+		/*GameRegistry.addShapedRecipe(new ItemStack(chalice, 1), new Object[]
+                                     {
+                                         "ICI", " I ", "III",
+                                         'I', Item.ingotGold,
+                                         'C', new ItemStack(buckets, 1, 12)
+                                     });*/
 	}
 }

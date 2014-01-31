@@ -13,43 +13,48 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 
-public class BlockPotionMixer extends BlockContainer {
+public class BlockPotionMixer extends BlockContainer
+{
+    Icon topBottom;
 
-	Icon topBottom;
-	
-	protected BlockPotionMixer(int par1) {
-		super(par1, Material.iron);
-		setHardness(1.0f);
+    protected BlockPotionMixer(int par1)
+    {
+        super(par1, Material.iron);
+        setHardness(1.0f);
         setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);
         setUnlocalizedName("dynamictanks.blocks.blockPotionMixer");
-	}
+    }
 
-	@Override
-	public TileEntity createNewTileEntity(World world) {
-		return new PotionMixerTileEntity();
-	}
-
-	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float clickX, float clickY, float clickZ)
+    @Override
+    public TileEntity createNewTileEntity(World world)
     {
-		player.openGui(DynamicLiquidTanksCore.instance, 0, world, x, y, z);
+        return new PotionMixerTileEntity();
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float clickX, float clickY, float clickZ)
+    {
+        player.openGui(DynamicLiquidTanksCore.instance, 0, world, x, y, z);
         return true;
     }
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister iconReg)
-	{
-		blockIcon = iconReg.registerIcon("dynamictanks:" + "potionMixer");
-		topBottom = iconReg.registerIcon("dynamictanks:" + "potionDisperserTB");
-	}
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public Icon getIcon(int side, int meta)
-	{
-		if (side == 0 || side == 1)
-			return topBottom;
-		return blockIcon;
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerIcons(IconRegister iconReg)
+    {
+        blockIcon = iconReg.registerIcon("dynamictanks:" + "potionMixer");
+        topBottom = iconReg.registerIcon("dynamictanks:" + "potionDisperserTB");
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public Icon getIcon(int side, int meta)
+    {
+        if (side == 0 || side == 1)
+        {
+            return topBottom;
+        }
+
+        return blockIcon;
+    }
 }

@@ -7,7 +7,6 @@ import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -20,10 +19,11 @@ import doc.mods.dynamictanks.DynamicLiquidTanksCore;
 import doc.mods.dynamictanks.Fluids.FluidManager;
 import doc.mods.dynamictanks.Fluids.tileentity.ClensingTileEntity;
 import doc.mods.dynamictanks.Fluids.tileentity.PotionTileEntity;
+import doc.mods.dynamictanks.apiMe.TickingBucket;
 import doc.mods.dynamictanks.common.BucketHandler;
 import doc.mods.dynamictanks.helpers.CPotionHelper;
 
-public class ChalicePotion extends ItemBucket
+public class ChalicePotion extends TickingBucket
 {
     public static String[] names =
     {
@@ -34,40 +34,27 @@ public class ChalicePotion extends ItemBucket
         "Cleansing"
     };
 
-    private final float ticksPerSec = CPotionHelper.ticksPerSec;
+    private final float ticksPerSec  = CPotionHelper.ticksPerSec;
     private final float maxExistance = CPotionHelper.maxExistance;
 
     private Icon filled;
 
     public ChalicePotion(int itemID)
     {
-        super(itemID, 0);
+        super(itemID);
         setHasSubtypes(true);
         setContainerItem(this);
         setMaxStackSize(1);
         setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);
-    }
-
-    @Override
-    public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean bool)
-    {
-        if (stack.getItemDamage() == 13 || stack.getItemDamage() == 0)
-        {
-            if (stack.stackTagCompound == null)
-            {
-                stack.setTagCompound(new NBTTagCompound());
-            }
-
-            list.add("Damage: " + ((int)((stack.stackTagCompound.getFloat("damage") / maxExistance) * 100)) + "%");
-            return;
-        }
-
-        if (stack.stackTagCompound == null)
-        {
-            stack.setTagCompound(new NBTTagCompound());
-        }
-
-        list.add("Stability: " + (100 - (int)((stack.stackTagCompound.getFloat("lengthExisted") / maxExistance) * 100)) + "%");
+        
+        addMonitoredElement("damage",        "Life Force", 1200, tickingType.DECREASE  );
+        addMonitoredElement("lengthExisted", "Stability" , 1200, tickingType.INCREASE  );
+        addMonitoredElement("damageHealed",  ""          , 1200, tickingType.NOMOVEMENT);
+        
+        addIgnoredDamage(0);
+        addDependantVar("lengthExisted", "damage");
+        
+        cancelTooltipDisplay("damageHealed");
     }
 
     @Override
@@ -95,79 +82,14 @@ public class ChalicePotion extends ItemBucket
     }
 
     @Override
-    public void onUpdate(ItemStack par1ItemStack, World par2World, Entity par3Entity, int par4, boolean par5)
-    {
-        float ticksExisted = 0;
-        float chaliceDamage = 0;
-        float damageHealed = 0;
-
-        if (par1ItemStack.getItemDamage() == 0)
-        {
-            return;
-        }
-
-        if (par1ItemStack.stackTagCompound == null)
-        {
-            par1ItemStack.setTagCompound(new NBTTagCompound());
-            par1ItemStack.stackTagCompound.setFloat("lengthExisted", 0);
-            par1ItemStack.stackTagCompound.setFloat("damage", 0);
-            ticksExisted = 0;
-            chaliceDamage = 0;
-
-            if (par1ItemStack.getItemDamage() == 13)
-            {
-                par1ItemStack.stackTagCompound.setFloat("damageHealed", 0);
-                damageHealed = 0;
-            }
-        }
-
-        if (par1ItemStack.stackTagCompound.hasKey("lengthExisted"))
-        {
-            if (par1ItemStack.stackTagCompound.getFloat("damage") < maxExistance && ((100 - (int)((par1ItemStack.stackTagCompound.getFloat("lengthExisted") / maxExistance) * 100)) >= 100))
-            {
-                ticksExisted = par1ItemStack.stackTagCompound.getFloat("lengthExisted");
-                ticksExisted--;
-            }
-        }
-
-        if (par1ItemStack.stackTagCompound.hasKey("damage"))
-        {
-            chaliceDamage = par1ItemStack.stackTagCompound.getFloat("damage");
-
-            if (par1ItemStack.getItemDamage() == 13)
-            {
-                if (chaliceDamage > 0 && damageHealed <= ClensingTileEntity.maxHealing)
-                {
-                    chaliceDamage--;
-                    damageHealed++;
-                }
-            }
-            else
-            {
-                chaliceDamage = chaliceDamage + 4;
-            }
-        }
-
-        if (damageHealed >= ClensingTileEntity.maxHealing)
-        {
-            par1ItemStack = new ItemStack(ItemManager.chalice, 1, 0);
-            par1ItemStack.setTagCompound(new NBTTagCompound());
-        }
-
-        par1ItemStack.stackTagCompound.setFloat("lengthExisted", ticksExisted);
-        par1ItemStack.stackTagCompound.setFloat("damage", chaliceDamage);
-        par1ItemStack.stackTagCompound.setFloat("damageHealed", damageHealed);
-    }
-
-    @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player)
     {
         MovingObjectPosition position = this.getMovingObjectPositionFromPlayer(world, player, true);
-        float damage = 0;
+        float damage = maxExistance;
 
         if (stack.stackTagCompound != null && stack.stackTagCompound.hasKey("damage"))
         {
-            damage = stack.stackTagCompound.getFloat("damage");
+            damage = stack.stackTagCompound.getInteger("damage");
         }
 
         if (stack.getItemDamage() == 0)
@@ -203,15 +125,15 @@ public class ChalicePotion extends ItemBucket
 
                     if (potionTile instanceof PotionTileEntity)
                     {
-                        event.result.stackTagCompound.setFloat("lengthExisted", ((PotionTileEntity) potionTile).getExistance());
+                        event.result.stackTagCompound.setInteger("lengthExisted", (int) ((PotionTileEntity) potionTile).getExistance());
                     }
 
                     if (potionTile instanceof ClensingTileEntity)
                     {
-                        event.result.stackTagCompound.setFloat("damageHealed", ((ClensingTileEntity) potionTile).getHealed());
+                        event.result.stackTagCompound.setInteger("damageHealed", (int) ((ClensingTileEntity) potionTile).getHealed());
                     }
 
-                    event.result.stackTagCompound.setFloat("damage", damage);
+                    event.result.stackTagCompound.setInteger("damage", (int) damage);
                     world.setBlock(event.target.blockX, event.target.blockY, event.target.blockZ, 0);
 
                     if (player.capabilities.isCreativeMode)
@@ -289,9 +211,9 @@ public class ChalicePotion extends ItemBucket
 
         if (tryPlaceContainedLiquid(world, stack, clickX, clickY, clickZ, (stack.getItemDamage() - 1)) && !player.capabilities.isCreativeMode)
         {
-            ItemStack emptyChalice = new ItemStack(ItemManager.chalice);
+            ItemStack emptyChalice = null;//new ItemStack(ItemManager.chalice);
             emptyChalice.setTagCompound(new NBTTagCompound());
-            emptyChalice.stackTagCompound.setFloat("damage", damage);
+            emptyChalice.stackTagCompound.setInteger("damage", (int) damage);
             return emptyChalice;
         }
 
@@ -316,7 +238,7 @@ public class ChalicePotion extends ItemBucket
 
                 if (stack.stackTagCompound.hasKey("lengthExisted"))
                 {
-                    potionTile.setExistance(stack.stackTagCompound.getFloat("lengthExisted"));
+                    potionTile.setExistance(stack.stackTagCompound.getInteger("lengthExisted"));
                 }
             }
 
@@ -326,7 +248,7 @@ public class ChalicePotion extends ItemBucket
 
                 if (stack.stackTagCompound.hasKey("damageHealed"))
                 {
-                    potionTile.setHealed(stack.stackTagCompound.getFloat("damageHealed"));
+                    potionTile.setHealed(stack.stackTagCompound.getInteger("damageHealed"));
                 }
             }
 

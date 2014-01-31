@@ -7,7 +7,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Icon;
@@ -17,10 +16,10 @@ import doc.mods.dynamictanks.DynamicLiquidTanksCore;
 import doc.mods.dynamictanks.Fluids.FluidManager;
 import doc.mods.dynamictanks.Fluids.tileentity.ClensingTileEntity;
 import doc.mods.dynamictanks.Fluids.tileentity.PotionTileEntity;
-import doc.mods.dynamictanks.block.BlockManager;
+import doc.mods.dynamictanks.apiMe.TickingBucket;
 import doc.mods.dynamictanks.helpers.CPotionHelper;
 
-public class BucketPotion extends ItemBucket
+public class BucketPotion extends TickingBucket
 {
     public static String[] names =
     {
@@ -38,22 +37,17 @@ public class BucketPotion extends ItemBucket
 
     public BucketPotion(int itemID)
     {
-        super(itemID, 0);
+        super(itemID);
         setContainerItem(Item.bucketEmpty);
         setHasSubtypes(true);
         setMaxStackSize(1);
         setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);
-    }
-
-    @Override
-    public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean bool)
-    {
-        if (stack.stackTagCompound == null)
-        {
-            stack.setTagCompound(new NBTTagCompound());
-        }
-
-        list.add("Stability: " + (100 - (int)((stack.stackTagCompound.getFloat("lengthExisted") / maxExistance) * 100)) + "%");
+        
+        addMonitoredElement("lengthExisted", "Stability", (int) maxExistance, tickingType.DECREASE);
+        
+        addIgnoredDamage(12);
+        addIgnoredDamage(13);
+        addIgnoredDamage(14);
     }
 
     @Override
@@ -81,40 +75,11 @@ public class BucketPotion extends ItemBucket
         {
             return nitro;
         }
-
+        else if (i == 14)
+        {
+            return nitro;
+        }
         return itemIcon;
-    }
-
-    @Override
-    public void onUpdate(ItemStack par1ItemStack, World par2World, Entity par3Entity, int par4, boolean par5)
-    {
-        float ticksExisted = 0;
-
-        if (par1ItemStack.getItemDamage() == 12 || par1ItemStack.getItemDamage() == 13)
-        {
-            return;
-        }
-
-        if (par1ItemStack.stackTagCompound != null && par1ItemStack.stackTagCompound.hasKey("lengthExisted"))
-            if ((100 - (int)((par1ItemStack.stackTagCompound.getFloat("lengthExisted") / maxExistance) * 10)) <= -100)
-            {
-                return;
-            }
-
-        if (par1ItemStack.stackTagCompound == null)
-        {
-            par1ItemStack.setTagCompound(new NBTTagCompound());
-            par1ItemStack.stackTagCompound.setFloat("lengthExisted", 0);
-            ticksExisted = 0;
-        }
-
-        if (par1ItemStack.stackTagCompound.hasKey("lengthExisted"))
-        {
-            ticksExisted = par1ItemStack.stackTagCompound.getFloat("lengthExisted");
-            ticksExisted++;
-        }
-
-        par1ItemStack.stackTagCompound.setFloat("lengthExisted", ticksExisted);
     }
 
     @Override
@@ -197,7 +162,7 @@ public class BucketPotion extends ItemBucket
 
                 if (stack.stackTagCompound.hasKey("lengthExisted"))
                 {
-                    potionTile.setExistance(stack.stackTagCompound.getFloat("lengthExisted"));
+                    potionTile.setExistance(stack.stackTagCompound.getInteger("lengthExisted"));
                 }
             }
 
@@ -207,7 +172,7 @@ public class BucketPotion extends ItemBucket
 
                 if (stack.stackTagCompound.hasKey("damageHealed"))
                 {
-                    clenseTile.setHealed(stack.stackTagCompound.getFloat("damageHealed"));
+                    clenseTile.setHealed(stack.stackTagCompound.getInteger("damageHealed"));
                 }
             }
 

@@ -15,51 +15,56 @@ import doc.mods.dynamictanks.DynamicLiquidTanksCore;
 import doc.mods.dynamictanks.items.ItemManager;
 import doc.mods.dynamictanks.tileentity.PotionDisperserTileEntity;
 
-public class BlockPotionDisperser extends BlockContainer {
+public class BlockPotionDisperser extends BlockContainer
+{
+    Icon topBottom;
 
-	Icon topBottom;
+    protected BlockPotionDisperser(int par1)
+    {
+        super(par1, Material.iron);
+        setHardness(1.0f);
+        setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);
+        setUnlocalizedName("dynamictanks.blocks.blockPotionDisperser");
+    }
 
-	protected BlockPotionDisperser(int par1) {
-		super(par1, Material.iron);
-		setHardness(1.0f);
-		setCreativeTab(DynamicLiquidTanksCore.tabDynamicTanks);
-		setUnlocalizedName("dynamictanks.blocks.blockPotionDisperser");
-	}
+    @Override
+    public TileEntity createNewTileEntity(World world)
+    {
+        return new PotionDisperserTileEntity();
+    }
 
-	@Override
-	public TileEntity createNewTileEntity(World world) {
-		return new PotionDisperserTileEntity();
-	}
+    @Override
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float clickX, float clickY, float clickZ)
+    {
+        ItemStack heldItem = player.inventory.getCurrentItem();
+        PotionDisperserTileEntity potionDTE = (PotionDisperserTileEntity) world.getBlockTileEntity(x, y, z);
 
-	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float clickX, float clickY, float clickZ)
-	{
-		ItemStack heldItem = player.inventory.getCurrentItem();
-		PotionDisperserTileEntity potionDTE = (PotionDisperserTileEntity) world.getBlockTileEntity(x, y, z);
+        if (potionDTE.getStackInSlot(0) == null && heldItem != null && (heldItem.itemID == Item.potion.itemID || heldItem.itemID == ItemManager.mixedPotion.itemID))
+        {
+            potionDTE.setInventorySlotContents(0, heldItem);
+            heldItem = heldItem.splitStack(1);
+        }
 
-		if (potionDTE.getStackInSlot(0) == null && heldItem != null && (heldItem.itemID == Item.potion.itemID || heldItem.itemID == ItemManager.mixedPotion.itemID)) {
-			potionDTE.setInventorySlotContents(0, heldItem);
-			heldItem = heldItem.splitStack(1);
-		}
+        return true;
+    }
 
-		return true;
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerIcons(IconRegister iconReg)
+    {
+        blockIcon = iconReg.registerIcon("dynamictanks:" + "potionDisperser");
+        topBottom = iconReg.registerIcon("dynamictanks:" + "potionDisperserTB");
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister iconReg)
-	{
-		blockIcon = iconReg.registerIcon("dynamictanks:" + "potionDisperser");
-		topBottom = iconReg.registerIcon("dynamictanks:" + "potionDisperserTB");
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public Icon getIcon(int side, int meta)
+    {
+        if (side == 0 || side == 1)
+        {
+            return topBottom;
+        }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public Icon getIcon(int side, int meta)
-	{
-		if (side == 0 || side == 1)
-			return topBottom;
-		return blockIcon;
-	}
-
+        return blockIcon;
+    }
 }

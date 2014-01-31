@@ -74,6 +74,8 @@ public class ItemHelper
     public static ItemStack removeSingleItem(ItemStack is)
     {
         is.stackSize--;
+        if (is.stackSize == 0)
+        	return null;
         return is;
     }
 }

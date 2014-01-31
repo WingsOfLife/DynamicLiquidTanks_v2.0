@@ -9,20 +9,17 @@ import net.minecraft.potion.PotionHelper;
 
 public class PotionEffectHelper
 {
-    public static void applyPotionEffects(EntityPlayer player, int potionId, int durationDivisor, boolean override)
-    {
-        List list = PotionHelper.getPotionEffects(potionId, override);
-
-        if (list != null)
-        {
-            Iterator iterator = list.iterator();
-
-            while (iterator.hasNext())
-            {
-                PotionEffect potioneffect = (PotionEffect) iterator.next();
-                potioneffect.duration = potioneffect.getDuration() / durationDivisor;
-                player.addPotionEffect(new PotionEffect(potioneffect));
-            }
-        }
-    }
+	public static void applyPotionEffects(EntityPlayer player, List list, int durationDivisor, boolean override)
+	{
+		if (list != null)
+		{
+			for (Object obj : list) {
+				if (obj instanceof PotionEffect) {
+					PotionEffect potioneffect = (PotionEffect) obj;
+					potioneffect.duration = potioneffect.getDuration() / durationDivisor;
+					player.addPotionEffect(new PotionEffect(potioneffect));
+				}
+			}
+		}
+	}
 }

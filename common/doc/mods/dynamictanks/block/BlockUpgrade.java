@@ -152,17 +152,20 @@ public class BlockUpgrade extends BlockContainer
         ItemStack heldItem = player.inventory.getCurrentItem();
         UpgradeTileEntity upgradeTE = (UpgradeTileEntity) world.getBlockTileEntity(x, y, z);
 
-        if ((heldItem == null || heldItem.itemID == ItemManager.upgradeItem.itemID) && player.rayTrace(200, 1.0F) != null && world.isRemote)
+        if (world.isRemote && (heldItem == null || heldItem.itemID == ItemManager.upgradeItem.itemID))
         {
-            double xCoord = player.rayTrace(200, 1.0F).hitVec.xCoord;
-            double yCoord = player.rayTrace(200, 1.0F).hitVec.yCoord;
-            double zCoord = player.rayTrace(200, 1.0F).hitVec.zCoord;
-            double xRound = xCoord - MathHelper.floor_double(xCoord);
-            double zRound = zCoord - MathHelper.floor_double(zCoord);
-            double yRound = yCoord - MathHelper.floor_double(yCoord);
-            PacketHandler.sendPacketWithInt(PacketHandler.PacketIDs.spotClick, 1,
-                                            heldItem != null ? heldItem.itemID : -1, heldItem != null ? heldItem.getItemDamage() : -1,
-                                            xRound, yRound, zRound, x, y, z);
+            if (player.rayTrace(200, 1.0F) != null)
+            {
+                double xCoord = player.rayTrace(200, 1.0F).hitVec.xCoord;
+                double yCoord = player.rayTrace(200, 1.0F).hitVec.yCoord;
+                double zCoord = player.rayTrace(200, 1.0F).hitVec.zCoord;
+                double xRound = xCoord - MathHelper.floor_double(xCoord);
+                double zRound = zCoord - MathHelper.floor_double(zCoord);
+                double yRound = yCoord - MathHelper.floor_double(yCoord);
+                PacketHandler.sendPacketWithInt(PacketHandler.PacketIDs.spotClick, 1,
+                                                heldItem != null ? heldItem.itemID : -1, heldItem != null ? heldItem.getItemDamage() : -1,
+                                                xRound, yRound, zRound, x, y, z);
+            }
         }
 
         return true;

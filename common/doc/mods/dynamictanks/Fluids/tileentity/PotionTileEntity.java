@@ -17,7 +17,7 @@ public class PotionTileEntity extends TileEntity
     private final float ticksPerSec = CPotionHelper.ticksPerSec;
     private final float maxExistance = CPotionHelper.maxExistance;
 
-    protected float ticksExisted = 0;
+    protected float ticksExisted = maxExistance;
 
     public PotionTileEntity() {}
 
@@ -28,7 +28,7 @@ public class PotionTileEntity extends TileEntity
 
     public int getPotency()
     {
-        return (int)(100 - ((ticksExisted / maxExistance) * 100));
+        return (int)(((ticksExisted / maxExistance) * 100));
     }
 
     public void setExistance(float newExistance)
@@ -43,18 +43,18 @@ public class PotionTileEntity extends TileEntity
 
     public void removeRndStability()
     {
-        ticksExisted += (new Random().nextInt(25) + new Random().nextInt(50) + 20) * ticksPerSec;
+        ticksExisted -= (new Random().nextInt(25) + new Random().nextInt(50) + 20) * ticksPerSec;
     }
 
     @Override
     public void updateEntity()
     {
-        ticksExisted++;
+        //ticksExisted++;
 
-        if (ticksExisted >= maxExistance)
+        if (ticksExisted <= 0)
         {
             int blockId = worldObj.getBlockId(xCoord, yCoord, zCoord);
-            worldObj.setBlock(xCoord, yCoord, zCoord, PotionInverse.getInverse(blockId));
+            worldObj.setBlock(xCoord, yCoord, zCoord, Block.waterStill.blockID);
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
         }
     }

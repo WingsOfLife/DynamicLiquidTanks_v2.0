@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemDye;
@@ -24,6 +25,7 @@ import doc.mods.dynamictanks.Fluids.FluidManager;
 import doc.mods.dynamictanks.client.ClientProxy;
 import doc.mods.dynamictanks.helpers.ConnectedTexturesHelper;
 import doc.mods.dynamictanks.helpers.ItemHelper;
+import doc.mods.dynamictanks.packets.PacketHandler;
 import doc.mods.dynamictanks.tileentity.ControllerTileEntity;
 import doc.mods.dynamictanks.tileentity.TankTileEntity;
 
@@ -43,7 +45,7 @@ public class BlockTank extends BlockContainer
         return new TankTileEntity();
     }
 
-    @Override
+    /*@Override
     public void breakBlock(World par1World, int x, int y, int z, int par5, int par6)
     {
         TileEntity tile = par1World.getBlockTileEntity(x, y, z);
@@ -67,14 +69,15 @@ public class BlockTank extends BlockContainer
                             if (Arrays.equals(loc, controllerTile.getNeighbors().get(i)))
                             {
                                 controllerTile.getNeighbors().remove(i);
+                                controllerTile.refresh();
                             }
                 }
             }
         }
 
         super.breakBlock(par1World, x, y, z, par5, par6);
-    }
-
+    }*/
+    
     @Override
     public void onBlockClicked(World par1World, int x, int y, int z, EntityPlayer par5EntityPlayer)
     {
@@ -120,10 +123,12 @@ public class BlockTank extends BlockContainer
         }
 
         ControllerTileEntity conTE = (ControllerTileEntity) tank.getControllerTE();
-        
+
         if (conTE == null)
-        	return false;
-        
+        {
+            return false;
+        }
+
         if (heldItem != null && heldItem.itemID == Item.potion.itemID)
         {
             FluidStack potion = new FluidStack(FluidManager.potionFluid, FluidContainerRegistry.BUCKET_VOLUME);

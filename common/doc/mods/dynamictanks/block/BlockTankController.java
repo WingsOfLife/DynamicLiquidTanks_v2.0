@@ -108,7 +108,9 @@ public class BlockTankController extends BlockContainer
                 TileEntity tile = par1World.getBlockTileEntity(arr[0], arr[1], arr[2]);
 
                 if (tile != null && tile instanceof TankTileEntity)
-                    ((TankTileEntity) tile).invalidate();//setControllerPos(new int[] { -1, -1, -1 });
+                {
+                    ((TankTileEntity) tile).invalidate();
+                }//setControllerPos(new int[] { -1, -1, -1 });
             }
         }
 
@@ -185,13 +187,13 @@ public class BlockTankController extends BlockContainer
         }
 
         //read NBT
-        if (itemstack.stackTagCompound == null)
+        if (itemstack.stackTagCompound != null)
         {
-            return;
+        	ControllerTileEntity setInfo = (ControllerTileEntity) world.getBlockTileEntity(x, y, z);
+            setInfo.readFromNBT(itemstack.stackTagCompound);
         }
-
-        ControllerTileEntity setInfo = (ControllerTileEntity) world.getBlockTileEntity(x, y, z);
-        setInfo.readFromNBT(itemstack.stackTagCompound);
+        
+        super.onBlockPlacedBy(world, x, y, z, entity, itemstack);
     }
 
     /*
@@ -234,7 +236,7 @@ public class BlockTankController extends BlockContainer
             if (par5EntityPlayer != null && controller.getPotion() != -1 &&
                     (currentLiquid.amount - (FluidContainerRegistry.BUCKET_VOLUME / 10)) >= 0)
             {
-                PotionEffectHelper.applyPotionEffects((EntityPlayer) par5EntityPlayer, controller.getPotion(), 10, false);
+                //PotionEffectHelper.applyPotionEffects((EntityPlayer) par5EntityPlayer, controller.getPotion(), 10, false);
                 controller.drain(ForgeDirection.UNKNOWN, FluidContainerRegistry.BUCKET_VOLUME / 10, true);
 
                 if (currentLiquid.amount == 0)
@@ -251,7 +253,7 @@ public class BlockTankController extends BlockContainer
             {
                 controller.setDyeColor(heldItem.getItemDamage());
             }
-            else if (heldItem != null && Block.blocksList[heldItem.itemID] != null)
+            else if (heldItem != null && heldItem.itemID < 4096 && Block.blocksList[heldItem.itemID] != null)
             {
                 controller.setCamo(heldItem.itemID, heldItem.getItemDamage());
             }

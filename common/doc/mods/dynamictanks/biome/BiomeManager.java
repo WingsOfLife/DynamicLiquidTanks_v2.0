@@ -7,13 +7,16 @@ import net.minecraftforge.common.BiomeDictionary;
 
 public class BiomeManager
 {
-    public static BiomeGenBase potionBiome;
+	public static BiomeGenBase potionBiome;
 
-    public static void registerBiomes()
-    {
-        potionBiome = new PotionBiome(ModConfig.BiomeIDs.potionBiome).setBiomeName("Haunted Forest").setDisableRain();
-        GameRegistry.registerWorldGenerator(new TreeGenerator());
-        GameRegistry.addBiome(potionBiome);
-        BiomeDictionary.registerBiomeType(potionBiome, BiomeDictionary.Type.MAGICAL);
-    }
+	public static void registerBiomes()
+	{
+		if (ModConfig.miscBoolean.terrainGen == true) {
+			potionBiome = new PotionBiome(ModConfig.BiomeIDs.potionBiome).setBiomeName("Haunted Forest").setDisableRain();
+			GameRegistry.addBiome(potionBiome);
+			BiomeDictionary.registerBiomeType(potionBiome, BiomeDictionary.Type.MAGICAL);
+		}
+		
+		GameRegistry.registerWorldGenerator(new TreeGenerator());
+	}
 }

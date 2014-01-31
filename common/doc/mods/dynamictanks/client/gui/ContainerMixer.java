@@ -8,13 +8,13 @@ import net.minecraft.item.ItemStack;
 import doc.mods.dynamictanks.tileentity.ControllerTileEntity;
 import doc.mods.dynamictanks.tileentity.PotionMixerTileEntity;
 
-public class ContainerMixer extends Container {
-
-	protected PotionMixerTileEntity mixerTile;
+public class ContainerMixer extends Container
+{
+    protected PotionMixerTileEntity mixerTile;
 
     public ContainerMixer(InventoryPlayer inventoryPlayer, PotionMixerTileEntity upgradeTE)
     {
-    	mixerTile = upgradeTE;
+        mixerTile = upgradeTE;
         addSlotToContainer(new PotionSlot(upgradeTE, 0, 64, 14));
         addSlotToContainer(new PotionSlot(upgradeTE, 1, 64, 44));
         addSlotToContainer(new Slot(upgradeTE, 2, 96, 29));
@@ -86,5 +86,4 @@ public class ContainerMixer extends Container {
             addSlotToContainer(new Slot(inventoryPlayer, j, 8 + j * 18, 136));
         }
     }
-	
 }

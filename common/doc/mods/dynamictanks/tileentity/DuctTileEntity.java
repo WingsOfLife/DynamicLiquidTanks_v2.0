@@ -234,7 +234,6 @@ public class DuctTileEntity extends CountableTileEntity
         {
             return TRUE;
         }*/
-
         return FALSE;
     }
 

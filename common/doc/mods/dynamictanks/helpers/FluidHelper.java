@@ -26,6 +26,13 @@ public class FluidHelper
         return getTotal(tanks, toFind, amount, currentIndex + 1);
     }
 
+    public static int getFluidAmtIndex(LinkedList<FluidTank> tanks, int index) {
+    	if (index >= tanks.size())
+    		return 0;
+    	
+    	return tanks.get(index).getFluidAmount();
+    }
+    
     public static String getName(LinkedList<FluidTank> tanks, int index)
     {
         if (index >= tanks.size())

@@ -20,244 +20,255 @@ import doc.mods.dynamictanks.client.particle.ParticleEffects;
 import doc.mods.dynamictanks.helpers.ItemHelper;
 import doc.mods.dynamictanks.items.ItemManager;
 
-public class PotionMixerTileEntity extends CountableTileEntity implements IInventory, ISidedInventory {
+public class PotionMixerTileEntity extends CountableTileEntity implements IInventory, ISidedInventory
+{
+    protected int numSlots = 4;
 
-	protected int numSlots = 4;
+    protected ItemStack[] inventory;
 
-	protected ItemStack[] inventory;
+    public PotionMixerTileEntity()
+    {
+        inventory = new ItemStack[numSlots];
+    }
 
-	public PotionMixerTileEntity() {
-		inventory = new ItemStack[numSlots];
-	}
+    @Override
+    public void updateEntity()
+    {
+        /*if (worldObj.isRemote) {
+        	int color = PotionHelper.calcPotionLiquidColor(PotionHelper.getPotionEffects(8204, false));
+        	String nextColor = ParticleEffects.int2Rgb(color);
+        	Color toConvert = ParticleEffects.hex2Rgb(nextColor);
+        	for (int i = 0; i < 35; i++) {
+        		ParticleEffects.spawnParticle("coloredSmoke", (double)((float)xCoord + worldObj.rand.nextInt(5) + worldObj.rand.nextFloat()), (double)((float)yCoord + worldObj.rand.nextInt(2) - worldObj.rand.nextFloat()), (double)((float)zCoord + worldObj.rand.nextInt(5) + worldObj.rand.nextFloat()), 0.0D, 0.02D, 0.0D, toConvert.getRed(), toConvert.getGreen(), toConvert.getBlue());
+        		ParticleEffects.spawnParticle("coloredSmoke", (double)((float)xCoord - worldObj.rand.nextInt(5) + worldObj.rand.nextFloat()), (double)((float)yCoord - worldObj.rand.nextInt(2) + worldObj.rand.nextFloat()), (double)((float)zCoord - worldObj.rand.nextInt(5) + worldObj.rand.nextFloat()), 0.0D, 0.02D, 0.0D, toConvert.getRed(), toConvert.getGreen(), toConvert.getBlue());
+        		ParticleEffects.spawnParticle("coloredSmoke", (double)((float)xCoord + worldObj.rand.nextInt(5) + worldObj.rand.nextFloat()), (double)((float)yCoord - worldObj.rand.nextInt(2) + worldObj.rand.nextFloat()), (double)((float)zCoord - worldObj.rand.nextInt(5) + worldObj.rand.nextFloat()), 0.0D, 0.02D, 0.0D, toConvert.getRed(), toConvert.getGreen(), toConvert.getBlue());
+        		ParticleEffects.spawnParticle("coloredSmoke", (double)((float)xCoord - worldObj.rand.nextInt(5) + worldObj.rand.nextFloat()), (double)((float)yCoord + worldObj.rand.nextInt(2) - worldObj.rand.nextFloat()), (double)((float)zCoord + worldObj.rand.nextInt(5) + worldObj.rand.nextFloat()), 0.0D, 0.02D, 0.0D, toConvert.getRed(), toConvert.getGreen(), toConvert.getBlue());
+        	}
+        }*/
+        if (!worldObj.isRemote)
+        {
+            if (getStackInSlot(2) != null && getStackInSlot(2).itemID == Item.netherStalkSeeds.itemID)
+            {
+                if (getStackInSlot(0) == null || getStackInSlot(1) == null)
+                {
+                    return;
+                }
 
-	@Override
-	public void updateEntity() {
-		/*if (worldObj.isRemote) {
-			int color = PotionHelper.calcPotionLiquidColor(PotionHelper.getPotionEffects(8204, false));
-			String nextColor = ParticleEffects.int2Rgb(color);
-			Color toConvert = ParticleEffects.hex2Rgb(nextColor);
-			for (int i = 0; i < 35; i++) {
-				ParticleEffects.spawnParticle("coloredSmoke", (double)((float)xCoord + worldObj.rand.nextInt(5) + worldObj.rand.nextFloat()), (double)((float)yCoord + worldObj.rand.nextInt(2) - worldObj.rand.nextFloat()), (double)((float)zCoord + worldObj.rand.nextInt(5) + worldObj.rand.nextFloat()), 0.0D, 0.02D, 0.0D, toConvert.getRed(), toConvert.getGreen(), toConvert.getBlue());
-				ParticleEffects.spawnParticle("coloredSmoke", (double)((float)xCoord - worldObj.rand.nextInt(5) + worldObj.rand.nextFloat()), (double)((float)yCoord - worldObj.rand.nextInt(2) + worldObj.rand.nextFloat()), (double)((float)zCoord - worldObj.rand.nextInt(5) + worldObj.rand.nextFloat()), 0.0D, 0.02D, 0.0D, toConvert.getRed(), toConvert.getGreen(), toConvert.getBlue());
-				ParticleEffects.spawnParticle("coloredSmoke", (double)((float)xCoord + worldObj.rand.nextInt(5) + worldObj.rand.nextFloat()), (double)((float)yCoord - worldObj.rand.nextInt(2) + worldObj.rand.nextFloat()), (double)((float)zCoord - worldObj.rand.nextInt(5) + worldObj.rand.nextFloat()), 0.0D, 0.02D, 0.0D, toConvert.getRed(), toConvert.getGreen(), toConvert.getBlue());
-				ParticleEffects.spawnParticle("coloredSmoke", (double)((float)xCoord - worldObj.rand.nextInt(5) + worldObj.rand.nextFloat()), (double)((float)yCoord + worldObj.rand.nextInt(2) - worldObj.rand.nextFloat()), (double)((float)zCoord + worldObj.rand.nextInt(5) + worldObj.rand.nextFloat()), 0.0D, 0.02D, 0.0D, toConvert.getRed(), toConvert.getGreen(), toConvert.getBlue());
-			}
-			
-		}*/
-		
-		if (!worldObj.isRemote) {
-			if (getStackInSlot(2) != null && getStackInSlot(2).itemID == Item.netherStalkSeeds.itemID) {
+                setInventorySlotContents(2, null);
+                NBTTagCompound nbt = new NBTTagCompound();
+                ItemStack outputItem = new ItemStack(ItemManager.mixedPotion);
+                int[] appendTo = new int[2];
 
-				if (getStackInSlot(0) == null || getStackInSlot(1) == null)
-					return;
+                if (getStackInSlot(0).itemID == ItemManager.mixedPotion.itemID)
+                {
+                    appendTo = ArrayUtils.addAll(appendTo, getStackInSlot(0).stackTagCompound.getIntArray("PotionEffects"));
+                }
+                else
+                {
+                    appendTo[0] = getStackInSlot(0).getItemDamage();
+                }
 
-				setInventorySlotContents(2, null);
+                if (getStackInSlot(1).itemID == ItemManager.mixedPotion.itemID)
+                {
+                    appendTo = ArrayUtils.addAll(appendTo, getStackInSlot(1).stackTagCompound.getIntArray("PotionEffects"));
+                }
+                else
+                {
+                    appendTo[1] = getStackInSlot(1).getItemDamage();
+                }
 
-				NBTTagCompound nbt = new NBTTagCompound();
-				ItemStack outputItem = new ItemStack(ItemManager.mixedPotion);
-				int[] appendTo = new int[2];
+                nbt.setIntArray("PotionEffects", appendTo);
+                outputItem.setTagCompound(nbt);
+                setInventorySlotContents(0, null);
+                setInventorySlotContents(1, null);
+                ItemHelper.spawnItem(outputItem, worldObj, xCoord, yCoord, zCoord);
+            }
+        }
+    }
 
-				if (getStackInSlot(0).itemID == ItemManager.mixedPotion.itemID)
-					appendTo = ArrayUtils.addAll(appendTo, getStackInSlot(0).stackTagCompound.getIntArray("PotionEffects"));
-				else
-					appendTo[0] = getStackInSlot(0).getItemDamage();
-				if (getStackInSlot(1).itemID == ItemManager.mixedPotion.itemID)
-					appendTo = ArrayUtils.addAll(appendTo, getStackInSlot(1).stackTagCompound.getIntArray("PotionEffects"));
-				else
-					appendTo[1] = getStackInSlot(1).getItemDamage();
+    /*
+     * IInventory
+     */
 
-				nbt.setIntArray("PotionEffects", appendTo);
-				outputItem.setTagCompound(nbt);
+    @Override
+    public int getSizeInventory()
+    {
+        return numSlots;
+    }
 
-				setInventorySlotContents(0, null);
-				setInventorySlotContents(1, null);
+    @Override
+    public ItemStack getStackInSlot(int slot)
+    {
+        return inventory[slot];
+    }
 
-				ItemHelper.spawnItem(outputItem, worldObj, xCoord, yCoord, zCoord);
-			}
-		}
-	}
+    @Override
+    public ItemStack decrStackSize(int slot, int amount)
+    {
+        ItemStack itemStack = getStackInSlot(slot);
 
-	/*
-	 * IInventory
-	 */
+        if (itemStack != null)
+        {
+            if (itemStack.stackSize <= amount)
+            {
+                setInventorySlotContents(slot, itemStack);
+            }
+            else
+            {
+                itemStack = itemStack.splitStack(amount);
 
-	@Override
-	public int getSizeInventory()
-	{
-		return numSlots;
-	}
+                if (itemStack.stackSize == 0)
+                {
+                    setInventorySlotContents(slot, null);
+                }
+            }
+        }
 
-	@Override
-	public ItemStack getStackInSlot(int slot)
-	{
-		return inventory[slot];
-	}
+        return itemStack;
+    }
 
-	@Override
-	public ItemStack decrStackSize(int slot, int amount)
-	{
-		ItemStack itemStack = getStackInSlot(slot);
+    @Override
+    public ItemStack getStackInSlotOnClosing(int slot)
+    {
+        ItemStack itemStack = getStackInSlot(slot);
 
-		if (itemStack != null)
-		{
-			if (itemStack.stackSize <= amount)
-			{
-				setInventorySlotContents(slot, itemStack);
-			}
-			else
-			{
-				itemStack = itemStack.splitStack(amount);
+        if (itemStack != null)
+        {
+            setInventorySlotContents(slot, null);
+        }
 
-				if (itemStack.stackSize == 0)
-				{
-					setInventorySlotContents(slot, null);
-				}
-			}
-		}
+        return itemStack;
+    }
 
-		return itemStack;
-	}
+    @Override
+    public void setInventorySlotContents(int slot, ItemStack itemStack)
+    {
+        inventory[slot] = itemStack;
 
-	@Override
-	public ItemStack getStackInSlotOnClosing(int slot)
-	{
-		ItemStack itemStack = getStackInSlot(slot);
+        if (itemStack != null && itemStack.stackSize > getInventoryStackLimit())
+        {
+            itemStack.stackSize = getInventoryStackLimit();
+        }
+    }
 
-		if (itemStack != null)
-		{
-			setInventorySlotContents(slot, null);
-		}
+    @Override
+    public String getInvName()
+    {
+        return "dynamictanks.tileEntity.UpgradeContainer";
+    }
 
-		return itemStack;
-	}
+    @Override
+    public boolean isInvNameLocalized()
+    {
+        return true;
+    }
 
-	@Override
-	public void setInventorySlotContents(int slot, ItemStack itemStack)
-	{
-		inventory[slot] = itemStack;
+    @Override
+    public int getInventoryStackLimit()
+    {
+        return 1;
+    }
 
-		if (itemStack != null && itemStack.stackSize > getInventoryStackLimit())
-		{
-			itemStack.stackSize = getInventoryStackLimit();
-		}
-	}
+    @Override
+    public boolean isUseableByPlayer(EntityPlayer entityPlayer)
+    {
+        return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this &&
+               entityPlayer.getDistanceSq(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5) < 64;
+    }
 
-	@Override
-	public String getInvName()
-	{
-		return "dynamictanks.tileEntity.UpgradeContainer";
-	}
+    @Override
+    public void openChest()
+    {
+    }
 
-	@Override
-	public boolean isInvNameLocalized()
-	{
-		return true;
-	}
+    @Override
+    public void closeChest()
+    {
+    }
 
-	@Override
-	public int getInventoryStackLimit()
-	{
-		return 1;
-	}
+    @Override
+    public boolean isItemValidForSlot(int i, ItemStack itemstack)
+    {
+        return true;
+    }
 
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityPlayer)
-	{
-		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this &&
-				entityPlayer.getDistanceSq(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5) < 64;
-	}
+    /*
+     * Syncing Methods
+     */
 
-	@Override
-	public void openChest()
-	{
-	}
+    @Override
+    public void readFromNBT(NBTTagCompound tagCompound)
+    {
+        super.readFromNBT(tagCompound);
+        NBTTagList tagList = tagCompound.getTagList("Inventory");
 
-	@Override
-	public void closeChest()
-	{
-	}
+        for (int i = 0; i < tagList.tagCount(); i++)
+        {
+            NBTTagCompound tag = (NBTTagCompound) tagList.tagAt(i);
+            byte slot = tag.getByte("Slot");
 
-	@Override
-	public boolean isItemValidForSlot(int i, ItemStack itemstack)
-	{
-		return true;
-	}
+            if (slot >= 0 && slot < inventory.length)
+            {
+                inventory[slot] = ItemStack.loadItemStackFromNBT(tag);
+            }
+        }
+    }
 
-	/*
-	 * Syncing Methods
-	 */
+    @Override
+    public void writeToNBT(NBTTagCompound tagCompound)
+    {
+        super.writeToNBT(tagCompound);
+        NBTTagList itemList = new NBTTagList();
 
-	@Override
-	public void readFromNBT(NBTTagCompound tagCompound)
-	{
-		super.readFromNBT(tagCompound);
-		NBTTagList tagList = tagCompound.getTagList("Inventory");
+        for (int i = 0; i < inventory.length; i++)
+        {
+            ItemStack stack = inventory[i];
 
-		for (int i = 0; i < tagList.tagCount(); i++)
-		{
-			NBTTagCompound tag = (NBTTagCompound) tagList.tagAt(i);
-			byte slot = tag.getByte("Slot");
+            if (stack != null)
+            {
+                NBTTagCompound tag = new NBTTagCompound();
+                tag.setByte("Slot", (byte) i);
+                stack.writeToNBT(tag);
+                itemList.appendTag(tag);
+            }
+        }
 
-			if (slot >= 0 && slot < inventory.length)
-			{
-				inventory[slot] = ItemStack.loadItemStackFromNBT(tag);
-			}
-		}
-	}
+        tagCompound.setTag("Inventory", itemList);
+    }
 
-	@Override
-	public void writeToNBT(NBTTagCompound tagCompound)
-	{
-		super.writeToNBT(tagCompound);
-		NBTTagList itemList = new NBTTagList();
+    @Override
+    public Packet getDescriptionPacket()
+    {
+        NBTTagCompound tag = new NBTTagCompound();
+        writeToNBT(tag);
+        return new Packet132TileEntityData(xCoord, yCoord, zCoord, 1, tag);
+    }
 
-		for (int i = 0; i < inventory.length; i++)
-		{
-			ItemStack stack = inventory[i];
+    @Override
+    public void onDataPacket(INetworkManager net, Packet132TileEntityData packet)
+    {
+        readFromNBT(packet.data);
+    }
 
-			if (stack != null)
-			{
-				NBTTagCompound tag = new NBTTagCompound();
-				tag.setByte("Slot", (byte) i);
-				stack.writeToNBT(tag);
-				itemList.appendTag(tag);
-			}
-		}
+    /*
+     * ISided
+     */
 
-		tagCompound.setTag("Inventory", itemList);
-	}
+    @Override
+    public int[] getAccessibleSlotsFromSide(int var1)
+    {
+        return new int[] { 0, 1, 2 };
+    }
 
-	@Override
-	public Packet getDescriptionPacket()
-	{
-		NBTTagCompound tag = new NBTTagCompound();
-		writeToNBT(tag);
-		return new Packet132TileEntityData(xCoord, yCoord, zCoord, 1, tag);
-	}
+    @Override
+    public boolean canInsertItem(int i, ItemStack itemstack, int j)
+    {
+        return true;
+    }
 
-	@Override
-	public void onDataPacket(INetworkManager net, Packet132TileEntityData packet)
-	{
-		readFromNBT(packet.data);
-	}
-
-	/*
-	 * ISided
-	 */
-	
-	@Override
-	public int[] getAccessibleSlotsFromSide(int var1) {
-		return new int[] { 0, 1, 2 };
-	}
-
-	@Override
-	public boolean canInsertItem(int i, ItemStack itemstack, int j) {
-		return true;
-	}
-
-	@Override
-	public boolean canExtractItem(int i, ItemStack itemstack, int j) {
-		return true;
-	}
-
+    @Override
+    public boolean canExtractItem(int i, ItemStack itemstack, int j)
+    {
+        return true;
+    }
 }

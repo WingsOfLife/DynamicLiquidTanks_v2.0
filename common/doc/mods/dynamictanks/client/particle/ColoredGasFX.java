@@ -89,4 +89,3 @@ public class ColoredGasFX extends EntityFX
         }
     }
 }
-

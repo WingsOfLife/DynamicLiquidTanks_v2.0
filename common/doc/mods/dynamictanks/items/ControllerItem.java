@@ -22,12 +22,14 @@ public class ControllerItem extends ItemBlock
     public void addInformation(ItemStack itemstack, EntityPlayer player, List list, boolean par4)
     {
         ControllerTileEntity controller = new ControllerTileEntity();
-        if (itemstack.stackTagCompound != null) {
-        	Object name = list.get(0);
-        	list.set(0, "" + name + EnumChatFormatting.YELLOW + " (Pre-Filled)");
-        	list.add(1, EnumChatFormatting.RESET + "Hold " + EnumChatFormatting.GOLD + EnumChatFormatting.ITALIC + "SHIFT" + EnumChatFormatting.RESET + " for information.");
+
+        if (itemstack.stackTagCompound != null)
+        {
+            Object name = list.get(0);
+            list.set(0, "" + name + EnumChatFormatting.YELLOW + " (Pre-Filled)");
+            list.add(1, EnumChatFormatting.RESET + "Hold " + EnumChatFormatting.GOLD + EnumChatFormatting.ITALIC + "SHIFT" + EnumChatFormatting.RESET + " for information.");
         }
-        
+
         if (itemstack.stackTagCompound != null && Keyboard.isKeyDown(Keyboard.KEY_LSHIFT))
         {
             list.remove(1);
