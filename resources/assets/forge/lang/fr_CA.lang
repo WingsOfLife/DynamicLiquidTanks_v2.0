@@ -1,0 +1,5 @@
+commands.forge.usage=Syntaxe : /forge <tps|track>
+commands.forge.usage.tracking=Syntaxe : /forge track te <durée>. La durée doit être inférieure à 60
+commands.forge.tps.summary=%s : moyenne de temps de tick : %d ms, moyenne de TPS : %d
+
+commands.forge.tracking.te.enabled=Suivi d'entités de bloc activé pour %d secondes
